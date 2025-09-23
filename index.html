@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Wheels Detailing | Premium Mobile Auto & Boat Detailing Services</title>
+    <meta name="description" content="Professional mobile auto detailing & marine gel-coat services. We come to you! Interior detailing, paint correction, ceramic coating. Serving Detroit -> St. Clair County. Free quotes.">
+    <meta name="keywords" content="mobile detailing, auto detailing, car detailing, boat detailing, marine detailing, gel-coat restoration, paint correction, interior detailing, ceramic coating, mobile car wash, On-Wheels Detailing, Port Huron detailing, Detroit detailing, Chesterfield detailing, Sterling Heights detailing, Troy detailing, Rochester Hills detailing">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="On-Wheels Detailing | Premium Mobile Detailing Services">
+    <meta property="og:description" content="Professional mobile auto & boat detailing services. We come to you! Interior detailing, paint correction, marine gel-coat restoration.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.onwheelsdetailing.com">
+    <!-- Add your actual logo image here -->
+    <meta property="og:image" content="https://www.onwheelsdetailing.com/images/logo-social.jpg">
+
+    <!-- Structured Data for Local Business -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "AutoDetailing",
+            "name": "On-Wheels Detailing",
+            "description": "Professional mobile auto and boat detailing services",
+            "url": "https://www.onwheelsdetailing.com",
+            "telephone": "+1-586-873-0656",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Detroit",
+                "addressRegion": "Michigan",
+                "postalCode": "48235"
+            },
+            "openingHours": "Mo-Sa 08:00-18:00",
+            "areaServed": "Detroit and surrounding areas",
+            "serviceType": "Auto detailing, Boat detailing, Paint correction",
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Detailing Services",
+                "itemListElement": [
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Marine Gel-coat Detailing"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Interior Detailing"
+                        }
+                    },
+                    {
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "Service",
+                            "name": "Paint Correction"
+                        }
+                    }
+                ]
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #000000;
+            --accent: #FFD700;
+            --light: #f8f8f8;
+            --dark: #1a1a1a;
+            --gray: #333333;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Dropdown Styles - Fixed */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--dark);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-top: 3px solid var(--accent);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .dropdown-content a {
+            color: var(--light);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--gray);
+            color: var(--accent);
+        }
+
+        /* Show dropdown on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80') no-repeat center center/cover;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--light);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--light);
+            transform: translateY(-3px);
+        }
+
+        /* About Us Section */
+        .about {
+            padding: 5rem 0;
+            background-color: var(--light);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background-color: #f0f0f0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-card i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Quote Section */
+        .quote {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .quote h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .quote p {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .phone {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* Recent Jobs Section */
+        .recent-jobs {
+            padding: 5rem 0;
+            background-color: var(--light);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            height: 250px;
+            background-color: var(--dark);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .placeholder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light);
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #333 0%, #000 100%);
+        }
+
+        /* Service Areas Section */
+        .service-areas {
+            padding: 3rem 0;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .areas-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .area-tag {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .social-icons {
+            margin: 1rem 0;
+        }
+
+        .social-icons a {
+            color: var(--light);
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            height: 3px;
+            width: 100%;
+            background-color: var(--light);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: flex;
+                position: absolute;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav li {
+                margin: 0.5rem 0;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                opacity: 1;
+                transform: none;
+                box-shadow: none;
+                margin-left: 1rem;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: block;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container header-content">
+        <div class="logo">
+            <i class="fas fa-car fa-2x" style="color: #FFD700;"></i>
+            <h1>On-<span>Wheels</span> Detailing</h1>
+        </div>
+
+        <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li class="dropdown">
+                    <a href="#services">Services <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#marine">Marine Gel-coat Detailing</a>
+                        <a href="#interior">Interior Detailing</a>
+                        <a href="#paint">Paint Correction</a>
+                    </div>
+                </li>
+                <li><a href="#gallery">Recent Jobs</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="container hero-content">
+        <h1>Premium Mobile Auto & Boat Detailing Services</h1>
+        <p>We bring professional detailing services to your doorstep in Metro Detroit and surrounding areas. Marine gel-coat detailing, interior detailing, and expert paint correction.</p>
+        <a href="#contact" class="btn">Get a Free Quote</a>
+    </div>
+</section>
+
+<!-- About Us Section -->
+<section id="about" class="about">
+    <div class="container">
+        <div class="section-title">
+            <h2>About On-Wheels Detailing</h2>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-home"></i>
+                <h3>Mobile Convenience</h3>
+                <p>Our mobile detailing service comes to your home or office in Michigan, saving you time and effort. We also have a fully-equipped garage for boats and vehicles that need special attention</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-tag"></i>
+                <h3>Competitive Pricing</h3>
+                <p>All our detailing rates are competitively priced for the premium service you'll receive.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-spray-can"></i>
+                <h3>Professional Results</h3>
+                <p>Expert paint correction and stain/odor removal that revitalizes your vehicle. We use only the highest quality products and techniques for lasting protection.</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Satisfaction Guaranteed</h3>
+                <p>We take pride in every detailing service we provide. Your satisfaction is guaranteed with our quality assurance promise for all auto and marine detailing work.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our Detailing Services</h2>
+            <p>Professional auto and marine detailing services to meet all your needs</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card" id="marine">
+                <i class="fas fa-water"></i>
+                <h3>Marine Gel-coat Detailing</h3>
+                <p>Our specialized marine gel-coat detailing service restores and protects the finish of your boat with premium products designed for marine environments. We bring our mobile boat detailing service to marinas throughout [Your Area].</p>
+            </div>
+
+            <div class="service-card" id="interior">
+                <i class="fas fa-couch"></i>
+                <h3>Interior Detailing</h3>
+                <p>Transform your vehicle's interior with our comprehensive detailing service. We carefully clean and protect all surfaces including upholstery, carpets, and leather. Our mobile interior detailing revives your car's cabin to like-new condition.</p>
+            </div>
+
+            <div class="service-card" id="paint">
+                <i class="fas fa-paint-roller"></i>
+                <h3>Paint Correction & Protection</h3>
+                <p>Restore your vehicle's paint to showroom condition with our professional paint correction service that eliminates swirl marks, scratches, and oxidation. We offer ceramic coating applications for long-lasting protection.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Service Areas Section -->
+<section class="service-areas">
+    <div class="container">
+        <div class="section-title">
+            <h2>Service Areas</h2>
+            <p>We provide mobile detailing services throughout these areas:</p>
+        </div>
+        <div class="areas-list">
+            <span class="area-tag">Detroit</span>
+            <span class="area-tag">Ann-Arbor</span>
+            <span class="area-tag">Troy</span>
+            <span class="area-tag">Royal Oak</span>
+            <span class="area-tag">Port Huron</span>
+        </div>
+    </div>
+</section>
+
+<!-- Quote Section -->
+<section id="contact" class="quote">
+    <div class="container">
+        <h2>Ready to Restore Your Vehicle's Shine?</h2>
+        <p>Contact us today for a free, no-obligation quote</p>
+        <a href="tel:+15868730656" class="phone"><i class="fas fa-phone"></i> (586) 873-0656</a>
+        <p style="margin-top: 1rem;">Serving Metro Detroit and surrounding areas</p>
+    </div>
+</section>
+
+<!-- Recent Jobs Section -->
+<section id="gallery" class="recent-jobs">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our Recent Detailing Work</h2>
+            <p>See examples of our auto and marine detailing results</p>
+        </div>
+        <div class="gallery">
+            <!-- Placeholder for 20 images - Add alt text when adding real images -->
+            <div class="gallery-item">
+                <div class="placeholder">Before & After: Paint Correction</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Marine Gel-coat Restoration</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Interior Detailing Transformation</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Ceramic Coating Application</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Headlight Restoration</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Full Auto Detailing</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Boat Detailing Service</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Leather Interior Cleaning</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Paint Protection Film</div>
+            </div>
+            <div class="gallery-item">
+                <div class="placeholder">Engine Bay Detailing</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container footer-content">
+        <div class="logo">
+            <i class="fas fa-car fa-2x" style="color: #FFD700;"></i>
+            <h2>On-<span>Wheels</span> Detailing</h2>
+        </div>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p>&copy; 2025 On-Wheels Detailing. Professional Mobile Auto & Boat Detailing Services. A product of SAIN API.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Serving Metro Detroit and surrounding areas</p>
+    </div>
+</footer>
+
+<script>
+    // Mobile menu toggle
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navMenu = document.getElementById('nav-menu');
+
+    mobileMenu.addEventListener('click', function() {
+        navMenu.classList.toggle('show');
+        mobileMenu.classList.toggle('active');
+    });
+
+    // Dropdown menu functionality for mobile
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+        if (window.innerWidth <= 768) {
+            // For mobile devices, make dropdowns clickable
+            const dropdownLink = dropdown.querySelector('a');
+
+            dropdownLink.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                }
+            });
+        }
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            if(targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if(targetElement) {
+                // Close mobile menu if open
+                if (navMenu.classList.contains('show')) {
+                    navMenu.classList.remove('show');
+                    mobileMenu.classList.remove('active');
+                }
+
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Update dropdown behavior on window resize
+    window.addEventListener('resize', function() {
+        dropdowns.forEach(dropdown => {
+            if (window.innerWidth <= 768) {
+                const dropdownLink = dropdown.querySelector('a');
+
+                dropdownLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                });
+            } else {
+                // Remove click event for larger screens
+                const dropdownLink = dropdown.querySelector('a');
+                const newDropdownLink = dropdownLink.cloneNode(true);
+                dropdownLink.parentNode.replaceChild(newDropdownLink, dropdownLink);
+            }
+        });
+    });
+</script>
+</body>
+</html>
