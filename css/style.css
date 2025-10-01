@@ -1,13 +1,46 @@
+/* Font Imports - Fixed Structure */
+@font-face {
+    font-family: "FHOscar";
+    src: url("../fonts/FHOscarCondensedTest-Bold-BF65139d0c7ac65.otf") format("opentype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "FHOscar";
+    src: url("../fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "FHOscar";
+    src: url("../fonts/FHOscarCondensedTest-Medium-BF65139d0c9ecad.otf") format("opentype");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "FHOscar";
+    src: url("../fonts/FHOscarCondensedTest-SemiBold-BF65139d0c852c5.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'FHOscar', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 :root {
-    --primary: #000000;
-    --accent: #FFD700;
+    /* Updated color palette based on brand guidelines */
+    --navy-blue: #0e2f48;    /* Primary color - Navy Blue */
+    --red: #c63c34;          /* Primary color - Red */
+    --beige: #e5dfb9;        /* Secondary color - Beige */
+    --yellow: #f0be5f;       /* Secondary color - Yellow */
+    --orange: #e6853a;       /* Secondary color - Orange */
     --light: #f8f8f8;
     --dark: #1a1a1a;
     --gray: #333333;
@@ -17,6 +50,7 @@ body {
     background-color: var(--light);
     color: var(--dark);
     line-height: 1.6;
+    font-weight: 300; /* Lorimer No2 Light for body text */
 }
 
 .container {
@@ -28,7 +62,7 @@ body {
 
 /* Header Styles */
 header {
-    background-color: var(--primary);
+    background-color: var(--navy-blue);
     color: var(--light);
     padding: 1rem 0;
     position: sticky;
@@ -49,16 +83,8 @@ header {
 }
 
 .logo img {
-    height: 50px;
-    margin-right: 10px;
-}
-
-.logo h1 {
-    font-size: 1.8rem;
-}
-
-.logo span {
-    color: var(--accent);
+    height: 60px;
+    width: auto;
 }
 
 /* Navigation */
@@ -75,13 +101,17 @@ nav li {
 nav a {
     color: var(--light);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     padding: 0.5rem;
     transition: color 0.3s;
+    font-family: 'P4Speed', 'Segoe UI', sans-serif; /* P4Speed for navigation */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
 }
 
 nav a:hover {
-    color: var(--accent);
+    color: var(--beige);
 }
 
 /* Dropdown Styles */
@@ -96,7 +126,7 @@ nav a:hover {
     min-width: 200px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
-    border-top: 3px solid var(--accent);
+    border-top: 3px solid var(--beige);
 }
 
 .dropdown-content a {
@@ -104,11 +134,15 @@ nav a:hover {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    font-family: 'Lorimer No2', 'Segoe UI', sans-serif;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 300;
 }
 
 .dropdown-content a:hover {
     background-color: var(--gray);
-    color: var(--accent);
+    color: var(--beige);
 }
 
 .dropdown:hover .dropdown-content {
@@ -117,7 +151,7 @@ nav a:hover {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/hero-bg.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(15, 42, 72, 0.7), rgba(15, 42, 72, 0.7)), url('../images/hero-car.png') no-repeat center center/cover;
     height: 80vh;
     display: flex;
     align-items: center;
@@ -130,31 +164,38 @@ nav a:hover {
     margin: 0 auto;
 }
 
-.hero h2 {
+.hero h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: var(--accent);
+    color: var(--beige);
+    font-family: 'P4Speed', 'Segoe UI', sans-serif; /* P4Speed for main heading */
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .hero p {
     font-size: 1.2rem;
     margin-bottom: 2rem;
+    font-weight: 300;
 }
 
 .btn {
     display: inline-block;
-    background-color: var(--accent);
-    color: var(--dark);
+    background-color: var(--red);
+    color: var(--light);
     padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 5px;
     font-weight: bold;
     text-decoration: none;
     transition: all 0.3s;
+    font-family: 'P4Speed', 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .btn:hover {
-    background-color: var(--light);
+    background-color: var(--orange);
     transform: translateY(-3px);
 }
 
@@ -171,10 +212,13 @@ nav a:hover {
 
 .section-title h2 {
     font-size: 2.5rem;
-    color: var(--primary);
+    color: var(--navy-blue);
     position: relative;
     display: inline-block;
     padding-bottom: 10px;
+    font-family: 'P4Speed', 'Segoe UI', sans-serif; /* P4Speed for section titles */
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .section-title h2::after {
@@ -185,7 +229,7 @@ nav a:hover {
     transform: translateX(-50%);
     width: 80px;
     height: 3px;
-    background-color: var(--accent);
+    background-color: var(--red);
 }
 
 .features {
@@ -202,6 +246,7 @@ nav a:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s;
+    border-top: 4px solid var(--navy-blue);
 }
 
 .feature:hover {
@@ -210,18 +255,65 @@ nav a:hover {
 
 .feature i {
     font-size: 2.5rem;
-    color: var(--accent);
+    color: var(--red);
     margin-bottom: 1rem;
 }
 
 .feature h3 {
     margin-bottom: 1rem;
-    color: var(--primary);
+    color: var(--navy-blue);
+    font-weight: 600; /* Lorimer No2 SemiBold for feature titles */
+}
+
+/* Services Section */
+.services {
+    padding: 5rem 0;
+    background-color: #f0f0f0;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s;
+    border-top: 4px solid var(--red);
+}
+
+.service-image {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+.service-card i {
+    font-size: 2.5rem;
+    color: var(--red);
+    margin-bottom: 1rem;
+}
+
+.service-card h3 {
+    margin-bottom: 1rem;
+    color: var(--navy-blue);
+    font-weight: 600; /* Lorimer No2 SemiBold for service titles */
 }
 
 /* Quote Section */
 .quote {
-    background-color: var(--primary);
+    background-color: var(--navy-blue);
     color: var(--light);
     padding: 3rem 0;
     text-align: center;
@@ -230,34 +322,37 @@ nav a:hover {
 .quote h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: var(--accent);
+    color: var(--beige);
+    font-family: 'P4Speed', 'Segoe UI', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .quote p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
 .phone {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    color: var(--accent);
+    color: var(--beige);
     text-decoration: none;
     display: inline-block;
     margin-top: 1rem;
+    font-family: 'P4Speed', 'Segoe UI', sans-serif;
 }
 
 /* Recent Jobs Section */
 .recent-jobs {
     padding: 5rem 0;
-    background-color: #f0f0f0;
+    background-color: var(--light);
 }
 
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 2rem;
 }
 
 .gallery-item {
@@ -287,4 +382,140 @@ nav a:hover {
     font-size: 1.2rem;
     text-align: center;
     padding: 20px;
-    background: linear-gradient(
+    background: linear-gradient(135deg, var(--navy-blue) 0%, var(--dark) 100%);
+    height: 100%;
+}
+
+/* Service Areas Section */
+.service-areas {
+    padding: 3rem 0;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+.areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.area-tag {
+    background-color: var(--navy-blue);
+    color: var(--light);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark);
+    color: var(--light);
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content .logo img {
+    height: 50px;
+    margin-bottom: 1rem;
+}
+
+.social-icons {
+    margin: 1rem 0;
+}
+
+.social-icons a {
+    color: var(--light);
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: var(--beige);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    height: 3px;
+    width: 100%;
+    background-color: var(--light);
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .menu-toggle {
+        display: flex;
+        position: absolute;
+        top: 1.5rem;
+        right: 1rem;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    nav ul.show {
+        display: flex;
+    }
+
+    nav li {
+        margin: 0.5rem 0;
+    }
+
+    .dropdown-content {
+        position: static;
+        display: none;
+        box-shadow: none;
+        margin-left: 1rem;
+        background-color: transparent;
+        border-top: none;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: none;
+    }
+
+    .dropdown.active .dropdown-content {
+        display: block;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
