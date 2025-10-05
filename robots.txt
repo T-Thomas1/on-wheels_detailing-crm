@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.onwheelsdetailing.com/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /config/
+
+# Allow search engines to crawl CSS and JS for proper rendering
+Allow: /css/
+Allow: /js/
+Allow: /images/

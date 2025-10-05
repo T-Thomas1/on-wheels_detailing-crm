@@ -6,6 +6,21 @@
     font-style: normal;
 }
 
+/* Add to your style.css */
+.service-image, .gallery-item img, .logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Lazy loading */
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}
 @font-face {
     font-family: "FHOscar";
     src: url("../fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf") format("opentype");
