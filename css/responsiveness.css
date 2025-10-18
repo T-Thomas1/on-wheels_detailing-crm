@@ -1,4 +1,10 @@
 /* Responsive Design */
+@media (max-width: 1200px) {
+    .gallery-full {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -59,6 +65,11 @@
         grid-template-columns: 1fr;
     }
 
+    .gallery-full {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
     .gallery {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
@@ -75,6 +86,95 @@
     .area-tag {
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
+    }
+
+    /* About Page Responsive */
+    .slogan-section h1 {
+        font-size: 2.2rem;
+    }
+
+    .passion-statement {
+        font-size: 1.1rem;
+        padding: 20px;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .about-text h3 {
+        font-size: 1.6rem;
+    }
+
+    .about-text p {
+        font-size: 1.1rem;
+    }
+
+    .future-vision h3 {
+        font-size: 1.8rem;
+    }
+
+    .future-vision p {
+        font-size: 1.1rem;
+    }
+
+    .personal-touch h3 {
+        font-size: 1.6rem;
+    }
+
+    .personal-touch p {
+        font-size: 1.1rem;
+    }
+
+    /* Services Page Responsive */
+    .service-detail {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .service-detail:nth-child(even) {
+        flex-direction: column;
+    }
+
+    .service-text, .service-image {
+        min-width: 100%;
+    }
+
+    .service-text h3 {
+        font-size: 1.6rem;
+    }
+
+    .service-text p {
+        font-size: 1.1rem;
+    }
+
+    /* Homepage Responsive */
+    .passion-banner h2 {
+        font-size: 2rem;
+    }
+
+    .passion-banner p {
+        font-size: 1.2rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+    }
+
+    .testimonial p {
+        font-size: 1.1rem;
+    }
+
+    .service-card {
+        min-width: 100%;
+    }
+
+    .gallery-item {
+        min-width: 100%;
     }
 }
 
@@ -95,6 +195,11 @@
         padding: 1.5rem;
     }
 
+    .gallery-full {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
     .gallery {
         grid-template-columns: 1fr;
     }
@@ -105,5 +210,27 @@
 
     .phone {
         font-size: 1.5rem;
+    }
+
+    .contact-options {
+        flex-direction: column;
+    }
+
+    .contact-option {
+        min-width: 100%;
+    }
+
+    .journey-timeline,
+    .values-section,
+    .benefits-grid,
+    .stats-grid {
+        flex-direction: column;
+    }
+
+    .journey-item,
+    .value-item,
+    .benefit-item,
+    .stat-item {
+        min-width: 100%;
     }
 }
