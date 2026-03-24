@@ -2,20 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us | On-Wheels Detailing</title>
-    <meta name="description" content="Learn about On-Wheels Detailing - our passion, journey, and commitment to excellence in mobile auto detailing since 2020.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>About Us | On-Wheels Detailing - Our Passion & Story Since 2020</title>
+    <meta name="description" content="Learn about On-Wheels Detailing - our passion, journey, and commitment to excellence in mobile auto detailing since 2020. Serving Detroit and Houston areas including Harris County, Waller County, and Prairie View.">
+    <meta name="keywords" content="about On-Wheels Detailing, detailing story, mobile detailing Detroit, mobile detailing Houston, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <meta name="author" content="On-Wheels Detailing">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
+
+    <link rel="canonical" href="https://www.onwheelsdetailing.com/about.html">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332">
-    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'AW-17663778332');
     </script>
 </head>
@@ -24,8 +31,30 @@
 <header>
     <div class="container header-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
-            <img src="images/onwheelsLogo.png" alt="description" loading="lazy">
+            <a href="index.html">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+            </a>
+        </div>
+
+        <!-- Location Toggle Button -->
+        <div class="location-toggle">
+            <button class="location-btn" id="locationDropdownBtn">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="selectedLocation">Detroit, MI</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="location-dropdown" id="locationDropdown">
+                <a href="#" data-location="detroit" class="location-option active">
+                    <i class="fas fa-city"></i>
+                    <span>Detroit, MI</span>
+                    <small>Metro Detroit Area</small>
+                </a>
+                <a href="#" data-location="houston" class="location-option">
+                    <i class="fas fa-flag-usa"></i>
+                    <span>Houston, TX</span>
+                    <small>Harris County • Waller County • Prairie View</small>
+                </a>
+            </div>
         </div>
 
         <div class="menu-toggle" id="mobile-menu">
@@ -134,7 +163,7 @@
                 </div>
                 <div class="journey-item">
                     <i class="fas fa-expand"></i>
-                    <h4>2024: New Horizons</h4>
+                    <h4>2023: New Horizons</h4>
                     <p>Added marine detailing services and continued to grow our loyal customer base</p>
                 </div>
                 <div class="journey-item">
@@ -160,14 +189,65 @@
             <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+        <div class="footer-info">
+            <div class="contact-info">
+                <p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        </div>
     </div>
 </footer>
 
 <script src="js/script.js"></script>
+<script>
+    // Location toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                localStorage.setItem('preferredLocation', this.getAttribute('data-location'));
+                locationDropdown.classList.remove('show');
+            });
+        });
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        if (savedLocation) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                savedOption.click();
+            }
+        }
+    });
+</script>
 </body>
 </html>

@@ -2,20 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | On-Wheels Detailing</title>
-    <meta name="description" content="Professional mobile auto detailing services including marine gel-coat detailing, interior detailing, and paint correction.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Detailing Services | On-Wheels Detailing - Marine, Interior & Paint Correction</title>
+    <meta name="description" content="Professional mobile auto detailing services including marine gel-coat detailing, interior detailing, and paint correction. Serving Detroit and Houston areas including Harris County, Waller County, and Prairie View. Free quotes available.">
+    <meta name="keywords" content="marine detailing, gel-coat restoration, interior detailing, paint correction, ceramic coating, boat detailing, car detailing, mobile detailing Detroit, mobile detailing Houston, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <meta name="author" content="On-Wheels Detailing">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
+
+    <link rel="canonical" href="https://www.onwheelsdetailing.com/services.html">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332">
-    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'AW-17663778332');
     </script>
 </head>
@@ -24,8 +31,30 @@
 <header>
     <div class="container header-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
-            <img src="images/onwheelsLogo.png" alt="description" loading="lazy">
+            <a href="index.html">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+            </a>
+        </div>
+
+        <!-- Location Toggle Button -->
+        <div class="location-toggle">
+            <button class="location-btn" id="locationDropdownBtn">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="selectedLocation">Detroit, MI</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="location-dropdown" id="locationDropdown">
+                <a href="#" data-location="detroit" class="location-option active">
+                    <i class="fas fa-city"></i>
+                    <span>Detroit, MI</span>
+                    <small>Metro Detroit Area</small>
+                </a>
+                <a href="#" data-location="houston" class="location-option">
+                    <i class="fas fa-flag-usa"></i>
+                    <span>Houston, TX</span>
+                    <small>Harris County • Waller County • Prairie View</small>
+                </a>
+            </div>
         </div>
 
         <div class="menu-toggle" id="mobile-menu">
@@ -57,13 +86,13 @@
 <section class="services-page">
     <div class="container">
         <div class="section-title">
-            <h2>Our Services</h2>
+            <h1>Our Detailing Services</h1>
             <p>Professional detailing services to meet all your needs</p>
         </div>
 
         <div id="marine" class="service-detail">
             <div class="service-text">
-                <h3>Marine Gel-coat Detailing</h3>
+                <h2>Marine Gel-coat Detailing</h2>
                 <p>Our specialized marine gel-coat detailing service restores and protects the finish of your boat. We use premium products designed specifically for marine environments to:</p>
                 <ul>
                     <li>Remove oxidation and restore shine</li>
@@ -72,18 +101,19 @@
                     <li>Enhance the appearance of your vessel</li>
                 </ul>
                 <p>Perfect for boats of all sizes, our marine detailing will keep your investment looking its best season after season.</p>
+                <a href="contact.html" class="btn btn-small">Get Marine Quote</a>
             </div>
             <div class="service-image">
-                <img src="images/IMG_4654.jpg" alt="Marine Gel-coat Detailing Service - Boat Detailing">
+                <img src="images/IMG_4654.jpg" alt="Marine Gel-coat Detailing Service - Professional boat detailing and restoration in Houston, Harris County, and Waller County">
             </div>
         </div>
 
         <div id="interior" class="service-detail">
             <div class="service-image">
-                <img src="images/IMG_4396.jpeg" alt="Interior Detailing Service - Car Interior Cleaning">
+                <img src="images/IMG_4396.jpeg" alt="Interior Detailing Service - Professional car interior cleaning and restoration in Detroit and Houston areas">
             </div>
             <div class="service-text">
-                <h3>Interior Detailing</h3>
+                <h2>Interior Detailing</h2>
                 <p>Transform your vehicle's interior with our comprehensive detailing service. We carefully clean and protect all surfaces including:</p>
                 <ul>
                     <li>Deep cleaning of upholstery and carpets</li>
@@ -93,12 +123,13 @@
                     <li>Odor elimination and air purification</li>
                 </ul>
                 <p>Enjoy a fresh, clean interior that feels like new with our expert interior detailing service.</p>
+                <a href="contact.html" class="btn btn-small">Get Interior Quote</a>
             </div>
         </div>
 
         <div id="paint" class="service-detail">
             <div class="service-text">
-                <h3>Paint Correction</h3>
+                <h2>Paint Correction</h2>
                 <p>Restore your vehicle's paint to showroom condition with our professional paint correction service. Our process includes:</p>
                 <ul>
                     <li>Paint decontamination and clay bar treatment</li>
@@ -108,9 +139,10 @@
                     <li>Long-lasting protection</li>
                 </ul>
                 <p>Eliminate imperfections and protect your investment with our expert paint correction service that brings back the deep gloss and shine to your vehicle's finish.</p>
+                <a href="contact.html" class="btn btn-small">Get Paint Correction Quote</a>
             </div>
             <div class="service-image">
-                <img src="images/IMG_2071.jpg" alt="Paint Correction Service - Car Paint Restoration">
+                <img src="images/IMG_2071.jpg" alt="Paint Correction Service - Professional car paint restoration and ceramic coating in Detroit, Houston, Harris County, and Prairie View">
             </div>
         </div>
     </div>
@@ -132,14 +164,65 @@
             <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+        <div class="footer-info">
+            <div class="contact-info">
+                <p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        </div>
     </div>
 </footer>
 
 <script src="js/script.js"></script>
+<script>
+    // Location toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                localStorage.setItem('preferredLocation', this.getAttribute('data-location'));
+                locationDropdown.classList.remove('show');
+            });
+        });
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        if (savedLocation) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                savedOption.click();
+            }
+        }
+    });
+</script>
 </body>
 </html>

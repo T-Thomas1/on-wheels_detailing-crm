@@ -2,30 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recent Jobs | On-Wheels Detailing</title>
-    <meta name="description" content="View our recent auto detailing jobs and see the quality of our work.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Recent Jobs | On-Wheels Detailing - Auto & Boat Detailing Gallery</title>
+    <meta name="description" content="View our recent auto and boat detailing jobs in Detroit and Houston areas including Harris County, Waller County, and Prairie View. See the quality of our work before and after.">
+    <meta name="keywords" content="detailing gallery, before and after detailing, car detailing photos, boat detailing photos, Detroit detailing gallery, Houston detailing gallery, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <meta name="author" content="On-Wheels Detailing">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
+
+    <link rel="canonical" href="https://www.onwheelsdetailing.com/gallery.html">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332">
-    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'AW-17663778332');
     </script>
 </head>
-
 <body>
 <!-- Header -->
 <header>
     <div class="container header-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+            <a href="index.html">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+            </a>
+        </div>
+
+        <!-- Location Toggle Button -->
+        <div class="location-toggle">
+            <button class="location-btn" id="locationDropdownBtn">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="selectedLocation">Detroit, MI</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="location-dropdown" id="locationDropdown">
+                <a href="#" data-location="detroit" class="location-option active">
+                    <i class="fas fa-city"></i>
+                    <span>Detroit, MI</span>
+                    <small>Metro Detroit Area</small>
+                </a>
+                <a href="#" data-location="houston" class="location-option">
+                    <i class="fas fa-flag-usa"></i>
+                    <span>Houston, TX</span>
+                    <small>Harris County • Waller County • Prairie View</small>
+                </a>
+            </div>
         </div>
 
         <div class="menu-toggle" id="mobile-menu">
@@ -57,56 +86,55 @@
 <section class="gallery-page">
     <div class="container">
         <div class="section-title">
-            <h2>Our Recent Work</h2>
-            <p>See examples of our detailing expertise</p>
+            <h1>Our Recent Work</h1>
+            <p>See examples of our detailing expertise in Detroit and Houston areas</p>
         </div>
 
         <div class="gallery-full">
-            <!-- 15 gallery items with actual images -->
             <div class="gallery-item">
-                <img src="images/IMG_2071.jpg" alt="Car paint job">
+                <img src="images/IMG_2071.jpg" alt="Paint correction results - Detroit and Houston detailing">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3170.JPG" alt="Marine Gelcoat job">
+                <img src="images/IMG_3170.JPG" alt="Marine gel-coat restoration - Serving Harris County and Waller County boat owners">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3954.JPG" alt="Car interior job">
+                <img src="images/IMG_3954.JPG" alt="Car interior detailing - Professional cleaning in Houston and Prairie View">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4961.jpeg" alt="Car after paint wheeling">
+                <img src="images/IMG_4961.jpeg" alt="Car after paint correction - Detroit and Houston area vehicles">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4959.jpeg" alt="Car before paint wheeling">
+                <img src="images/IMG_4959.jpeg" alt="Car before paint correction - Transformation results">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4651.JPG" alt="Marine before gelcoat wheeling">
+                <img src="images/IMG_4651.JPG" alt="Marine before gel-coat restoration - Boat detailing in Harris County">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4652.JPG" alt="Marine after gelcoat wheeling">
+                <img src="images/IMG_4652.JPG" alt="Marine after gel-coat restoration - Boat detailing results in Waller County">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4960.jpeg" alt="Car paint wax application job">
+                <img src="images/IMG_4960.jpeg" alt="Car paint wax application - Ceramic coating services in Detroit and Houston">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4386.jpeg" alt="Car exterior job">
+                <img src="images/IMG_4386.jpeg" alt="Car exterior detailing - Professional results in Prairie View and surrounding areas">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2288.jpeg" alt="Car exterior job">
+                <img src="images/IMG_2288.jpeg" alt="Car exterior job - Mobile detailing in Houston">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2967.jpeg" alt="Car interior job">
+                <img src="images/IMG_2967.jpeg" alt="Car interior job - Deep cleaning services">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3131.JPG" alt="Car exterior job">
+                <img src="images/IMG_3131.JPG" alt="Car exterior job - Paint correction results">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2577.JPG" alt="Car detailing job">
+                <img src="images/IMG_2577.JPG" alt="Car detailing job - Professional auto detailing">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2700.JPG" alt="Car exterior job">
+                <img src="images/IMG_2700.JPG" alt="Car exterior job - Mobile detailing services">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3123.JPG" alt="Car interior job">
+                <img src="images/IMG_3123.JPG" alt="Car interior job - Interior detailing before and after">
             </div>
         </div>
     </div>
@@ -128,14 +156,65 @@
             <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+        <div class="footer-info">
+            <div class="contact-info">
+                <p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        </div>
     </div>
 </footer>
 
 <script src="js/script.js"></script>
+<script>
+    // Location toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                localStorage.setItem('preferredLocation', this.getAttribute('data-location'));
+                locationDropdown.classList.remove('show');
+            });
+        });
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        if (savedLocation) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                savedOption.click();
+            }
+        }
+    });
+</script>
 </body>
 </html>

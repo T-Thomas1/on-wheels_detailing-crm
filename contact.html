@@ -2,20 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us | On-Wheels Detailing</title>
-    <meta name="description" content="Contact On-Wheels Detailing for a free quote on our mobile auto detailing services.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Contact On-Wheels Detailing | Free Quote for Auto & Boat Detailing</title>
+    <meta name="description" content="Contact On-Wheels Detailing for a free quote on our mobile auto detailing services. Serving Detroit and Houston areas including Harris County, Waller County, and Prairie View. Call, email, or request a quote online.">
+    <meta name="keywords" content="contact detailing, detailing quote, mobile detailing Detroit, mobile detailing Houston, Harris County detailing, Waller County detailing, Prairie View detailing, boat detailing quote, car detailing quote">
+    <meta name="author" content="On-Wheels Detailing">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
+
+    <link rel="canonical" href="https://www.onwheelsdetailing.com/contact.html">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332">
-    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'AW-17663778332');
     </script>
     <!-- Event snippet for Contact conversion page -->
@@ -28,8 +35,30 @@
 <header>
     <div class="container header-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
-            <img src="images/onwheelsLogo.png" alt="description" loading="lazy">
+            <a href="index.html">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+            </a>
+        </div>
+
+        <!-- Location Toggle Button -->
+        <div class="location-toggle">
+            <button class="location-btn" id="locationDropdownBtn">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="selectedLocation">Detroit, MI</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="location-dropdown" id="locationDropdown">
+                <a href="#" data-location="detroit" class="location-option active">
+                    <i class="fas fa-city"></i>
+                    <span>Detroit, MI</span>
+                    <small>Metro Detroit Area</small>
+                </a>
+                <a href="#" data-location="houston" class="location-option">
+                    <i class="fas fa-flag-usa"></i>
+                    <span>Houston, TX</span>
+                    <small>Harris County • Waller County • Prairie View</small>
+                </a>
+            </div>
         </div>
 
         <div class="menu-toggle" id="mobile-menu">
@@ -61,7 +90,7 @@
 <section class="contact-page">
     <div class="container">
         <div class="section-title">
-            <h2>Contact Us</h2>
+            <h1>Contact Us</h1>
             <p>Get in touch for a free quote on our detailing services</p>
         </div>
 
@@ -101,15 +130,17 @@
 <!-- Service Area -->
 <section class="service-area">
     <div class="container">
-        <h2>Our Service Area</h2>
-        <p>We proudly serve the following areas with our mobile detailing services:</p>
-        <div class="areas">
+        <h2>Our Service Areas</h2>
+        <p class="location-specific" data-detroit="We proudly serve the following Michigan areas with our mobile detailing services:" data-houston="We proudly serve the following Texas areas with our mobile detailing services:">We proudly serve the following Michigan areas with our mobile detailing services:</p>
+        <div class="areas" id="contactAreasList">
             <div class="area">Detroit</div>
             <div class="area">Sterling Heights</div>
             <div class="area">Port Huron</div>
             <div class="area">Troy</div>
             <div class="area">Clinton Township</div>
             <div class="area">Macomb</div>
+            <div class="area">Ann Arbor</div>
+            <div class="area">Royal Oak</div>
         </div>
         <p class="note">Don't see your area listed? Contact us to see if we can service your location!</p>
     </div>
@@ -122,14 +153,114 @@
             <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+        <div class="footer-info">
+            <div class="contact-info">
+                <p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
+            </div>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+        </div>
     </div>
 </footer>
 
 <script src="js/script.js"></script>
+<script>
+    // Location toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                const location = this.getAttribute('data-location');
+                updateContactAreas(location);
+                localStorage.setItem('preferredLocation', location);
+                locationDropdown.classList.remove('show');
+            });
+        });
+
+        function updateContactAreas(location) {
+            const contactAreasList = document.getElementById('contactAreasList');
+            const serviceAreaText = document.querySelector('.service-area .location-specific');
+
+            if (location === 'detroit') {
+                if (contactAreasList) {
+                    contactAreasList.innerHTML = `
+                        <div class="area">Detroit</div>
+                        <div class="area">Sterling Heights</div>
+                        <div class="area">Port Huron</div>
+                        <div class="area">Troy</div>
+                        <div class="area">Clinton Township</div>
+                        <div class="area">Macomb</div>
+                        <div class="area">Ann Arbor</div>
+                        <div class="area">Royal Oak</div>
+                    `;
+                }
+                if (serviceAreaText) {
+                    serviceAreaText.innerHTML = "We proudly serve the following Michigan areas with our mobile detailing services:";
+                }
+            } else {
+                if (contactAreasList) {
+                    contactAreasList.innerHTML = `
+                        <div class="area">Houston</div>
+                        <div class="area">Harris County</div>
+                        <div class="area">Waller County</div>
+                        <div class="area">Prairie View</div>
+                        <div class="area">Katy</div>
+                        <div class="area">Sugar Land</div>
+                        <div class="area">The Woodlands</div>
+                        <div class="area">Cypress</div>
+                        <div class="area">Pearland</div>
+                        <div class="area">Pasadena</div>
+                        <div class="area">Baytown</div>
+                        <div class="area">Conroe</div>
+                        <div class="area">Magnolia</div>
+                        <div class="area">Tomball</div>
+                        <div class="area">Humble</div>
+                        <div class="area">Kingwood</div>
+                    `;
+                }
+                if (serviceAreaText) {
+                    serviceAreaText.innerHTML = "We proudly serve the following Texas areas with our mobile detailing services:";
+                }
+            }
+        }
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        if (savedLocation) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                savedOption.click();
+            }
+        }
+    });
+</script>
 </body>
 </html>
