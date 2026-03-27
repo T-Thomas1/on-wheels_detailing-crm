@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>On-Wheels Detailing | Premium Mobile Auto & Boat Detailing Services in Detroit & Houston</title>
     <meta name="description" content="Professional mobile auto detailing & marine gel-coat services. We come to you in Detroit, Metro Detroit, Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas. Interior detailing, paint correction, ceramic coating. Free quotes!">
-    <meta name="keywords" content="mobile detailing, auto detailing, car detailing, boat detailing, marine detailing, gel-coat restoration, paint correction, interior detailing, ceramic coating, mobile car wash, On-Wheels Detailing, Detroit detailing, Houston detailing, Harris County detailing, Waller County detailing, Prairie View detailing, Port Huron detailing, Chesterfield detailing, Sterling Heights detailing, Troy detailing">
+    <meta name="keywords" content="mobile detailing, auto detailing, car detailing, boat detailing, marine detailing, gel-coat restoration, paint correction, interior detailing, ceramic coating, mobile car wash, On-Wheels Detailing, Detroit detailing, Houston detailing, Harris County detailing, Waller County detailing, Prairie View detailing">
     <meta name="author" content="On-Wheels Detailing">
     <meta name="robots" content="index, follow">
-    <meta name="geo.region" content="US-MI">
-    <meta name="geo.region" content="US-TX">
-    <meta name="geo.placename" content="Detroit, Houston, Harris County, Waller County, Prairie View">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.onwheelsdetailing.com">
@@ -42,7 +39,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Structured Data for Local Business with Multiple Service Areas -->
+    <!-- Structured Data -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -62,104 +59,18 @@
                 "postalCode": "48235",
                 "addressCountry": "US"
             },
+            "founder": {
+                "@type": "Person",
+                "name": "TaSain"
+            },
             "areaServed": [
-                {
-                    "@type": "City",
-                    "name": "Detroit",
-                    "addressRegion": "MI"
-                },
-                {
-                    "@type": "City",
-                    "name": "Houston",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Harris County",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "AdministrativeArea",
-                    "name": "Waller County",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Prairie View",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Katy",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Sugar Land",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "The Woodlands",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Cypress",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Pearland",
-                    "addressRegion": "TX"
-                },
-                {
-                    "@type": "City",
-                    "name": "Port Huron",
-                    "addressRegion": "MI"
-                },
-                {
-                    "@type": "City",
-                    "name": "Sterling Heights",
-                    "addressRegion": "MI"
-                },
-                {
-                    "@type": "City",
-                    "name": "Troy",
-                    "addressRegion": "MI"
-                }
+                {"@type": "City", "name": "Detroit", "addressRegion": "MI"},
+                {"@type": "City", "name": "Houston", "addressRegion": "TX"},
+                {"@type": "AdministrativeArea", "name": "Harris County", "addressRegion": "TX"},
+                {"@type": "AdministrativeArea", "name": "Waller County", "addressRegion": "TX"},
+                {"@type": "City", "name": "Prairie View", "addressRegion": "TX"}
             ],
-            "serviceType": ["Auto detailing", "Boat detailing", "Paint correction", "Interior detailing", "Marine gel-coat detailing"],
-            "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Detailing Services",
-                "itemListElement": [
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Marine Gel-coat Detailing",
-                            "description": "Professional boat detailing and gel-coat restoration"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Interior Detailing",
-                            "description": "Complete interior cleaning and protection services"
-                        }
-                    },
-                    {
-                        "@type": "Offer",
-                        "itemOffered": {
-                            "@type": "Service",
-                            "name": "Paint Correction",
-                            "description": "Paint restoration and ceramic coating application"
-                        }
-                    }
-                ]
-            }
+            "serviceType": ["Auto detailing", "Boat detailing", "Paint correction", "Interior detailing", "Marine gel-coat detailing"]
         }
     </script>
 
@@ -173,32 +84,34 @@
     </script>
 </head>
 <body>
-<!-- Header -->
 <header>
     <div class="container header-content">
         <div class="logo">
             <a href="index.html">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             </a>
         </div>
 
-        <!-- Location Toggle Button -->
         <div class="location-toggle">
             <button class="location-btn" id="locationDropdownBtn">
                 <i class="fas fa-map-marker-alt"></i>
-                <span id="selectedLocation">Detroit, MI</span>
+                <span id="selectedLocation">▼ Choose Your Location ▼</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="location-dropdown" id="locationDropdown">
-                <a href="#" data-location="detroit" class="location-option active">
+                <a href="#" data-location="detroit" class="location-option">
                     <i class="fas fa-city"></i>
-                    <span>Detroit, MI</span>
-                    <small>Metro Detroit Area</small>
+                    <div>
+                        <span>📍 Detroit, Michigan</span>
+                        <small>In-Shop & Mobile Service Available</small>
+                    </div>
                 </a>
                 <a href="#" data-location="houston" class="location-option">
                     <i class="fas fa-flag-usa"></i>
-                    <span>Houston, TX</span>
-                    <small>Harris County • Waller County • Prairie View</small>
+                    <div>
+                        <span>🤠 Houston, Texas</span>
+                        <small>Mobile Service Only • We Come to You</small>
+                    </div>
                 </a>
             </div>
         </div>
@@ -232,7 +145,7 @@
 <section id="home" class="hero">
     <div class="container hero-content">
         <h1>Premium Mobile Auto & Boat Detailing Services</h1>
-        <p class="location-specific" data-detroit="We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction." data-houston="We bring professional detailing services to your doorstep across Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas. Mobile detailing that comes to you! Marine gel-coat detailing, interior detailing, and expert paint correction.">We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction.</p>
+        <p class="location-specific" data-detroit="We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction. In-shop service also available at our Detroit garage." data-houston="We bring professional mobile detailing services to your doorstep across Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas. Mobile detailing that comes to you! Marine gel-coat detailing, interior detailing, and expert paint correction.">We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction. In-shop service also available at our Detroit garage.</p>
         <a href="contact.html" class="btn">Get a Free Quote</a>
     </div>
 </section>
@@ -328,8 +241,8 @@
             </div>
             <div class="benefit-item">
                 <i class="fas fa-tools"></i>
-                <h4>Dual Service Options</h4>
-                <p class="location-specific" data-detroit="Choose mobile service at your location or bring your vehicle to our fully-equipped garage." data-houston="Choose mobile service at your location for ultimate convenience across Harris County, Waller County, Prairie View, and all of Greater Houston.">Choose mobile service at your location or bring your vehicle to our fully-equipped garage.</p>
+                <h4>Service Options</h4>
+                <p class="location-specific" data-detroit="Choose mobile service at your location or bring your vehicle to our fully-equipped garage in Detroit." data-houston="Mobile service only - we come directly to your location in Houston and surrounding Texas areas.">Choose mobile service at your location or bring your vehicle to our fully-equipped garage in Detroit.</p>
             </div>
             <div class="benefit-item">
                 <i class="fas fa-star"></i>
@@ -347,22 +260,19 @@
             <h2>Our Detailing Services</h2>
             <p>Professional auto and marine detailing services to meet all your needs</p>
         </div>
-
         <div class="services-grid">
             <div class="service-card">
-                <img src="images/onwheelsLogoMark.png" alt="Marine Gel-coat Detailing Icon" class="service-icon">
+                <img src="images/onwheelsLogoMark.png" alt="Marine Gel-coat Detailing" class="service-icon">
                 <h3>Marine Gel-coat Detailing</h3>
                 <p>Specialized boat detailing and gel-coat restoration with premium marine-grade products.</p>
             </div>
-
             <div class="service-card">
-                <img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing Icon" class="service-icon">
+                <img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing" class="service-icon">
                 <h3>Interior Detailing</h3>
                 <p>Complete interior transformation with deep cleaning and protection for all surfaces.</p>
             </div>
-
             <div class="service-card">
-                <img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction Icon" class="service-icon">
+                <img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction" class="service-icon">
                 <h3>Paint Correction</h3>
                 <p>Professional paint restoration that eliminates swirls, scratches, and oxidation.</p>
             </div>
@@ -407,12 +317,12 @@
 <section id="contact" class="quote">
     <div class="container">
         <h2>Ready to Restore Your Vehicle's Shine?</h2>
-        <p>Contact us today for a free, no-obligation quote</p>
+        <p>Contact TaSain today for a free, no-obligation quote</p>
         <a href="tel:+15868730656" class="phone"><i class="fas fa-phone"></i> (586) 873-0656</a>
         <div style="margin-top: 1.5rem;">
             <a href="contact.html" class="btn">Get Your Free Quote</a>
         </div>
-        <p class="location-specific" data-detroit="Serving Metro Detroit and all surrounding Michigan areas" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas" style="margin-top: 1rem;">Serving Metro Detroit and all surrounding Michigan areas</p>
+        <p class="location-specific" data-detroit="Serving Metro Detroit with mobile & in-shop service" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas with mobile service" style="margin-top: 1rem;">Serving Metro Detroit with mobile & in-shop service</p>
     </div>
 </section>
 
@@ -425,13 +335,13 @@
         </div>
         <div class="gallery">
             <div class="gallery-item">
-                <img src="images/IMG_4386.jpeg" alt="Paint correction before and after results - Detroit and Houston detailing">
+                <img src="images/IMG_4386.jpeg" alt="Paint correction results">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4654.jpg" alt="Boat detailing results - marine gel-coat restoration in Harris County and Waller County">
+                <img src="images/IMG_4654.jpg" alt="Boat detailing results">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4396.jpeg" alt="Car interior cleaning and detailing - Prairie View and Houston area">
+                <img src="images/IMG_4396.jpeg" alt="Car interior cleaning">
             </div>
         </div>
         <div class="text-center">
@@ -453,76 +363,25 @@
                 <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
             </div>
             <div class="social-icons">
-                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;" class="location-specific" data-detroit="Serving Metro Detroit and all surrounding Michigan areas" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas">Serving Metro Detroit and all surrounding Michigan areas</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;" class="location-specific" data-detroit="Serving Metro Detroit with mobile & in-shop service" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas with mobile service">Serving Metro Detroit with mobile & in-shop service</p>
         </div>
     </div>
 </footer>
 
 <script src="js/script.js"></script>
 <script>
-    // Location toggle functionality
+    // Location toggle functionality with cross-page persistence
     document.addEventListener('DOMContentLoaded', function() {
         const locationBtn = document.getElementById('locationDropdownBtn');
         const locationDropdown = document.getElementById('locationDropdown');
         const locationOptions = document.querySelectorAll('.location-option');
         const selectedLocationSpan = document.getElementById('selectedLocation');
-
-        // Toggle dropdown
-        if (locationBtn) {
-            locationBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                locationDropdown.classList.toggle('show');
-            });
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function() {
-            if (locationDropdown) {
-                locationDropdown.classList.remove('show');
-            }
-        });
-
-        // Handle location selection
-        locationOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const location = this.getAttribute('data-location');
-                const locationName = this.querySelector('span').innerText;
-
-                // Update active class
-                locationOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-
-                // Update button text
-                selectedLocationSpan.innerText = locationName;
-
-                // Update all location-specific content
-                updateLocationContent(location);
-
-                // Close dropdown
-                locationDropdown.classList.remove('show');
-
-                // Store preference
-                localStorage.setItem('preferredLocation', location);
-            });
-        });
-
-        // Load saved preference
-        const savedLocation = localStorage.getItem('preferredLocation');
-        if (savedLocation) {
-            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
-            if (savedOption) {
-                savedOption.click();
-            }
-        }
 
         function updateLocationContent(location) {
             // Update all elements with location-specific data attributes
@@ -583,6 +442,64 @@
                     sectionTitle.innerHTML = 'Service Areas - Greater Houston & Surrounding Counties';
                     sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas:';
                 }
+            }
+        }
+
+        // Toggle dropdown
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        // Handle location selection
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const location = this.getAttribute('data-location');
+                const locationName = this.querySelector('span').innerText;
+
+                // Update active class
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update button text
+                selectedLocationSpan.innerText = locationName;
+
+                // Update content
+                updateLocationContent(location);
+
+                // Close dropdown
+                locationDropdown.classList.remove('show');
+
+                // Save to localStorage for cross-page persistence
+                localStorage.setItem('preferredLocation', location);
+                localStorage.setItem('preferredLocationName', locationName);
+            });
+        });
+
+        // Load saved preference on page load
+        const savedLocation = localStorage.getItem('preferredLocation');
+        const savedLocationName = localStorage.getItem('preferredLocationName');
+
+        if (savedLocation && savedLocationName) {
+            // Find and activate the matching option
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                savedOption.classList.add('active');
+                selectedLocationSpan.innerText = savedLocationName;
+                updateLocationContent(savedLocation);
             }
         }
     });

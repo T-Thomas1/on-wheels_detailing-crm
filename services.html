@@ -27,32 +27,34 @@
     </script>
 </head>
 <body>
-<!-- Header -->
 <header>
     <div class="container header-content">
         <div class="logo">
             <a href="index.html">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing - Professional Mobile Auto & Boat Detailing Services">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
             </a>
         </div>
 
-        <!-- Location Toggle Button -->
         <div class="location-toggle">
             <button class="location-btn" id="locationDropdownBtn">
                 <i class="fas fa-map-marker-alt"></i>
-                <span id="selectedLocation">Detroit, MI</span>
+                <span id="selectedLocation">▼ Choose Your Location ▼</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="location-dropdown" id="locationDropdown">
-                <a href="#" data-location="detroit" class="location-option active">
+                <a href="#" data-location="detroit" class="location-option">
                     <i class="fas fa-city"></i>
-                    <span>Detroit, MI</span>
-                    <small>Metro Detroit Area</small>
+                    <div>
+                        <span>📍 Detroit, Michigan</span>
+                        <small>In-Shop & Mobile Service Available</small>
+                    </div>
                 </a>
                 <a href="#" data-location="houston" class="location-option">
                     <i class="fas fa-flag-usa"></i>
-                    <span>Houston, TX</span>
-                    <small>Harris County • Waller County • Prairie View</small>
+                    <div>
+                        <span>🤠 Houston, Texas</span>
+                        <small>Mobile Service Only • We Come to You</small>
+                    </div>
                 </a>
             </div>
         </div>
@@ -104,13 +106,13 @@
                 <a href="contact.html" class="btn btn-small">Get Marine Quote</a>
             </div>
             <div class="service-image">
-                <img src="images/IMG_4654.jpg" alt="Marine Gel-coat Detailing Service - Professional boat detailing and restoration in Houston, Harris County, and Waller County">
+                <img src="images/IMG_4654.jpg" alt="Marine Gel-coat Detailing Service">
             </div>
         </div>
 
         <div id="interior" class="service-detail">
             <div class="service-image">
-                <img src="images/IMG_4396.jpeg" alt="Interior Detailing Service - Professional car interior cleaning and restoration in Detroit and Houston areas">
+                <img src="images/IMG_4396.jpeg" alt="Interior Detailing Service">
             </div>
             <div class="service-text">
                 <h2>Interior Detailing</h2>
@@ -142,7 +144,7 @@
                 <a href="contact.html" class="btn btn-small">Get Paint Correction Quote</a>
             </div>
             <div class="service-image">
-                <img src="images/IMG_2071.jpg" alt="Paint Correction Service - Professional car paint restoration and ceramic coating in Detroit, Houston, Harris County, and Prairie View">
+                <img src="images/IMG_2071.jpg" alt="Paint Correction Service">
             </div>
         </div>
     </div>
@@ -152,7 +154,7 @@
 <section class="cta">
     <div class="container">
         <h2>Ready to Transform Your Vehicle?</h2>
-        <p>Contact us today to schedule your detailing service</p>
+        <p>Contact TaSain today to schedule your detailing service</p>
         <a href="contact.html" class="btn">Get a Quote</a>
     </div>
 </section>
@@ -170,8 +172,8 @@
                 <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
             </div>
             <div class="social-icons">
-                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram profile"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -182,13 +184,14 @@
 
 <script src="js/script.js"></script>
 <script>
-    // Location toggle functionality
+    // Location toggle functionality with cross-page persistence
     document.addEventListener('DOMContentLoaded', function() {
         const locationBtn = document.getElementById('locationDropdownBtn');
         const locationDropdown = document.getElementById('locationDropdown');
         const locationOptions = document.querySelectorAll('.location-option');
         const selectedLocationSpan = document.getElementById('selectedLocation');
 
+        // Toggle dropdown
         if (locationBtn) {
             locationBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -196,30 +199,48 @@
             });
         }
 
+        // Close dropdown when clicking outside
         document.addEventListener('click', function() {
             if (locationDropdown) {
                 locationDropdown.classList.remove('show');
             }
         });
 
+        // Handle location selection
         locationOptions.forEach(option => {
             option.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                const location = this.getAttribute('data-location');
+                const locationName = this.querySelector('span').innerText;
+
+                // Update active class
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
-                const locationName = this.querySelector('span').innerText;
+
+                // Update button text
                 selectedLocationSpan.innerText = locationName;
-                localStorage.setItem('preferredLocation', this.getAttribute('data-location'));
+
+                // Close dropdown
                 locationDropdown.classList.remove('show');
+
+                // Save to localStorage for cross-page persistence
+                localStorage.setItem('preferredLocation', location);
+                localStorage.setItem('preferredLocationName', locationName);
             });
         });
 
+        // Load saved preference on page load
         const savedLocation = localStorage.getItem('preferredLocation');
-        if (savedLocation) {
+        const savedLocationName = localStorage.getItem('preferredLocationName');
+
+        if (savedLocation && savedLocationName) {
             const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
             if (savedOption) {
-                savedOption.click();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                savedOption.classList.add('active');
+                selectedLocationSpan.innerText = savedLocationName;
             }
         }
     });

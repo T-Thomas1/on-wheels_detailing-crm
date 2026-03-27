@@ -112,6 +112,137 @@ nav a {
     font-size: 0.9rem;
 }
 
+/* Location Dropdown Styles */
+.location-toggle {
+    position: relative;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+
+.location-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffb347;
+    border: none;
+    color: #1a2a3a;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.location-btn i {
+    font-size: 0.9rem;
+}
+
+.location-btn i:first-child {
+    color: #1a2a3a;
+}
+
+.location-btn i:last-child {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.location-btn:hover {
+    background: #ff9500;
+    transform: translateY(-2px);
+}
+
+.location-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    min-width: 260px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.location-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.location-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+.location-option:last-child {
+    border-bottom: none;
+}
+
+.location-option i {
+    width: 24px;
+    color: #ffb347;
+    font-size: 1.1rem;
+}
+
+.location-option div {
+    flex: 1;
+}
+
+.location-option span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: block;
+}
+
+.location-option small {
+    display: block;
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: normal;
+    margin-top: 2px;
+}
+
+.location-option:hover {
+    background: #fff5e6;
+}
+
+.location-option.active {
+    background: #ffb34720;
+    border-left: 3px solid #ffb347;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .location-toggle {
+        margin-right: 0.5rem;
+    }
+    .location-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    .location-btn span {
+        display: none;
+    }
+    .location-btn i:first-child {
+        margin-right: 0;
+    }
+}
+
 nav a:hover {
     color: var(--beige);
 }
