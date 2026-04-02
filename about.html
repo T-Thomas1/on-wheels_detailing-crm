@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>About Us | On-Wheels Detailing - Our Passion & Story Since 2020</title>
-    <meta name="description" content="Learn about On-Wheels Detailing - our passion, journey, and commitment to excellence in mobile auto detailing since 2020. Serving Detroit and Houston areas including Harris County, Waller County, and Prairie View.">
-    <meta name="keywords" content="about On-Wheels Detailing, detailing story, mobile detailing Detroit, mobile detailing Houston, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <meta name="description" content="Learn about On-Wheels Detailing - our passion, journey, and commitment to excellence in mobile auto detailing since 2020. Serving Harris County TX and Metro Detroit MI.">
+    <meta name="keywords" content="about On-Wheels Detailing, detailing story, mobile detailing Harris County, Metro Detroit detailing, Michigan detailing, Texas detailing">
     <meta name="author" content="On-Wheels Detailing">
     <meta name="robots" content="index, follow">
 
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
 
+    <!-- In about.html, add this line -->
     <link rel="canonical" href="https://www.onwheelsdetailing.com/about.html">
+
+    <!-- Preload critical CSS -->
+    <link rel="preload" as="style" href="css/style.css">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
@@ -25,45 +31,81 @@
         gtag('js', new Date());
         gtag('config', 'AW-17663778332');
     </script>
+
+    <style>
+        @media (max-width: 768px) {
+            .values-section { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .journey-timeline { grid-template-columns: 1fr; gap: 20px; }
+            .about-text h3 { margin-top: 20px; }
+        }
+    </style>
 </head>
 <body>
+<!-- Location Reminder Banner - Visible until user selects location -->
+<div id="locationReminderBanner" class="location-reminder" style="display: none;">
+    <i class="fas fa-map-marker-alt"></i>
+    <span class="reminder-text">Select your location for accurate service information</span>
+    <span class="reminder-action">Click Here ▼</span>
+    <i class="fas fa-chevron-down"></i>
+</div>
+
+<script>
+    // Show location reminder if no location is selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const reminderBanner = document.getElementById('locationReminderBanner');
+        const savedLocation = localStorage.getItem('preferredLocation');
+        const locationBtn = document.getElementById('locationDropdownBtn');
+
+        // Show banner only if no location saved and user hasn't dismissed
+        if (!savedLocation && reminderBanner) {
+            reminderBanner.style.display = 'block';
+        }
+
+        // Click on reminder banner opens location dropdown
+        if (reminderBanner && locationBtn) {
+            reminderBanner.addEventListener('click', function() {
+                locationBtn.click();
+            });
+        }
+    });
+</script>
 <header>
     <div class="container header-content">
         <div class="logo">
             <a href="index.html">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="180" height="60" loading="eager">
             </a>
         </div>
 
         <div class="location-toggle">
-            <button class="location-btn" id="locationDropdownBtn">
+            <button class="location-btn" id="locationDropdownBtn" aria-label="Select your location">
                 <i class="fas fa-map-marker-alt"></i>
                 <span id="selectedLocation">▼ Choose Your Location ▼</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="location-dropdown" id="locationDropdown">
-                <a href="#" data-location="detroit" class="location-option">
-                    <i class="fas fa-city"></i>
-                    <div>
-                        <span>📍 Detroit, Michigan</span>
-                        <small>In-Shop & Mobile Service Available</small>
-                    </div>
-                </a>
-                <a href="#" data-location="houston" class="location-option">
+                <a href="#" data-location="texas" class="location-option">
                     <i class="fas fa-flag-usa"></i>
                     <div>
-                        <span>🤠 Houston, Texas</span>
-                        <small>Mobile Service Only • We Come to You</small>
+                        <span>🤠 Texas - Harris County</span>
+                        <small>Mobile Only • We Come to You</small>
+                    </div>
+                </a>
+                <a href="#" data-location="michigan" class="location-option">
+                    <i class="fas fa-city"></i>
+                    <div>
+                        <span>🚗 Michigan - Metro Detroit</span>
+                        <small>Garage Locations & Mobile Service</small>
                     </div>
                 </a>
             </div>
         </div>
 
-        <div class="menu-toggle" id="mobile-menu">
+        <button class="menu-toggle" id="mobile-menu" aria-label="Menu">
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </button>
 
         <nav>
             <ul id="nav-menu">
@@ -113,7 +155,7 @@
                 </div>
 
                 <h3>The Transformation</h3>
-                <p>Over the past five years, we've grown from a simple idea fueled by passion to a trusted service in our community. Each detail tells a story - of revival, of care, and of the passion that drives us forward.</p>
+                <p class="location-specific" data-texas="Over the past five years, we've grown from a simple idea fueled by passion to a trusted mobile interior detailing service across Harris County, Texas. Each detail tells a story - of revival, of care, and of the passion that drives us forward." data-michigan="Over the past five years, we've grown from a simple idea fueled by passion to a trusted detailing service with garage locations in Marysville and New Haven, plus mobile service throughout Metro Detroit. Each detail tells a story - of revival, of care, and of the passion that drives us forward.">Over the past five years, we've grown from a simple idea fueled by passion to a trusted mobile interior detailing service across Harris County, Texas. Each detail tells a story - of revival, of care, and of the passion that drives us forward.</p>
             </div>
         </div>
 
@@ -184,7 +226,7 @@
 <footer>
     <div class="container footer-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
+            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="150" height="50" loading="lazy">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
         <div class="footer-info">
@@ -193,17 +235,18 @@
                 <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
             </div>
             <div class="social-icons">
-                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;" class="location-specific" data-texas="Serving Houston, Harris County, and all surrounding Texas areas with mobile service" data-michigan="📍 Garage Locations: Marysville & New Haven | Mobile Service Throughout Metro Detroit">Serving Houston, Harris County, and all surrounding Texas areas with mobile service</p>
         </div>
     </div>
 </footer>
 
-<script src="js/script.js"></script>
+<script src="js/script.js" defer></script>
 <script>
     // Location toggle functionality with cross-page persistence
     document.addEventListener('DOMContentLoaded', function() {
@@ -212,7 +255,16 @@
         const locationOptions = document.querySelectorAll('.location-option');
         const selectedLocationSpan = document.getElementById('selectedLocation');
 
-        // Toggle dropdown
+        function updateLocationContent(location) {
+            const locationElements = document.querySelectorAll('[data-texas][data-michigan]');
+            locationElements.forEach(el => {
+                const content = el.getAttribute(`data-${location}`);
+                if (content) {
+                    el.innerHTML = content;
+                }
+            });
+        }
+
         if (locationBtn) {
             locationBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -220,39 +272,28 @@
             });
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function() {
             if (locationDropdown) {
                 locationDropdown.classList.remove('show');
             }
         });
 
-        // Handle location selection
         locationOptions.forEach(option => {
             option.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                const location = this.getAttribute('data-location');
-                const locationName = this.querySelector('span').innerText;
-
-                // Update active class
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
-
-                // Update button text
+                const locationName = this.querySelector('span').innerText;
                 selectedLocationSpan.innerText = locationName;
-
-                // Close dropdown
+                const location = this.getAttribute('data-location');
+                updateLocationContent(location);
                 locationDropdown.classList.remove('show');
-
-                // Save to localStorage for cross-page persistence
                 localStorage.setItem('preferredLocation', location);
                 localStorage.setItem('preferredLocationName', locationName);
             });
         });
 
-        // Load saved preference on page load
         const savedLocation = localStorage.getItem('preferredLocation');
         const savedLocationName = localStorage.getItem('preferredLocationName');
 
@@ -262,9 +303,41 @@
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 savedOption.classList.add('active');
                 selectedLocationSpan.innerText = savedLocationName;
+                updateLocationContent(savedLocation);
             }
         }
     });
+</script>
+
+<script>
+    // Sticky Header Shrink with Debounce for Extra Smoothness
+    (function() {
+        const header = document.querySelector('header');
+        if (!header) return;
+
+        let scrollTimer;
+
+        function setHeaderState() {
+            const scrollY = window.scrollY;
+            if (scrollY > 50 && !header.classList.contains('shrink')) {
+                header.classList.add('shrink');
+            } else if (scrollY <= 50 && header.classList.contains('shrink')) {
+                header.classList.remove('shrink');
+            }
+        }
+
+        // Immediate scroll response for better UX
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);
+            }
+            scrollTimer = setTimeout(setHeaderState, 10);
+            requestAnimationFrame(setHeaderState);
+        }, { passive: true });
+
+        // Initial state
+        setHeaderState();
+    })();
 </script>
 </body>
 </html>

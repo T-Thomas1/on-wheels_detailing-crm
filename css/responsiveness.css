@@ -3,27 +3,71 @@
     .gallery-full {
         grid-template-columns: repeat(4, 1fr);
     }
+
+    .container {
+        padding: 0 30px;
+    }
+}
+
+@media (max-width: 992px) {
+    .gallery-full {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .section-title h2 {
+        font-size: 2.2rem;
+    }
 }
 
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column;
-        text-align: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
         position: relative;
     }
 
     .menu-toggle {
         display: flex;
-        position: absolute;
-        top: 1.5rem;
-        right: 1rem;
+        position: relative;
+        order: 2;
+    }
+
+    .location-toggle {
+        order: 1;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .location-btn span {
+        display: inline-block;
+    }
+
+    .location-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    nav {
+        order: 3;
+        width: 100%;
+        display: none;
+    }
+
+    nav.show {
+        display: block;
     }
 
     nav ul {
-        display: none;
+        display: flex;
         flex-direction: column;
         width: 100%;
         margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255,255,255,0.2);
     }
 
     nav ul.show {
@@ -32,6 +76,7 @@
 
     nav li {
         margin: 0.5rem 0;
+        margin-left: 0;
     }
 
     .dropdown-content {
@@ -47,6 +92,11 @@
 
     .dropdown.active .dropdown-content {
         display: block;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 4rem 1rem;
     }
 
     .hero h1 {
@@ -66,12 +116,12 @@
     }
 
     .gallery-full {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
     .gallery {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .footer-info {
@@ -90,46 +140,53 @@
 
     /* About Page Responsive */
     .slogan-section h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
 
     .passion-statement {
-        font-size: 1.1rem;
+        font-size: 1rem;
         padding: 20px;
     }
 
     .section-title h2 {
-        font-size: 2rem;
-    }
-
-    .about-text h3 {
-        font-size: 1.6rem;
-    }
-
-    .about-text p {
-        font-size: 1.1rem;
-    }
-
-    .future-vision h3 {
         font-size: 1.8rem;
     }
 
-    .future-vision p {
+    .section-title p {
         font-size: 1.1rem;
     }
 
-    .personal-touch h3 {
+    .about-text h3 {
+        font-size: 1.4rem;
+    }
+
+    .about-text p {
+        font-size: 1rem;
+    }
+
+    .future-vision h3 {
         font-size: 1.6rem;
     }
 
+    .future-vision p {
+        font-size: 1rem;
+    }
+
+    .personal-touch h3 {
+        font-size: 1.4rem;
+    }
+
     .personal-touch p {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     /* Services Page Responsive */
     .service-detail {
         flex-direction: column;
         text-align: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding: 20px 0;
     }
 
     .service-detail:nth-child(even) {
@@ -140,29 +197,44 @@
         min-width: 100%;
     }
 
-    .service-text h3 {
-        font-size: 1.6rem;
+    .service-image img {
+        max-width: 100%;
+    }
+
+    .service-text h2 {
+        font-size: 1.5rem;
     }
 
     .service-text p {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .service-text ul {
+        text-align: left;
+        display: inline-block;
+        margin: 0 auto;
+    }
+
+    .service-text ul li {
+        text-align: left;
+        font-size: 0.95rem;
     }
 
     /* Homepage Responsive */
     .passion-banner h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .passion-banner p {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .stat-number {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
 
     .stat-label {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .testimonial p {
@@ -173,8 +245,72 @@
         min-width: 100%;
     }
 
-    .gallery-item {
+    /* Products Section */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .product-category {
+        padding: 1.5rem;
+    }
+
+    /* Contact Page */
+    .contact-options {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .contact-option {
         min-width: 100%;
+    }
+
+    .contact-option h3 {
+        font-size: 1.5rem;
+    }
+
+    .contact-option p {
+        font-size: 1rem;
+    }
+
+    .contact-link {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .areas {
+        gap: 10px;
+    }
+
+    .area {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .journey-timeline,
+    .values-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* CTA Section */
+    .cta h2 {
+        font-size: 1.8rem;
+    }
+
+    .cta p {
+        font-size: 1.1rem;
     }
 }
 
@@ -184,20 +320,24 @@
     }
 
     .hero h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
     }
 
     .section-title h2 {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .feature, .service-card {
-        padding: 1.5rem;
+        padding: 1.2rem;
     }
 
     .gallery-full {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 8px;
     }
 
     .gallery {
@@ -205,11 +345,15 @@
     }
 
     .quote h2 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .quote p {
+        font-size: 1rem;
     }
 
     .phone {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
 
     .contact-options {
@@ -220,11 +364,24 @@
         min-width: 100%;
     }
 
+    .contact-note {
+        padding: 15px;
+    }
+
+    .contact-note p {
+        font-size: 1.1rem;
+    }
+
+    .contact-note ul li {
+        font-size: 0.9rem;
+    }
+
     .journey-timeline,
     .values-section,
     .benefits-grid,
     .stats-grid {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
 
     .journey-item,
@@ -232,5 +389,68 @@
     .benefit-item,
     .stat-item {
         min-width: 100%;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-small {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .location-btn span {
+        display: none;
+    }
+
+    .location-btn {
+        padding: 8px 12px;
+    }
+
+    .location-btn i:first-child {
+        margin-right: 0;
+    }
+
+    .location-dropdown {
+        right: 0;
+        left: auto;
+        min-width: 240px;
+    }
+
+    .area-tag {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .passion-banner h2 {
+        font-size: 1.5rem;
+    }
+
+    .passion-banner p {
+        font-size: 1rem;
+    }
+
+    .slogan-section h1 {
+        font-size: 1.6rem;
+    }
+
+    .passion-statement {
+        font-size: 0.9rem;
+        padding: 15px;
+    }
+
+    .future-vision h3 {
+        font-size: 1.4rem;
+    }
+
+    .service-area h2 {
+        font-size: 1.6rem;
     }
 }
