@@ -246,7 +246,95 @@
     </div>
 </footer>
 
-<script src="js/script.js" defer></script>
+<script>
+    // ==================== MOBILE MENU TOGGLE ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('mobile-menu');
+        const nav = document.querySelector('nav');
+
+        if (menuToggle && nav) {
+            menuToggle.addEventListener('click', function() {
+                nav.classList.toggle('show');
+                menuToggle.classList.toggle('active');
+            });
+        }
+    });
+
+    // ==================== LOCATION TOGGLE ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        function updateLocationContent(location) {
+            const locationElements = document.querySelectorAll('[data-texas][data-michigan]');
+            locationElements.forEach(el => {
+                const content = el.getAttribute(`data-${location}`);
+                if (content) el.innerHTML = content;
+            });
+        }
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) locationDropdown.classList.remove('show');
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                const location = this.getAttribute('data-location');
+                updateLocationContent(location);
+                locationDropdown.classList.remove('show');
+                localStorage.setItem('preferredLocation', location);
+                localStorage.setItem('preferredLocationName', locationName);
+            });
+        });
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        const savedLocationName = localStorage.getItem('preferredLocationName');
+        if (savedLocation && savedLocationName) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                savedOption.classList.add('active');
+                selectedLocationSpan.innerText = savedLocationName;
+                updateLocationContent(savedLocation);
+            }
+        }
+    });
+
+    // ==================== STICKY HEADER ====================
+    (function() {
+        const header = document.querySelector('header');
+        if (!header) return;
+        let scrollTimer;
+        function setHeaderState() {
+            if (window.scrollY > 50 && !header.classList.contains('shrink')) {
+                header.classList.add('shrink');
+            } else if (window.scrollY <= 50 && header.classList.contains('shrink')) {
+                header.classList.remove('shrink');
+            }
+        }
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(setHeaderState, 10);
+            requestAnimationFrame(setHeaderState);
+        }, { passive: true });
+        setHeaderState();
+    })();
+</script>
 <script>
     // Location toggle functionality with cross-page persistence
     document.addEventListener('DOMContentLoaded', function() {
