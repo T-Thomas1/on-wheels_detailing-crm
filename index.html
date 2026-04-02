@@ -375,89 +375,85 @@
 </footer>
 
 <script src="js/script.js"></script>
+<script src="js/script.js"></script>
 <script>
     // Location toggle functionality with cross-page persistence
     document.addEventListener('DOMContentLoaded', function() {
+        // Mobile Menu Toggle - FIXED
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        if (mobileMenu && navMenu) {
+            mobileMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navMenu.classList.toggle('show');
+                // Optional: Toggle active class for animation
+                this.classList.toggle('active');
+            });
+        }
+
         const locationBtn = document.getElementById('locationDropdownBtn');
         const locationDropdown = document.getElementById('locationDropdown');
         const locationOptions = document.querySelectorAll('.location-option');
         const selectedLocationSpan = document.getElementById('selectedLocation');
 
-        function updateLocationContent(location) {
-            // Update all elements with location-specific data attributes
-            const locationElements = document.querySelectorAll('[data-detroit][data-houston]');
-            locationElements.forEach(el => {
-                const content = el.getAttribute(`data-${location}`);
-                if (content) {
-                    el.innerHTML = content;
+        // Function to update location content (only needed for index and contact pages)
+        if (typeof updateLocationContent === 'undefined' && document.querySelector('[data-detroit]')) {
+            window.updateLocationContent = function(location) {
+                const locationElements = document.querySelectorAll('[data-detroit][data-houston]');
+                locationElements.forEach(el => {
+                    const content = el.getAttribute(`data-${location}`);
+                    if (content) el.innerHTML = content;
+                });
+                // Update service areas if exists
+                const areasList = document.getElementById('areasList');
+                if (areasList) {
+                    if (location === 'detroit') {
+                        areasList.innerHTML = `<span class="area-tag">Detroit</span><span class="area-tag">Ann Arbor</span><span class="area-tag">Troy</span><span class="area-tag">Royal Oak</span><span class="area-tag">Port Huron</span><span class="area-tag">Chesterfield</span><span class="area-tag">Sterling Heights</span><span class="area-tag">Rochester Hills</span><span class="area-tag">Clinton Township</span><span class="area-tag">Macomb</span>`;
+                    } else {
+                        areasList.innerHTML = `<span class="area-tag">Houston</span><span class="area-tag">Harris County</span><span class="area-tag">Waller County</span><span class="area-tag">Prairie View</span><span class="area-tag">Katy</span><span class="area-tag">Sugar Land</span><span class="area-tag">The Woodlands</span><span class="area-tag">Cypress</span><span class="area-tag">Pearland</span><span class="area-tag">Pasadena</span><span class="area-tag">Baytown</span><span class="area-tag">Conroe</span><span class="area-tag">Magnolia</span><span class="area-tag">Tomball</span><span class="area-tag">Humble</span><span class="area-tag">Kingwood</span>`;
+                    }
                 }
-            });
+                // Update section titles if exists
+                const sectionTitle = document.querySelector('.service-areas .section-title h2');
+                const sectionSubtitle = document.querySelector('.service-areas .section-title p');
+                if (sectionTitle && sectionSubtitle) {
+                    if (location === 'detroit') {
+                        sectionTitle.innerHTML = 'Service Areas - Metro Detroit';
+                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout these Michigan areas:';
+                    } else {
+                        sectionTitle.innerHTML = 'Service Areas - Greater Houston & Surrounding Counties';
+                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas:';
+                    }
+                }
+            };
+        }
 
-            // Update service areas list
-            const areasList = document.getElementById('areasList');
-            if (areasList) {
+        if (typeof updateContactAreas === 'undefined' && document.getElementById('contactAreasList')) {
+            window.updateContactAreas = function(location) {
+                const contactAreasList = document.getElementById('contactAreasList');
+                const serviceAreaText = document.querySelector('.service-area .location-specific');
                 if (location === 'detroit') {
-                    areasList.innerHTML = `
-                        <span class="area-tag">Detroit</span>
-                        <span class="area-tag">Ann Arbor</span>
-                        <span class="area-tag">Troy</span>
-                        <span class="area-tag">Royal Oak</span>
-                        <span class="area-tag">Port Huron</span>
-                        <span class="area-tag">Chesterfield</span>
-                        <span class="area-tag">Sterling Heights</span>
-                        <span class="area-tag">Rochester Hills</span>
-                        <span class="area-tag">Clinton Township</span>
-                        <span class="area-tag">Macomb</span>
-                    `;
+                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Detroit</div><div class="area">Sterling Heights</div><div class="area">Port Huron</div><div class="area">Troy</div><div class="area">Clinton Township</div><div class="area">Macomb</div><div class="area">Ann Arbor</div><div class="area">Royal Oak</div>`;
+                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Michigan areas with our mobile detailing services:";
                 } else {
-                    areasList.innerHTML = `
-                        <span class="area-tag">Houston</span>
-                        <span class="area-tag">Harris County</span>
-                        <span class="area-tag">Waller County</span>
-                        <span class="area-tag">Prairie View</span>
-                        <span class="area-tag">Katy</span>
-                        <span class="area-tag">Sugar Land</span>
-                        <span class="area-tag">The Woodlands</span>
-                        <span class="area-tag">Cypress</span>
-                        <span class="area-tag">Pearland</span>
-                        <span class="area-tag">Pasadena</span>
-                        <span class="area-tag">Baytown</span>
-                        <span class="area-tag">Conroe</span>
-                        <span class="area-tag">Magnolia</span>
-                        <span class="area-tag">Tomball</span>
-                        <span class="area-tag">Humble</span>
-                        <span class="area-tag">Kingwood</span>
-                    `;
+                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Houston</div><div class="area">Harris County</div><div class="area">Waller County</div><div class="area">Prairie View</div><div class="area">Katy</div><div class="area">Sugar Land</div><div class="area">The Woodlands</div><div class="area">Cypress</div><div class="area">Pearland</div><div class="area">Pasadena</div><div class="area">Baytown</div><div class="area">Conroe</div><div class="area">Magnolia</div><div class="area">Tomball</div><div class="area">Humble</div><div class="area">Kingwood</div>`;
+                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Texas areas with our mobile detailing services:";
                 }
-            }
-
-            // Update section titles
-            const sectionTitle = document.querySelector('.service-areas .section-title h2');
-            const sectionSubtitle = document.querySelector('.service-areas .section-title p');
-            if (sectionTitle && sectionSubtitle) {
-                if (location === 'detroit') {
-                    sectionTitle.innerHTML = 'Service Areas - Metro Detroit';
-                    sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout these Michigan areas:';
-                } else {
-                    sectionTitle.innerHTML = 'Service Areas - Greater Houston & Surrounding Counties';
-                    sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas:';
-                }
-            }
+            };
         }
 
         // Toggle dropdown
         if (locationBtn) {
             locationBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                locationDropdown.classList.toggle('show');
+                if (locationDropdown) locationDropdown.classList.toggle('show');
             });
         }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function() {
-            if (locationDropdown) {
-                locationDropdown.classList.remove('show');
-            }
+            if (locationDropdown) locationDropdown.classList.remove('show');
         });
 
         // Handle location selection
@@ -465,41 +461,30 @@
             option.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-
                 const location = this.getAttribute('data-location');
                 const locationName = this.querySelector('span').innerText;
-
-                // Update active class
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
-
-                // Update button text
-                selectedLocationSpan.innerText = locationName;
-
-                // Update content
-                updateLocationContent(location);
-
-                // Close dropdown
-                locationDropdown.classList.remove('show');
-
-                // Save to localStorage for cross-page persistence
+                if (selectedLocationSpan) selectedLocationSpan.innerText = locationName;
+                if (locationDropdown) locationDropdown.classList.remove('show');
                 localStorage.setItem('preferredLocation', location);
                 localStorage.setItem('preferredLocationName', locationName);
+                if (window.updateLocationContent) window.updateLocationContent(location);
+                if (window.updateContactAreas) window.updateContactAreas(location);
             });
         });
 
         // Load saved preference on page load
         const savedLocation = localStorage.getItem('preferredLocation');
         const savedLocationName = localStorage.getItem('preferredLocationName');
-
-        if (savedLocation && savedLocationName) {
-            // Find and activate the matching option
+        if (savedLocation && savedLocationName && selectedLocationSpan) {
             const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
             if (savedOption) {
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 savedOption.classList.add('active');
                 selectedLocationSpan.innerText = savedLocationName;
-                updateLocationContent(savedLocation);
+                if (window.updateLocationContent) window.updateLocationContent(savedLocation);
+                if (window.updateContactAreas) window.updateContactAreas(savedLocation);
             }
         }
     });
