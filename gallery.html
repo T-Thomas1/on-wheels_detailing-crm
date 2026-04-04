@@ -4,18 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Recent Jobs | On-Wheels Detailing - Auto & Boat Detailing Gallery</title>
-    <meta name="description" content="View our recent auto and boat detailing jobs in Detroit and Houston areas including Harris County, Waller County, and Prairie View. See the quality of our work before and after.">
-    <meta name="keywords" content="detailing gallery, before and after detailing, car detailing photos, boat detailing photos, Detroit detailing gallery, Houston detailing gallery, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <meta name="description" content="View our recent auto and boat detailing jobs in Harris County TX and Metro Detroit MI. See the quality of our work before and after. Marine gel-coat, interior, and paint correction results.">
+    <meta name="keywords" content="detailing gallery, before and after detailing, car detailing photos, boat detailing photos, Harris County detailing gallery, Metro Detroit detailing gallery, Michigan detailing, Texas detailing">
     <meta name="author" content="On-Wheels Detailing">
     <meta name="robots" content="index, follow">
 
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
 
+    <!-- In gallery.html, add this line -->
     <link rel="canonical" href="https://www.onwheelsdetailing.com/gallery.html">
+
+    <!-- Preload critical CSS -->
+    <link rel="preload" as="style" href="css/style.css">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
@@ -25,45 +31,87 @@
         gtag('js', new Date());
         gtag('config', 'AW-17663778332');
     </script>
+
+    <style>
+        @media (max-width: 768px) {
+            .gallery-full {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .gallery-item img {
+                height: auto;
+                aspect-ratio: 1 / 1;
+                object-fit: cover;
+            }
+        }
+    </style>
 </head>
 <body>
+<!-- Location Reminder Banner - Visible until user selects location -->
+<div id="locationReminderBanner" class="location-reminder" style="display: none;">
+    <i class="fas fa-map-marker-alt"></i>
+    <span class="reminder-text">Select your location for accurate service information</span>
+    <span class="reminder-action">Click Here ▼</span>
+    <i class="fas fa-chevron-down"></i>
+</div>
+
+<script>
+    // Show location reminder if no location is selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const reminderBanner = document.getElementById('locationReminderBanner');
+        const savedLocation = localStorage.getItem('preferredLocation');
+        const locationBtn = document.getElementById('locationDropdownBtn');
+
+        // Show banner only if no location saved and user hasn't dismissed
+        if (!savedLocation && reminderBanner) {
+            reminderBanner.style.display = 'block';
+        }
+
+        // Click on reminder banner opens location dropdown
+        if (reminderBanner && locationBtn) {
+            reminderBanner.addEventListener('click', function() {
+                locationBtn.click();
+            });
+        }
+    });
+</script>
 <header>
     <div class="container header-content">
         <div class="logo">
             <a href="index.html">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
+                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="180" height="60" loading="eager">
             </a>
         </div>
 
         <div class="location-toggle">
-            <button class="location-btn" id="locationDropdownBtn">
+            <button class="location-btn" id="locationDropdownBtn" aria-label="Select your location">
                 <i class="fas fa-map-marker-alt"></i>
                 <span id="selectedLocation">▼ Choose Your Location ▼</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="location-dropdown" id="locationDropdown">
-                <a href="#" data-location="detroit" class="location-option">
-                    <i class="fas fa-city"></i>
-                    <div>
-                        <span>📍 Detroit, Michigan</span>
-                        <small>In-Shop & Mobile Service Available</small>
-                    </div>
-                </a>
-                <a href="#" data-location="houston" class="location-option">
+                <a href="#" data-location="texas" class="location-option">
                     <i class="fas fa-flag-usa"></i>
                     <div>
-                        <span>🤠 Houston, Texas</span>
-                        <small>Mobile Service Only • We Come to You</small>
+                        <span>🤠 Texas - Harris County</span>
+                        <small>Mobile Only • We Come to You</small>
+                    </div>
+                </a>
+                <a href="#" data-location="michigan" class="location-option">
+                    <i class="fas fa-city"></i>
+                    <div>
+                        <span>🚗 Michigan - Metro Detroit</span>
+                        <small>Garage Locations & Mobile Service</small>
                     </div>
                 </a>
             </div>
         </div>
 
-        <div class="menu-toggle" id="mobile-menu">
+        <button class="menu-toggle" id="mobile-menu" aria-label="Menu">
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </button>
 
         <nav>
             <ul id="nav-menu">
@@ -89,54 +137,54 @@
     <div class="container">
         <div class="section-title">
             <h1>Our Recent Work</h1>
-            <p>See examples of our detailing expertise in Detroit and Houston areas</p>
+            <p class="location-specific" data-texas="See examples of our mobile detailing expertise in Harris County, Texas" data-michigan="See examples of our detailing expertise at our Marysville and New Haven garage locations in Metro Detroit">See examples of our mobile detailing expertise in Harris County, Texas</p>
         </div>
 
         <div class="gallery-full">
             <div class="gallery-item">
-                <img src="images/IMG_2071.jpg" alt="Paint correction results">
+                <img src="images/IMG_2071.jpg" alt="Paint correction results" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3170.JPG" alt="Marine gel-coat restoration">
+                <img src="images/IMG_3170.JPG" alt="Marine gel-coat restoration" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3954.JPG" alt="Car interior detailing">
+                <img src="images/IMG_3954.JPG" alt="Car interior detailing" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4961.jpeg" alt="Car after paint correction">
+                <img src="images/IMG_4961.jpeg" alt="Car after paint correction" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4959.jpeg" alt="Car before paint correction">
+                <img src="images/IMG_4959.jpeg" alt="Car before paint correction" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4651.JPG" alt="Marine before gel-coat restoration">
+                <img src="images/IMG_4651.JPG" alt="Marine before gel-coat restoration" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4652.JPG" alt="Marine after gel-coat restoration">
+                <img src="images/IMG_4652.JPG" alt="Marine after gel-coat restoration" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4960.jpeg" alt="Car paint wax application">
+                <img src="images/IMG_4960.jpeg" alt="Car paint wax application" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4386.jpeg" alt="Car exterior detailing">
+                <img src="images/IMG_4386.jpeg" alt="Car exterior detailing" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2288.jpeg" alt="Car exterior job">
+                <img src="images/IMG_2288.jpeg" alt="Car exterior job" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2967.jpeg" alt="Car interior job">
+                <img src="images/IMG_2967.jpeg" alt="Car interior job" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3131.JPG" alt="Car exterior job">
+                <img src="images/IMG_3131.JPG" alt="Car exterior job" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2577.JPG" alt="Car detailing job">
+                <img src="images/IMG_2577.JPG" alt="Car detailing job" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2700.JPG" alt="Car exterior job">
+                <img src="images/IMG_2700.JPG" alt="Car exterior job" loading="lazy" width="400" height="300">
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3123.JPG" alt="Car interior job">
+                <img src="images/IMG_3123.JPG" alt="Car interior job" loading="lazy" width="400" height="300">
             </div>
         </div>
     </div>
@@ -146,8 +194,8 @@
 <section class="cta">
     <div class="container">
         <h2>Like What You See?</h2>
-        <p>Contact TaSain to schedule your detailing service</p>
-        <a href="contact.html" class="btn">Get a Quote</a>
+        <p class="location-specific" data-texas="Contact TaSain to schedule your mobile detailing service in Harris County, Texas" data-michigan="Contact TaSain to schedule your detailing service at our Marysville or New Haven garage, or for mobile service">Contact TaSain to schedule your mobile detailing service in Harris County, Texas</p>
+        <a href="contact.html" class="btn">Get a Free Quote</a>
     </div>
 </section>
 
@@ -155,7 +203,7 @@
 <footer>
     <div class="container footer-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
+            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="150" height="50" loading="lazy">
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
         <div class="footer-info">
@@ -164,130 +212,196 @@
                 <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
             </div>
             <div class="social-icons">
-                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;" class="location-specific" data-texas="Serving Houston, Harris County, and all surrounding Texas areas with mobile service" data-michigan="📍 Garage Locations: Marysville & New Haven | Mobile Service Throughout Metro Detroit">Serving Houston, Harris County, and all surrounding Texas areas with mobile service</p>
         </div>
     </div>
 </footer>
 
-<script src="js/script.js"></script>
-<script src="js/script.js"></script>
 <script>
-    // Location toggle functionality with cross-page persistence
+    // ==================== MOBILE MENU TOGGLE ====================
     document.addEventListener('DOMContentLoaded', function() {
-        // Mobile Menu Toggle - FIXED
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navMenu = document.getElementById('nav-menu');
+        const menuToggle = document.getElementById('mobile-menu');
+        const nav = document.querySelector('nav');
 
-        if (mobileMenu && navMenu) {
-            mobileMenu.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navMenu.classList.toggle('show');
-                // Optional: Toggle active class for animation
-                this.classList.toggle('active');
+        if (menuToggle && nav) {
+            menuToggle.addEventListener('click', function() {
+                nav.classList.toggle('show');
+                menuToggle.classList.toggle('active');
             });
         }
+    });
 
+    // ==================== LOCATION TOGGLE ====================
+    document.addEventListener('DOMContentLoaded', function() {
         const locationBtn = document.getElementById('locationDropdownBtn');
         const locationDropdown = document.getElementById('locationDropdown');
         const locationOptions = document.querySelectorAll('.location-option');
         const selectedLocationSpan = document.getElementById('selectedLocation');
 
-        // Function to update location content (only needed for index and contact pages)
-        if (typeof updateLocationContent === 'undefined' && document.querySelector('[data-detroit]')) {
-            window.updateLocationContent = function(location) {
-                const locationElements = document.querySelectorAll('[data-detroit][data-houston]');
-                locationElements.forEach(el => {
-                    const content = el.getAttribute(`data-${location}`);
-                    if (content) el.innerHTML = content;
-                });
-                // Update service areas if exists
-                const areasList = document.getElementById('areasList');
-                if (areasList) {
-                    if (location === 'detroit') {
-                        areasList.innerHTML = `<span class="area-tag">Detroit</span><span class="area-tag">Ann Arbor</span><span class="area-tag">Troy</span><span class="area-tag">Royal Oak</span><span class="area-tag">Port Huron</span><span class="area-tag">Chesterfield</span><span class="area-tag">Sterling Heights</span><span class="area-tag">Rochester Hills</span><span class="area-tag">Clinton Township</span><span class="area-tag">Macomb</span>`;
-                    } else {
-                        areasList.innerHTML = `<span class="area-tag">Houston</span><span class="area-tag">Harris County</span><span class="area-tag">Waller County</span><span class="area-tag">Prairie View</span><span class="area-tag">Katy</span><span class="area-tag">Sugar Land</span><span class="area-tag">The Woodlands</span><span class="area-tag">Cypress</span><span class="area-tag">Pearland</span><span class="area-tag">Pasadena</span><span class="area-tag">Baytown</span><span class="area-tag">Conroe</span><span class="area-tag">Magnolia</span><span class="area-tag">Tomball</span><span class="area-tag">Humble</span><span class="area-tag">Kingwood</span>`;
-                    }
-                }
-                // Update section titles if exists
-                const sectionTitle = document.querySelector('.service-areas .section-title h2');
-                const sectionSubtitle = document.querySelector('.service-areas .section-title p');
-                if (sectionTitle && sectionSubtitle) {
-                    if (location === 'detroit') {
-                        sectionTitle.innerHTML = 'Service Areas - Metro Detroit';
-                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout these Michigan areas:';
-                    } else {
-                        sectionTitle.innerHTML = 'Service Areas - Greater Houston & Surrounding Counties';
-                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas:';
-                    }
-                }
-            };
-        }
-
-        if (typeof updateContactAreas === 'undefined' && document.getElementById('contactAreasList')) {
-            window.updateContactAreas = function(location) {
-                const contactAreasList = document.getElementById('contactAreasList');
-                const serviceAreaText = document.querySelector('.service-area .location-specific');
-                if (location === 'detroit') {
-                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Detroit</div><div class="area">Sterling Heights</div><div class="area">Port Huron</div><div class="area">Troy</div><div class="area">Clinton Township</div><div class="area">Macomb</div><div class="area">Ann Arbor</div><div class="area">Royal Oak</div>`;
-                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Michigan areas with our mobile detailing services:";
-                } else {
-                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Houston</div><div class="area">Harris County</div><div class="area">Waller County</div><div class="area">Prairie View</div><div class="area">Katy</div><div class="area">Sugar Land</div><div class="area">The Woodlands</div><div class="area">Cypress</div><div class="area">Pearland</div><div class="area">Pasadena</div><div class="area">Baytown</div><div class="area">Conroe</div><div class="area">Magnolia</div><div class="area">Tomball</div><div class="area">Humble</div><div class="area">Kingwood</div>`;
-                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Texas areas with our mobile detailing services:";
-                }
-            };
-        }
-
-        // Toggle dropdown
-        if (locationBtn) {
-            locationBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (locationDropdown) locationDropdown.classList.toggle('show');
+        function updateLocationContent(location) {
+            const locationElements = document.querySelectorAll('[data-texas][data-michigan]');
+            locationElements.forEach(el => {
+                const content = el.getAttribute(`data-${location}`);
+                if (content) el.innerHTML = content;
             });
         }
 
-        // Close dropdown when clicking outside
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
         document.addEventListener('click', function() {
             if (locationDropdown) locationDropdown.classList.remove('show');
         });
 
-        // Handle location selection
         locationOptions.forEach(option => {
             option.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const location = this.getAttribute('data-location');
-                const locationName = this.querySelector('span').innerText;
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
-                if (selectedLocationSpan) selectedLocationSpan.innerText = locationName;
-                if (locationDropdown) locationDropdown.classList.remove('show');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                const location = this.getAttribute('data-location');
+                updateLocationContent(location);
+                locationDropdown.classList.remove('show');
                 localStorage.setItem('preferredLocation', location);
                 localStorage.setItem('preferredLocationName', locationName);
-                if (window.updateLocationContent) window.updateLocationContent(location);
-                if (window.updateContactAreas) window.updateContactAreas(location);
             });
         });
 
-        // Load saved preference on page load
         const savedLocation = localStorage.getItem('preferredLocation');
         const savedLocationName = localStorage.getItem('preferredLocationName');
-        if (savedLocation && savedLocationName && selectedLocationSpan) {
+        if (savedLocation && savedLocationName) {
             const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
             if (savedOption) {
                 locationOptions.forEach(opt => opt.classList.remove('active'));
                 savedOption.classList.add('active');
                 selectedLocationSpan.innerText = savedLocationName;
-                if (window.updateLocationContent) window.updateLocationContent(savedLocation);
-                if (window.updateContactAreas) window.updateContactAreas(savedLocation);
+                updateLocationContent(savedLocation);
             }
         }
     });
+
+    // ==================== STICKY HEADER ====================
+    (function() {
+        const header = document.querySelector('header');
+        if (!header) return;
+        let scrollTimer;
+        function setHeaderState() {
+            if (window.scrollY > 50 && !header.classList.contains('shrink')) {
+                header.classList.add('shrink');
+            } else if (window.scrollY <= 50 && header.classList.contains('shrink')) {
+                header.classList.remove('shrink');
+            }
+        }
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(setHeaderState, 10);
+            requestAnimationFrame(setHeaderState);
+        }, { passive: true });
+        setHeaderState();
+    })();
+</script>
+<script>
+    // Location toggle functionality with cross-page persistence
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationBtn = document.getElementById('locationDropdownBtn');
+        const locationDropdown = document.getElementById('locationDropdown');
+        const locationOptions = document.querySelectorAll('.location-option');
+        const selectedLocationSpan = document.getElementById('selectedLocation');
+
+        function updateLocationContent(location) {
+            const locationElements = document.querySelectorAll('[data-texas][data-michigan]');
+            locationElements.forEach(el => {
+                const content = el.getAttribute(`data-${location}`);
+                if (content) {
+                    el.innerHTML = content;
+                }
+            });
+        }
+
+        if (locationBtn) {
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (locationDropdown) {
+                locationDropdown.classList.remove('show');
+            }
+        });
+
+        locationOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                const locationName = this.querySelector('span').innerText;
+                selectedLocationSpan.innerText = locationName;
+                const location = this.getAttribute('data-location');
+                updateLocationContent(location);
+                locationDropdown.classList.remove('show');
+                localStorage.setItem('preferredLocation', location);
+                localStorage.setItem('preferredLocationName', locationName);
+            });
+        });
+
+        const savedLocation = localStorage.getItem('preferredLocation');
+        const savedLocationName = localStorage.getItem('preferredLocationName');
+
+        if (savedLocation && savedLocationName) {
+            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+            if (savedOption) {
+                locationOptions.forEach(opt => opt.classList.remove('active'));
+                savedOption.classList.add('active');
+                selectedLocationSpan.innerText = savedLocationName;
+                updateLocationContent(savedLocation);
+            }
+        }
+    });
+</script>
+<script>
+    // Sticky Header Shrink with Debounce for Extra Smoothness
+    (function() {
+        const header = document.querySelector('header');
+        if (!header) return;
+
+        let scrollTimer;
+
+        function setHeaderState() {
+            const scrollY = window.scrollY;
+            if (scrollY > 50 && !header.classList.contains('shrink')) {
+                header.classList.add('shrink');
+            } else if (scrollY <= 50 && header.classList.contains('shrink')) {
+                header.classList.remove('shrink');
+            }
+        }
+
+        // Immediate scroll response for better UX
+        window.addEventListener('scroll', function() {
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);
+            }
+            scrollTimer = setTimeout(setHeaderState, 10);
+            requestAnimationFrame(setHeaderState);
+        }, { passive: true });
+
+        // Initial state
+        setHeaderState();
+    })();
 </script>
 </body>
 </html>

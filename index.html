@@ -3,88 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>On-Wheels Detailing | Premium Mobile Auto & Boat Detailing Services in Detroit & Houston</title>
-    <meta name="description" content="Professional mobile auto detailing & marine gel-coat services. We come to you in Detroit, Metro Detroit, Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas. Interior detailing, paint correction, ceramic coating. Free quotes!">
-    <meta name="keywords" content="mobile detailing, auto detailing, car detailing, boat detailing, marine detailing, gel-coat restoration, paint correction, interior detailing, ceramic coating, mobile car wash, On-Wheels Detailing, Detroit detailing, Houston detailing, Harris County detailing, Waller County detailing, Prairie View detailing">
+    <title>On-Wheels Detailing | Premium Mobile Auto & Boat Detailing</title>
+    <meta name="description" content="Professional mobile auto detailing & marine gel-coat services. Mobile service in Houston & Harris County TX. Garage locations in Metro Detroit MI. Free quotes!">
+    <meta name="keywords" content="mobile detailing, auto detailing, car detailing, boat detailing, marine detailing, gel-coat restoration, paint correction, interior detailing, ceramic coating, mobile car wash, On-Wheels Detailing">
     <meta name="author" content="On-Wheels Detailing">
     <meta name="robots" content="index, follow">
-
-    <!-- Canonical URL -->
     <link rel="canonical" href="https://www.onwheelsdetailing.com">
-
-    <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="OqEZZ9Za0cVa9OxM45e3UE8tDv1iOWqtRXPeM1Pg_Io">
-
-    <!-- Open Graph / Social Media Meta Tags -->
-    <meta property="og:title" content="On-Wheels Detailing | Premium Mobile Auto & Boat Detailing Services">
-    <meta property="og:description" content="Professional mobile auto & boat detailing services. Serving Detroit, Houston, Harris County, Waller County, Prairie View, and surrounding areas. Free quotes!">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.onwheelsdetailing.com">
-    <meta property="og:image" content="https://www.onwheelsdetailing.com/images/og-image.jpg">
-    <meta property="og:site_name" content="On-Wheels Detailing">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="On-Wheels Detailing | Premium Mobile Auto & Boat Detailing">
-    <meta name="twitter:description" content="Professional mobile detailing services in Detroit and Houston areas including Harris County, Waller County, and Prairie View.">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsiveness.css">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "name": "On-Wheels Detailing",
-            "description": "Professional mobile auto and boat detailing services serving Michigan and Texas",
-            "url": "https://www.onwheelsdetailing.com",
-            "telephone": "+1-586-873-0656",
-            "email": "tasain@onwheelsdetailing.com",
-            "priceRange": "$$",
-            "openingHours": "Mo-Sa 08:00-18:00",
-            "image": "https://www.onwheelsdetailing.com/images/onwheelsLogo.png",
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Detroit",
-                "addressRegion": "MI",
-                "postalCode": "48235",
-                "addressCountry": "US"
-            },
-            "founder": {
-                "@type": "Person",
-                "name": "TaSain"
-            },
-            "areaServed": [
-                {"@type": "City", "name": "Detroit", "addressRegion": "MI"},
-                {"@type": "City", "name": "Houston", "addressRegion": "TX"},
-                {"@type": "AdministrativeArea", "name": "Harris County", "addressRegion": "TX"},
-                {"@type": "AdministrativeArea", "name": "Waller County", "addressRegion": "TX"},
-                {"@type": "City", "name": "Prairie View", "addressRegion": "TX"}
-            ],
-            "serviceType": ["Auto detailing", "Boat detailing", "Paint correction", "Interior detailing", "Marine gel-coat detailing"]
-        }
-    </script>
-
+    <style>
+        /* Additional critical styles to ensure dropdown works */
+        .location-toggle { position: relative; margin-left: auto; margin-right: 1rem; z-index: 1001; }
+        .location-btn { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #ffb347, #ff9500); border: none; color: #1a2a3a; padding: 10px 20px; border-radius: 50px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3); }
+        .location-dropdown { position: absolute; top: 100%; right: 0; margin-top: 10px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); min-width: 260px; z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; overflow: hidden; }
+        .location-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .location-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: #333; transition: all 0.2s ease; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+        .location-option:last-child { border-bottom: none; }
+        .location-option:hover { background: #fff5e6; }
+        .location-option.active { background: #ffb34720; border-left: 3px solid #ffb347; }
+        .location-option i { width: 24px; color: #ffb347; font-size: 1.1rem; }
+        .location-option div { flex: 1; }
+        .location-option span { font-weight: 600; font-size: 0.9rem; display: block; }
+        .location-option small { display: block; font-size: 0.7rem; color: #666; margin-top: 2px; }
+        .location-reminder { background: linear-gradient(135deg, #ffb347, #ff9500); color: #1a2a3a; text-align: center; padding: 8px 16px; font-size: 0.85rem; font-weight: 600; position: relative; z-index: 999; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.1); display: none; }
+        .menu-toggle { display: none; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; cursor: pointer; background: none; border: none; }
+        .menu-toggle span { height: 3px; width: 100%; background-color: var(--light, #f8f8f8); border-radius: 3px; transition: all 0.3s; }
+        @media (max-width: 768px) { .menu-toggle { display: flex; } nav { display: none; width: 100%; order: 3; } nav.show { display: block; } nav ul { flex-direction: column; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); } nav li { margin: 0.5rem 0; margin-left: 0; } .location-toggle { order: 1; margin-left: 0; } .header-content { flex-wrap: wrap; justify-content: space-between; } }
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        header { background-color: #0e2f48; color: #f8f8f8; padding: 1rem 0; position: sticky; top: 0; z-index: 1000; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .logo img { height: 60px; width: auto; }
+        nav ul { display: flex; list-style: none; margin: 0; padding: 0; }
+        nav li { margin-left: 1.5rem; position: relative; }
+        nav a { color: #f8f8f8; text-decoration: none; font-weight: 600; padding: 0.5rem; transition: color 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
+        .dropdown-content { display: none; position: absolute; background-color: #1a1a1a; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1; border-top: 3px solid #e5dfb9; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { color: #f8f8f8; padding: 12px 16px; display: block; text-transform: none; }
+        .hero { background: linear-gradient(rgba(15, 42, 72, 0.7), rgba(15, 42, 72, 0.7)), url('images/hero-car.png') no-repeat center center/cover; min-height: 80vh; display: flex; align-items: center; text-align: center; color: #f8f8f8; padding: 4rem 0; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .btn { display: inline-block; background-color: #c63c34; color: #f8f8f8; padding: 0.8rem 1.5rem; border-radius: 5px; text-decoration: none; font-weight: bold; transition: all 0.3s; text-transform: uppercase; }
+        footer { background-color: #1a1a1a; color: #f8f8f8; padding: 2rem 0; text-align: center; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.5rem; color: #0e2f48; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .service-card { text-align: center; padding: 30px 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .service-icon { width: 80px; height: 80px; margin-bottom: 20px; object-fit: contain; }
+    </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663778332"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'AW-17663778332');
-    </script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-17663778332');</script>
 </head>
 <body>
-<header>
+<div id="locationReminderBanner" class="location-reminder" style="display: none;">
+    <i class="fas fa-map-marker-alt"></i>
+    <span class="reminder-text">Select your location for accurate service information</span>
+    <span class="reminder-action">Click Here ▼</span>
+    <i class="fas fa-chevron-down"></i>
+</div>
+
+<header id="mainHeader">
     <div class="container header-content">
         <div class="logo">
             <a href="index.html">
@@ -93,36 +72,36 @@
         </div>
 
         <div class="location-toggle">
-            <button class="location-btn" id="locationDropdownBtn">
+            <button class="location-btn" id="locationDropdownBtn" aria-label="Select your location">
                 <i class="fas fa-map-marker-alt"></i>
                 <span id="selectedLocation">▼ Choose Your Location ▼</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="location-dropdown" id="locationDropdown">
-                <a href="#" data-location="detroit" class="location-option">
-                    <i class="fas fa-city"></i>
-                    <div>
-                        <span>📍 Detroit, Michigan</span>
-                        <small>In-Shop & Mobile Service Available</small>
-                    </div>
-                </a>
-                <a href="#" data-location="houston" class="location-option">
+                <a href="#" data-location="texas" class="location-option">
                     <i class="fas fa-flag-usa"></i>
                     <div>
-                        <span>🤠 Houston, Texas</span>
-                        <small>Mobile Service Only • We Come to You</small>
+                        <span>🤠 Texas - Harris County</span>
+                        <small>Mobile Only • We Come to You</small>
+                    </div>
+                </a>
+                <a href="#" data-location="michigan" class="location-option">
+                    <i class="fas fa-city"></i>
+                    <div>
+                        <span>🚗 Michigan - Metro Detroit</span>
+                        <small>Garage Locations & Mobile Service</small>
                     </div>
                 </a>
             </div>
         </div>
 
-        <div class="menu-toggle" id="mobile-menu">
+        <button class="menu-toggle" id="mobile-menu" aria-label="Menu">
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </button>
 
-        <nav>
+        <nav id="mainNav">
             <ul id="nav-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About Us</a></li>
@@ -141,353 +120,194 @@
     </div>
 </header>
 
-<!-- Hero Section -->
 <section id="home" class="hero">
     <div class="container hero-content">
         <h1>Premium Mobile Auto & Boat Detailing Services</h1>
-        <p class="location-specific" data-detroit="We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction. In-shop service also available at our Detroit garage." data-houston="We bring professional mobile detailing services to your doorstep across Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas. Mobile detailing that comes to you! Marine gel-coat detailing, interior detailing, and expert paint correction.">We bring professional detailing services to your doorstep in Metro Detroit and surrounding Michigan areas. Marine gel-coat detailing, interior detailing, and expert paint correction. In-shop service also available at our Detroit garage.</p>
+        <p class="location-specific" data-texas="On-Wheels Detailing brings professional mobile interior detailing to Harris County, Texas. We specialize in interior refresh and premium interior restoration using hot water extraction and steam. Since we have no physical shop, we come directly to you—whether you're in Houston, Katy, Cypress, or anywhere in Harris County. We use premium products like Koch Chemie Pol Star and Carpro Perl to restore and protect your vehicle's interior. Free quotes available!" data-michigan="On-Wheels Detailing offers professional detailing at our garage locations in Marysville and New Haven, plus mobile service throughout Metro Detroit. We specialize in two-step paint correction, Carpro ceramic coating, and premium interior restoration using hot water extraction and steam. Whether you need interior refresh with Pol Star and Perl, or a full signature detail package (interior + exterior), we handle it all. We also specialize in marine gel-coat restoration and protection. Experience high-quality results with products like Carpro CQ.UK 3.0, Koch Chemie, and Starrybot extraction.">On-Wheels Detailing brings professional mobile interior detailing to Harris County, Texas. We specialize in interior refresh and premium interior restoration using hot water extraction and steam. Since we have no physical shop, we come directly to you—whether you're in Houston, Katy, Cypress, or anywhere in Harris County. We use premium products like Koch Chemie Pol Star and Carpro Perl to restore and protect your vehicle's interior. Free quotes available!</p>
         <a href="contact.html" class="btn">Get a Free Quote</a>
     </div>
 </section>
 
-<!-- Passion Banner -->
 <section class="passion-banner">
-    <div class="container">
-        <h2>Passion Fuels Us All</h2>
-        <p>Since 2020, we've been driven by our passion for transformation. It's not just about cleaning vehicles - it's about the process, the dedication, and the incredible results that bring your investment back to life.</p>
-    </div>
+    <div class="container"><h2>Passion Fuels Us All</h2><p>Since 2020, we've been driven by our passion for transformation. It's not just about cleaning vehicles - it's about the process, the dedication, and the incredible results that bring your investment back to life.</p></div>
 </section>
 
-<!-- Stats Section -->
-<section class="stats-section">
+<section class="services">
     <div class="container">
-        <div class="section-title">
-            <h2>Why Choose On-Wheels Detailing</h2>
-            <p>Experience the difference that passion and expertise make</p>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">5+</div>
-                <div class="stat-label">Years of Excellence</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">100+</div>
-                <div class="stat-label">Vehicles Transformed</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Satisfaction Guarantee</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">2</div>
-                <div class="stat-label">Service Methods</div>
-                <div style="font-weight: 300; font-size: 1rem; margin-top: 5px;">Mobile & Garage</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- About Us Section -->
-<section id="about" class="about">
-    <div class="container">
-        <div class="section-title">
-            <h2>About On-Wheels Detailing</h2>
-        </div>
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-home"></i>
-                <h3>Mobile Convenience</h3>
-                <p class="location-specific" data-detroit="Our mobile detailing service comes to your home or office in Michigan, saving you time and effort. We also have a fully-equipped garage for boats and vehicles that need special attention." data-houston="Our mobile detailing service comes to your home or office anywhere in Houston, Harris County, Waller County, and Prairie View. We bring professional-grade equipment right to your doorstep.">Our mobile detailing service comes to your home or office in Michigan, saving you time and effort. We also have a fully-equipped garage for boats and vehicles that need special attention.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-tag"></i>
-                <h3>Competitive Pricing</h3>
-                <p>All our detailing rates are competitively priced for the premium service you'll receive.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-spray-can"></i>
-                <h3>Professional Results</h3>
-                <p>Expert paint correction and stain/odor removal that revitalizes your vehicle. We use only the highest quality products and techniques for lasting protection.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Satisfaction Guaranteed</h3>
-                <p>We take pride in every detailing service we provide. Your satisfaction is guaranteed with our quality assurance promise for all auto and marine detailing work.</p>
-            </div>
-        </div>
-        <div class="text-center">
-            <a href="about.html" class="btn btn-outline">Learn More About Us</a>
-        </div>
-    </div>
-</section>
-
-<!-- Why Choose Us Section -->
-<section class="why-choose">
-    <div class="container">
-        <div class="section-title">
-            <h2>The On-Wheels Difference</h2>
-            <p>What sets us apart from other detailing services</p>
-        </div>
-        <div class="benefits-grid">
-            <div class="benefit-item">
-                <i class="fas fa-user-check"></i>
-                <h4>Owner-Operated</h4>
-                <p>Every job receives my personal attention and expertise, ensuring consistent quality and care.</p>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-clock"></i>
-                <h4>Flexible Scheduling</h4>
-                <p>We work around your schedule with evening and weekend appointments available.</p>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-tools"></i>
-                <h4>Service Options</h4>
-                <p class="location-specific" data-detroit="Choose mobile service at your location or bring your vehicle to our fully-equipped garage in Detroit." data-houston="Mobile service only - we come directly to your location in Houston and surrounding Texas areas.">Choose mobile service at your location or bring your vehicle to our fully-equipped garage in Detroit.</p>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-star"></i>
-                <h4>Premium Products</h4>
-                <p>We use only professional-grade products that deliver superior results and lasting protection.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Services Section -->
-<section id="services" class="services">
-    <div class="container">
-        <div class="section-title">
-            <h2>Our Detailing Services</h2>
-            <p>Professional auto and marine detailing services to meet all your needs</p>
-        </div>
+        <div class="section-title"><h2>Our Detailing Services</h2><p>Professional auto and marine detailing services to meet all your needs</p></div>
         <div class="services-grid">
-            <div class="service-card">
-                <img src="images/onwheelsLogoMark.png" alt="Marine Gel-coat Detailing" class="service-icon">
-                <h3>Marine Gel-coat Detailing</h3>
-                <p>Specialized boat detailing and gel-coat restoration with premium marine-grade products.</p>
-            </div>
-            <div class="service-card">
-                <img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing" class="service-icon">
-                <h3>Interior Detailing</h3>
-                <p>Complete interior transformation with deep cleaning and protection for all surfaces.</p>
-            </div>
-            <div class="service-card">
-                <img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction" class="service-icon">
-                <h3>Paint Correction</h3>
-                <p>Professional paint restoration that eliminates swirls, scratches, and oxidation.</p>
-            </div>
+            <div class="service-card"><img src="images/onwheelsLogoMark.png" alt="Marine Gel-coat Detailing" class="service-icon" loading="lazy"><h3>Marine Gel-coat Detailing</h3><p>Specialized boat detailing and gel-coat restoration with premium marine-grade products. Per-foot pricing available.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Gel-coat oxidation removal</li><li>• Polish & protect</li><li>• Ceramic coating (Carpro CQ.UK 3.0)</li><li>• Wash & protect</li></ul></div>
+            <div class="service-card"><img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing" class="service-icon" loading="lazy"><h3>Interior Detailing</h3><p>Complete interior transformation with deep cleaning and protection for all surfaces.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Interior Refresh</li><li>• Premium Interior Restoration</li><li>• Steam & Hot Water Extraction</li><li>• Pol Star & Carpro Perl treatment</li></ul></div>
+            <div class="service-card"><img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction" class="service-icon" loading="lazy"><h3>Paint Correction</h3><p>Professional paint restoration that eliminates swirls, scratches, and oxidation.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Two-step paint correction</li><li>• Ceramic coating (Carpro CQ.UK 3.0)</li><li>• Polish & protect</li><li>• Signature Detail Package (interior + exterior)</li></ul></div>
         </div>
-        <div class="text-center">
-            <a href="services.html" class="btn btn-outline">View All Services</a>
-        </div>
+        <div class="text-center"><a href="services.html" class="btn btn-outline">View All Services</a></div>
     </div>
 </section>
 
-<!-- Testimonial Section -->
-<section class="testimonial-section">
-    <div class="container">
-        <div class="testimonial">
-            <p>"TaSain and his team did a remarkable job with multiple jobs in 1 day. Professional, knowledgeable, & efficient. Thanks again guys!"</p>
-            <div class="testimonial-author">- Satisfied Marine Client</div>
-        </div>
-    </div>
-</section>
-
-<!-- Service Areas Section -->
-<section class="service-areas">
-    <div class="container">
-        <div class="section-title">
-            <h2 class="location-specific-title">Service Areas - Metro Detroit</h2>
-            <p class="location-specific-subtitle">We provide mobile detailing services throughout these Michigan areas:</p>
-        </div>
-        <div class="areas-list" id="areasList">
-            <span class="area-tag">Detroit</span>
-            <span class="area-tag">Ann Arbor</span>
-            <span class="area-tag">Troy</span>
-            <span class="area-tag">Royal Oak</span>
-            <span class="area-tag">Port Huron</span>
-            <span class="area-tag">Chesterfield</span>
-            <span class="area-tag">Sterling Heights</span>
-            <span class="area-tag">Rochester Hills</span>
-        </div>
-    </div>
-</section>
-
-<!-- Quote Section -->
-<section id="contact" class="quote">
-    <div class="container">
-        <h2>Ready to Restore Your Vehicle's Shine?</h2>
-        <p>Contact TaSain today for a free, no-obligation quote</p>
-        <a href="tel:+15868730656" class="phone"><i class="fas fa-phone"></i> (586) 873-0656</a>
-        <div style="margin-top: 1.5rem;">
-            <a href="contact.html" class="btn">Get Your Free Quote</a>
-        </div>
-        <p class="location-specific" data-detroit="Serving Metro Detroit with mobile & in-shop service" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas with mobile service" style="margin-top: 1rem;">Serving Metro Detroit with mobile & in-shop service</p>
-    </div>
-</section>
-
-<!-- Recent Jobs Section -->
-<section id="gallery" class="recent-jobs">
-    <div class="container">
-        <div class="section-title">
-            <h2>Our Recent Detailing Work</h2>
-            <p>See examples of our auto and marine detailing results</p>
-        </div>
-        <div class="gallery">
-            <div class="gallery-item">
-                <img src="images/IMG_4386.jpeg" alt="Paint correction results">
-            </div>
-            <div class="gallery-item">
-                <img src="images/IMG_4654.jpg" alt="Boat detailing results">
-            </div>
-            <div class="gallery-item">
-                <img src="images/IMG_4396.jpeg" alt="Car interior cleaning">
-            </div>
-        </div>
-        <div class="text-center">
-            <a href="gallery.html" class="btn btn-outline">View Full Gallery</a>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
 <footer>
     <div class="container footer-content">
-        <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
-            <h2>On-<span>Wheels</span> Detailing</h2>
-        </div>
-        <div class="footer-info">
-            <div class="contact-info">
-                <p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p>
-                <p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p>
-            </div>
-            <div class="social-icons">
-                <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem;" class="location-specific" data-detroit="Serving Metro Detroit with mobile & in-shop service" data-houston="Serving Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas with mobile service">Serving Metro Detroit with mobile & in-shop service</p>
-        </div>
+        <div class="logo"><img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" loading="lazy"><h2>On-<span>Wheels</span> Detailing</h2></div>
+        <div class="footer-info"><div class="contact-info"><p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p><p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p></div><div class="social-icons"><a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a><a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a></div></div>
+        <div class="footer-bottom"><p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p><p style="margin-top:0.5rem;font-size:0.9rem;" class="location-specific" data-texas="Serving Houston, Harris County, and all surrounding Texas areas with mobile service" data-michigan="📍 Garage Locations: Marysville & New Haven | Mobile Service Throughout Metro Detroit">Serving Houston, Harris County, and all surrounding Texas areas with mobile service</p></div>
     </div>
 </footer>
 
-<script src="js/script.js"></script>
-<script src="js/script.js"></script>
 <script>
-    // Location toggle functionality with cross-page persistence
-    document.addEventListener('DOMContentLoaded', function() {
-        // Mobile Menu Toggle - FIXED
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navMenu = document.getElementById('nav-menu');
-
-        if (mobileMenu && navMenu) {
-            mobileMenu.addEventListener('click', function(e) {
-                e.stopPropagation();
-                navMenu.classList.toggle('show');
-                // Optional: Toggle active class for animation
-                this.classList.toggle('active');
+    (function() {
+        // ---- Helper: update all location-specific content ----
+        function updateLocationContent(location) {
+            const elements = document.querySelectorAll('[data-texas][data-michigan]');
+            elements.forEach(el => {
+                const content = el.getAttribute(`data-${location}`);
+                if (content) el.innerHTML = content;
             });
-        }
-
-        const locationBtn = document.getElementById('locationDropdownBtn');
-        const locationDropdown = document.getElementById('locationDropdown');
-        const locationOptions = document.querySelectorAll('.location-option');
-        const selectedLocationSpan = document.getElementById('selectedLocation');
-
-        // Function to update location content (only needed for index and contact pages)
-        if (typeof updateLocationContent === 'undefined' && document.querySelector('[data-detroit]')) {
-            window.updateLocationContent = function(location) {
-                const locationElements = document.querySelectorAll('[data-detroit][data-houston]');
-                locationElements.forEach(el => {
-                    const content = el.getAttribute(`data-${location}`);
-                    if (content) el.innerHTML = content;
-                });
-                // Update service areas if exists
-                const areasList = document.getElementById('areasList');
-                if (areasList) {
-                    if (location === 'detroit') {
-                        areasList.innerHTML = `<span class="area-tag">Detroit</span><span class="area-tag">Ann Arbor</span><span class="area-tag">Troy</span><span class="area-tag">Royal Oak</span><span class="area-tag">Port Huron</span><span class="area-tag">Chesterfield</span><span class="area-tag">Sterling Heights</span><span class="area-tag">Rochester Hills</span><span class="area-tag">Clinton Township</span><span class="area-tag">Macomb</span>`;
-                    } else {
-                        areasList.innerHTML = `<span class="area-tag">Houston</span><span class="area-tag">Harris County</span><span class="area-tag">Waller County</span><span class="area-tag">Prairie View</span><span class="area-tag">Katy</span><span class="area-tag">Sugar Land</span><span class="area-tag">The Woodlands</span><span class="area-tag">Cypress</span><span class="area-tag">Pearland</span><span class="area-tag">Pasadena</span><span class="area-tag">Baytown</span><span class="area-tag">Conroe</span><span class="area-tag">Magnolia</span><span class="area-tag">Tomball</span><span class="area-tag">Humble</span><span class="area-tag">Kingwood</span>`;
-                    }
-                }
-                // Update section titles if exists
-                const sectionTitle = document.querySelector('.service-areas .section-title h2');
-                const sectionSubtitle = document.querySelector('.service-areas .section-title p');
-                if (sectionTitle && sectionSubtitle) {
-                    if (location === 'detroit') {
-                        sectionTitle.innerHTML = 'Service Areas - Metro Detroit';
-                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout these Michigan areas:';
-                    } else {
-                        sectionTitle.innerHTML = 'Service Areas - Greater Houston & Surrounding Counties';
-                        sectionSubtitle.innerHTML = 'We provide mobile detailing services throughout Houston, Harris County, Waller County, Prairie View, and all surrounding Texas areas:';
-                    }
-                }
-            };
-        }
-
-        if (typeof updateContactAreas === 'undefined' && document.getElementById('contactAreasList')) {
-            window.updateContactAreas = function(location) {
-                const contactAreasList = document.getElementById('contactAreasList');
-                const serviceAreaText = document.querySelector('.service-area .location-specific');
-                if (location === 'detroit') {
-                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Detroit</div><div class="area">Sterling Heights</div><div class="area">Port Huron</div><div class="area">Troy</div><div class="area">Clinton Township</div><div class="area">Macomb</div><div class="area">Ann Arbor</div><div class="area">Royal Oak</div>`;
-                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Michigan areas with our mobile detailing services:";
+            // Update service areas list if exists on this page (index has areasList)
+            const areasList = document.getElementById('areasList');
+            if (areasList) {
+                if (location === 'texas') {
+                    areasList.innerHTML = `<span class="area-tag">Houston</span><span class="area-tag">Harris County</span><span class="area-tag">Katy</span><span class="area-tag">Cypress</span><span class="area-tag">Sugar Land</span><span class="area-tag">The Woodlands</span><span class="area-tag">Pearland</span><span class="area-tag">Pasadena</span><span class="area-tag">Baytown</span><span class="area-tag">Humble</span><span class="area-tag">Kingwood</span><span class="area-tag">Tomball</span><span class="area-tag">Conroe</span><span class="area-tag">Magnolia</span>`;
                 } else {
-                    if (contactAreasList) contactAreasList.innerHTML = `<div class="area">Houston</div><div class="area">Harris County</div><div class="area">Waller County</div><div class="area">Prairie View</div><div class="area">Katy</div><div class="area">Sugar Land</div><div class="area">The Woodlands</div><div class="area">Cypress</div><div class="area">Pearland</div><div class="area">Pasadena</div><div class="area">Baytown</div><div class="area">Conroe</div><div class="area">Magnolia</div><div class="area">Tomball</div><div class="area">Humble</div><div class="area">Kingwood</div>`;
-                    if (serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Texas areas with our mobile detailing services:";
+                    areasList.innerHTML = `<span class="area-tag">Metro Detroit</span><span class="area-tag">Marysville</span><span class="area-tag">New Haven</span><span class="area-tag">Port Huron</span><span class="area-tag">Chesterfield</span><span class="area-tag">Macomb</span><span class="area-tag">Clinton Township</span><span class="area-tag">Sterling Heights</span><span class="area-tag">Troy</span><span class="area-tag">Royal Oak</span><span class="area-tag">Detroit</span><span class="area-tag">Ann Arbor</span><span class="area-tag">St. Clair</span><span class="area-tag">Richmond</span><span class="area-tag">Romeo</span><span class="area-tag">Blue Water Area</span>`;
                 }
-            };
-        }
-
-        // Toggle dropdown
-        if (locationBtn) {
-            locationBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (locationDropdown) locationDropdown.classList.toggle('show');
-            });
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function() {
-            if (locationDropdown) locationDropdown.classList.remove('show');
-        });
-
-        // Handle location selection
-        locationOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const location = this.getAttribute('data-location');
-                const locationName = this.querySelector('span').innerText;
-                locationOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                if (selectedLocationSpan) selectedLocationSpan.innerText = locationName;
-                if (locationDropdown) locationDropdown.classList.remove('show');
-                localStorage.setItem('preferredLocation', location);
-                localStorage.setItem('preferredLocationName', locationName);
-                if (window.updateLocationContent) window.updateLocationContent(location);
-                if (window.updateContactAreas) window.updateContactAreas(location);
-            });
-        });
-
-        // Load saved preference on page load
-        const savedLocation = localStorage.getItem('preferredLocation');
-        const savedLocationName = localStorage.getItem('preferredLocationName');
-        if (savedLocation && savedLocationName && selectedLocationSpan) {
-            const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
-            if (savedOption) {
-                locationOptions.forEach(opt => opt.classList.remove('active'));
-                savedOption.classList.add('active');
-                selectedLocationSpan.innerText = savedLocationName;
-                if (window.updateLocationContent) window.updateLocationContent(savedLocation);
-                if (window.updateContactAreas) window.updateContactAreas(savedLocation);
+            }
+            // Update contact areas if on contact page
+            const contactAreasList = document.getElementById('contactAreasList');
+            const serviceAreaText = document.getElementById('serviceAreaText');
+            if (contactAreasList) {
+                if (location === 'texas') {
+                    contactAreasList.innerHTML = `<div class="area">Houston</div><div class="area">Harris County</div><div class="area">Katy</div><div class="area">Cypress</div><div class="area">Sugar Land</div><div class="area">The Woodlands</div><div class="area">Pearland</div><div class="area">Pasadena</div><div class="area">Baytown</div><div class="area">Humble</div><div class="area">Kingwood</div><div class="area">Tomball</div><div class="area">Conroe</div><div class="area">Magnolia</div>`;
+                    if(serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Texas areas with our mobile detailing services:";
+                } else {
+                    contactAreasList.innerHTML = `<div class="area">Metro Detroit</div><div class="area">Marysville</div><div class="area">New Haven</div><div class="area">Port Huron</div><div class="area">Chesterfield</div><div class="area">Macomb</div><div class="area">Clinton Township</div><div class="area">Sterling Heights</div><div class="area">Troy</div><div class="area">Royal Oak</div><div class="area">Detroit</div><div class="area">Ann Arbor</div><div class="area">St. Clair</div><div class="area">Richmond</div><div class="area">Romeo</div><div class="area">Blue Water Area</div>`;
+                    if(serviceAreaText) serviceAreaText.innerHTML = "We proudly serve the following Michigan areas with our garage and mobile detailing services:";
+                }
+            }
+            // Update service area section titles on index
+            const serviceAreaTitle = document.querySelector('.service-areas .section-title h2');
+            const serviceAreaSub = document.querySelector('.service-areas .section-title p');
+            if (serviceAreaTitle && serviceAreaSub) {
+                if (location === 'texas') {
+                    serviceAreaTitle.innerHTML = 'Service Area - Harris County, Texas';
+                    serviceAreaSub.innerHTML = 'We provide mobile detailing services throughout these Texas areas:';
+                } else {
+                    serviceAreaTitle.innerHTML = 'Service Area - Metro Detroit & Surrounding Areas';
+                    serviceAreaSub.innerHTML = 'We provide garage and mobile detailing services throughout these Michigan areas:';
+                }
             }
         }
-    });
+
+        // ---- DOM ready init ----
+        function initLocationSystem() {
+            const locationBtn = document.getElementById('locationDropdownBtn');
+            const locationDropdown = document.getElementById('locationDropdown');
+            const locationOptions = document.querySelectorAll('.location-option');
+            const selectedLocationSpan = document.getElementById('selectedLocation');
+            if (!locationBtn || !locationDropdown) return;
+
+            // Toggle dropdown
+            locationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                locationDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', function(e) {
+                if (!locationDropdown.contains(e.target) && !locationBtn.contains(e.target)) {
+                    locationDropdown.classList.remove('show');
+                }
+            });
+
+            // Selection handler
+            locationOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const location = this.getAttribute('data-location');
+                    const locationName = this.querySelector('span').innerText;
+                    // Update active class
+                    locationOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    if (selectedLocationSpan) selectedLocationSpan.innerText = locationName;
+                    updateLocationContent(location);
+                    locationDropdown.classList.remove('show');
+                    localStorage.setItem('preferredLocation', location);
+                    localStorage.setItem('preferredLocationName', locationName);
+                    const reminder = document.getElementById('locationReminderBanner');
+                    if (reminder) reminder.style.display = 'none';
+                });
+            });
+
+            // Load saved preference
+            const savedLocation = localStorage.getItem('preferredLocation');
+            const savedName = localStorage.getItem('preferredLocationName');
+            if (savedLocation && savedName) {
+                const savedOption = document.querySelector(`.location-option[data-location="${savedLocation}"]`);
+                if (savedOption) {
+                    locationOptions.forEach(opt => opt.classList.remove('active'));
+                    savedOption.classList.add('active');
+                    if (selectedLocationSpan) selectedLocationSpan.innerText = savedName;
+                    updateLocationContent(savedLocation);
+                }
+            } else {
+                // Default to Texas content (no location selected, but show default texas info)
+                updateLocationContent('texas');
+                if (selectedLocationSpan) selectedLocationSpan.innerText = '▼ Choose Your Location ▼';
+            }
+
+            // Reminder banner logic
+            const reminderBanner = document.getElementById('locationReminderBanner');
+            if (reminderBanner && !localStorage.getItem('preferredLocation')) {
+                reminderBanner.style.display = 'block';
+                if (locationBtn) {
+                    reminderBanner.addEventListener('click', function() { locationBtn.click(); });
+                }
+            } else if (reminderBanner && localStorage.getItem('preferredLocation')) {
+                reminderBanner.style.display = 'none';
+            }
+        }
+
+        // Mobile menu toggle
+        function initMobileMenu() {
+            const menuToggle = document.getElementById('mobile-menu');
+            const nav = document.querySelector('nav');
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('show');
+                    menuToggle.classList.toggle('active');
+                });
+            }
+        }
+
+        // Sticky header shrink
+        function initStickyHeader() {
+            const header = document.querySelector('header');
+            if (!header) return;
+            let scrollTimer;
+            function setHeaderState() {
+                if (window.scrollY > 50 && !header.classList.contains('shrink')) {
+                    header.classList.add('shrink');
+                } else if (window.scrollY <= 50 && header.classList.contains('shrink')) {
+                    header.classList.remove('shrink');
+                }
+            }
+            window.addEventListener('scroll', function() {
+                if (scrollTimer) clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(setHeaderState, 10);
+                requestAnimationFrame(setHeaderState);
+            }, { passive: true });
+            setHeaderState();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                initLocationSystem();
+                initMobileMenu();
+                initStickyHeader();
+            });
+        } else {
+            initLocationSystem();
+            initMobileMenu();
+            initStickyHeader();
+        }
+    })();
 </script>
 </body>
 </html>
