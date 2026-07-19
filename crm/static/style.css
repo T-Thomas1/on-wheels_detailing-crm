@@ -1,0 +1,219 @@
+/* On-Wheels Detailing — Booking Form Styles */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  color: #00d4aa;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* ── Form ── */
+fieldset {
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #111;
+}
+
+legend {
+  color: #00d4aa;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.required label::after {
+  content: " *";
+  color: #ff4757;
+}
+
+label {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+input, select, textarea {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #00d4aa;
+  box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.15);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #555;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+/* ── Services Grid ── */
+.services-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading { color: #666; font-style: italic; }
+
+.service-category h4 {
+  color: #00d4aa;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.service-card {
+  display: block;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.service-card:hover { border-color: #00d4aa; background: #1e1e1e; }
+.service-card input[type="radio"] { display: none; }
+.service-card:has(input:checked) {
+  border-color: #00d4aa;
+  background: #1a2a25;
+  box-shadow: 0 0 12px rgba(0, 212, 170, 0.1);
+}
+
+.card-body strong { display: block; margin-bottom: 2px; }
+.pricing-model {
+  font-size: 0.78rem;
+  color: #888;
+  background: #252525;
+  padding: 1px 7px;
+  border-radius: 3px;
+  margin-left: 8px;
+}
+.price { color: #00d4aa; font-weight: 600; font-size: 0.92rem; }
+.card-desc { font-size: 0.82rem; color: #999; margin-top: 4px; }
+.products, .duration { display: inline-block; font-size: 0.75rem; color: #777; margin-top: 4px; margin-right: 10px; }
+
+/* ── Submit Button ── */
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: #00d4aa;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-bottom: 16px;
+}
+
+.btn-submit:hover { background: #00e6b8; }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+/* ── Result Messages ── */
+#result { padding: 16px; border-radius: 8px; margin-bottom: 16px; text-align: center; }
+.result-success { background: #0d3325; border: 1px solid #00d4aa; color: #00d4aa; }
+.result-error { background: #330d0d; border: 1px solid #ff4757; color: #ff4757; }
+
+/* ── Footer ── */
+.form-footer {
+  text-align: center;
+  color: #555;
+  font-size: 0.82rem;
+  padding-top: 20px;
+  border-top: 1px solid #222;
+}
+
+.form-footer a { color: #00d4aa; text-decoration: none; }
+.form-footer a:hover { text-decoration: underline; }
+
+/* ── Utility ── */
+.hidden { display: none !important; }
+.error { color: #ff4757; }
+
+/* ── Dashboard ── */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-card .stat-num { font-size: 2rem; font-weight: 700; color: #00d4aa; }
+.stat-card .stat-label { font-size: 0.8rem; color: #888; margin-top: 4px; }
+
+.appt-table { width: 100%; border-collapse: collapse; }
+.appt-table th, .appt-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #222;
+  font-size: 0.88rem;
+}
+.appt-table th { color: #00d4aa; font-size: 0.78rem; text-transform: uppercase; }
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.status-Confirmed { background: #0d3325; color: #00d4aa; }
+.status-Completed { background: #1a1a2e; color: #6c8cff; }
+.status-New-Lead { background: #332a0d; color: #ffa502; }
+.status-Cancelled { background: #330d0d; color: #ff4757; }

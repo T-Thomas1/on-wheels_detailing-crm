@@ -27,3 +27,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### CRM ###
+crm/onwheels.db
+crm/onwheels.db-wal
+crm/onwheels.db-shm
+__pycache__/
+*.pyc

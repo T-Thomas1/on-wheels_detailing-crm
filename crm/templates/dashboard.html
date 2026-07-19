@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — On-Wheels Detailing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>On-Wheels Detailing</h1>
+    <p class="subtitle">CRM Dashboard</p>
+  </div>
+
+  <div class="dash-stats">
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.total_customers }}</div>
+      <div class="stat-label">Total Customers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.pending_appointments }}</div>
+      <div class="stat-label">Pending Jobs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.upcoming_week }}</div>
+      <div class="stat-label">Next 7 Days</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">${{ "%.0f"|format(stats.deposits_paid) }}</div>
+      <div class="stat-label">Deposits Collected</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">${{ "%.0f"|format(stats.deposits_pending) }}</div>
+      <div class="stat-label">Deposits Pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{ stats.pending_follow_ups }}</div>
+      <div class="stat-label">Follow-ups Due</div>
+    </div>
+  </div>
+
+  <fieldset>
+    <legend>Upcoming Appointments (Next 14 Days)</legend>
+    {% if appointments %}
+    <table class="appt-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Customer</th>
+          <th>Service</th>
+          <th>Vehicle</th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for a in appointments %}
+        <tr>
+          <td>{{ a.appointment_date }}</td>
+          <td>{{ a.appointment_time or '--' }}</td>
+          <td>{{ a.full_name }}<br><small>{{ a.phone }}</small></td>
+          <td>{{ a.service_name or '--' }}</td>
+          <td>{{ a.vehicle_desc or '--' }}</td>
+          <td>{{ a.job_address or '--' }}</td>
+          <td><span class="status-badge status-{{ a.status|replace(' ','-') }}">{{ a.status }}</span></td>
+          <td>{{ "${:,.0f}".format(a.quoted_price) if a.quoted_price else '--' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color:#666; text-align:center; padding:20px;">No upcoming appointments. Time to hustle!</p>
+    {% endif %}
+  </fieldset>
+
+  <footer class="form-footer">
+    <p>On-Wheels Detailing CRM · <a href="/">Booking Form</a> · <a href="/api/dashboard">API</a></p>
+  </footer>
+</div>
+
+<script>
+// Auto-refresh every 60 seconds
+setTimeout(() => location.reload(), 60000);
+</script>
+</body>
+</html>
