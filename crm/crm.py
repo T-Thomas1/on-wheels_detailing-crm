@@ -10,8 +10,9 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
-# Default Stripe deposit link — set once, used in all booking confirmations
-DEFAULT_DEPOSIT_LINK = "https://buy.stripe.com/eVq4gBcqY6kvbhBdqT9ws00"
+# Default Stripe deposit links
+DEFAULT_DEPOSIT_LINK = "https://buy.stripe.com/eVq4gBcqY6kvbhBdqT9ws00"      # $50 standard
+PREMIUM_DEPOSIT_LINK = "https://buy.stripe.com/dRm6oJOIgfV5adx5Yr9ws01"      # $100 premium
 
 
 def get_db() -> sqlite3.Connection:
@@ -113,6 +114,18 @@ def init_db():
     """)
     conn.commit()
     return conn
+
+
+def get_deposit_link(service_id=None):
+    """Return the right deposit link based on service category."""
+    if not service_id:
+        return DEFAULT_DEPOSIT_LINK
+    conn = get_db()
+    row = conn.execute("SELECT category FROM services WHERE id=?", (service_id,)).fetchone()
+    conn.close()
+    if row and row['category'] == 'Paint Correction & Ceramic':
+        return PREMIUM_DEPOSIT_LINK
+    return DEFAULT_DEPOSIT_LINK
 
 
 # ── Customer Operations ──────────────────────────────────────────
