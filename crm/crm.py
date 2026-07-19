@@ -184,19 +184,6 @@ def seed_services():
         return  # Already seeded
 
     services = [
-        # Marine Gel-coat
-        ("Gel-coat Oxidation Removal", "Marine Gel-coat", "Gel-coat Oxidation Removal",
-         "Remove heavy oxidation and restore shine to gel-coat surfaces. Per-foot pricing available.",
-         None, "Per Foot", "Marine-grade compounds, Carpro CQ.UK 3.0", None),
-        ("Marine Polish & Protect", "Marine Gel-coat", "Polish & Protect",
-         "One-step polish with premium sealant protection for boats and watercraft.",
-         None, "Per Foot", "Marine polish, sealant", None),
-        ("Marine Ceramic Coating", "Marine Gel-coat", "Ceramic Coating",
-         "Carpro CQ.UK 3.0 ceramic coating — 2+ years of UV and water protection.",
-         None, "Per Foot", "Carpro CQ.UK 3.0", None),
-        ("Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
-         "Thorough hand wash with premium protectant. Keeps your boat showroom-ready.",
-         None, "Per Foot", "pH-neutral soap, marine sealant", 2),
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
          "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
