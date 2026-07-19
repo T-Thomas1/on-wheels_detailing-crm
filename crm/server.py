@@ -211,6 +211,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                 add_vehicle(
                     customer_id=customer_id,
                     vehicle_type=data.get('vehicle_type'),
+                    vehicle_size=data.get('vehicle_size') or None,
                     make=data.get('vehicle_make') or None,
                     model=data.get('vehicle_model') or None,
                     year=data.get('vehicle_year') or None,

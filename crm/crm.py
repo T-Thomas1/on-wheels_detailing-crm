@@ -32,7 +32,7 @@ def init_db():
             city TEXT,
             state TEXT,
             zip TEXT,
-            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit')),
+            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit','Shop - Marysville, MI','Shop - New Haven, MI')),
             source TEXT CHECK(source IN ('Website','Facebook','Instagram','Referral','Repeat','Other')),
             notes TEXT,
             created_at TEXT DEFAULT (datetime('now'))
@@ -41,7 +41,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS vehicles (
             id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
             customer_id TEXT NOT NULL REFERENCES customers(id),
-            vehicle_type TEXT CHECK(vehicle_type IN ('Car','Truck','SUV','Van','Boat','RV','Motorcycle','Other')),
+            vehicle_type TEXT CHECK(vehicle_type IN ('Car','Truck','SUV','Van','RV','Motorcycle','Other')),
+            vehicle_size TEXT CHECK(vehicle_size IN ('Sedan','SUV/Hatchback','Large SUV/Truck','Other')),
             make TEXT,
             model TEXT,
             year INTEGER,
@@ -155,13 +156,14 @@ def get_customers(limit=50):
 
 # ── Vehicle Operations ───────────────────────────────────────────
 
-def add_vehicle(customer_id, vehicle_type, make=None, model=None,
+def add_vehicle(customer_id, vehicle_type, vehicle_size=None,
+                make=None, model=None,
                 year=None, color=None, license_plate=None, notes=None):
     conn = get_db()
     conn.execute("""
-        INSERT INTO vehicles (customer_id, vehicle_type, make, model, year, color, license_plate, notes)
-        VALUES (?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_type, make, model, year, color, license_plate, notes))
+        INSERT INTO vehicles (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes)
+        VALUES (?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes))
     conn.commit()
     conn.close()
 
@@ -187,26 +189,33 @@ def seed_services():
     services = [
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
-         "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
+         "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.\n"
+         "Sedan $150 | SUV/Hatchback $180 | Large SUV/Truck $210",
          150, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl", 2),
         ("Premium Interior Restoration", "Interior Detailing", "Premium Interior Restoration",
-         "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner — the works.",
-         250, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4),
+         "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner.\n"
+         "Sedan $200 | SUV/Hatchback $240 | Large SUV/Truck $280",
+         200, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4),
         ("Steam & Hot Water Extraction", "Interior Detailing", "Steam & Hot Water Extraction",
-         "Sanitizing steam treatment + hot water extraction for carpets and fabric seats.",
+         "Sanitizing steam treatment + hot water extraction for carpets and fabric seats.\n"
+         "Included with Premium Interior Restoration.",
          180, "Flat Rate", "Steam cleaner, hot water extractor", 3),
         # Paint Correction
+        ("Polish & Protect", "Paint Correction & Ceramic", "Polish & Protect",
+         "Single-stage polish with premium paint sealant. Perfect maintenance detail.\n"
+         "Sedan $375 | SUV/Hatchback $425 | Large SUV/Truck $475",
+         375, "Flat Rate", "Polish, sealant, dual-action polisher", 3),
         ("Two-Step Paint Correction", "Paint Correction & Ceramic", "Two-Step Paint Correction",
-         "Compound + polish to remove swirls, light scratches, and oxidation. Restores depth and clarity.",
-         None, "Quote Only", "Compounds, polishes, dual-action polisher", 6),
+         "Compound + polish to remove swirls, scratches, and oxidation. Restores depth and clarity.\n"
+         "Sedan $525 | SUV/Hatchback $625 | Large SUV/Truck $725",
+         525, "Quote Only", "Compounds, polishes, dual-action polisher", 6),
         ("Ceramic Coating (Auto)", "Paint Correction & Ceramic", "Ceramic Coating",
-         "Carpro CQ.UK 3.0 ceramic coating for cars/trucks. 2+ years of hydrophobic protection.",
-         None, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8),
-        ("Polish & Protect (Auto)", "Paint Correction & Ceramic", "Polish & Protect",
-         "Single-stage polish with premium paint sealant. Perfect maintenance detail.",
-         200, "Flat Rate", "Polish, sealant, dual-action polisher", 3),
+         "Carpro CQ.UK 3.0 ceramic coating — 2+ years of hydrophobic protection.\n"
+         "Sedan $1,500 | SUV/Hatchback $1,750 | Large SUV/Truck $2,000",
+         1500, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8),
         ("Signature Detail Package", "Paint Correction & Ceramic", "Signature Detail Package",
-         "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.",
+         "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.\n"
+         "Sedan $350 | SUV/Hatchback $400 | Large SUV/Truck $450",
          350, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5),
     ]
     conn = get_db()
