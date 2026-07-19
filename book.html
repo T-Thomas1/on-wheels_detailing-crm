@@ -6,21 +6,63 @@
   <title>Book a Detail — On-Wheels Detailing</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e0e0e0;line-height:1.6;padding:20px}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;padding:20px}
     .container{max-width:720px;margin:0 auto}
     .header{text-align:center;margin-bottom:32px}
-    .header h1{font-size:2rem;color:#00d4aa;margin-bottom:4px}
-    .subtitle{color:#888;font-size:.95rem}
-    fieldset{border:1px solid #222;border-radius:10px;padding:20px;margin-bottom:20px;background:#111}
-    legend{color:#00d4aa;font-weight:600;font-size:1.05rem;padding:0 8px}
+    .header h1{font-size:2rem;color:#00b894;margin-bottom:4px}
+    .subtitle{font-size:.95rem}
+    fieldset{border-radius:10px;padding:20px;margin-bottom:20px}
+    legend{color:#00b894;font-weight:600;font-size:1.05rem;padding:0 8px}
     .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
     .form-group{display:flex;flex-direction:column}
-    .form-group.required label::after{content:" *";color:#ff4757}
-    label{font-size:.85rem;color:#aaa;margin-bottom:4px;font-weight:500}
-    input,select,textarea{background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#e0e0e0;font-size:.95rem;font-family:inherit;transition:border-color .2s}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:#00d4aa;box-shadow:0 0 0 2px rgba(0,212,170,.15)}
-    input::placeholder,textarea::placeholder{color:#555}
+    .form-group.required label::after{content:" *";color:#d63031}
+    label{font-size:.85rem;margin-bottom:4px;font-weight:500}
+    input,select,textarea{border-radius:6px;padding:10px 12px;font-size:.95rem;font-family:inherit;transition:border-color .2s}
+    input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 2px rgba(0,184,148,.2)}
     textarea{resize:vertical;min-height:80px}
+    /* dark theme (default) */
+    body{background:#0a0a0a;color:#e0e0e0}
+    .subtitle{color:#888}
+    fieldset{border:1px solid #222;background:#111}
+    input,select,textarea{background:#1a1a1a;border:1px solid #333;color:#e0e0e0}
+    input:focus,select:focus,textarea:focus{border-color:#00b894}
+    input::placeholder,textarea::placeholder{color:#555}
+    .service-card{background:#1a1a1a;border:1px solid #2a2a2a}
+    .service-card:hover{background:#1e1e1e;border-color:#00b894}
+    .service-card:has(input:checked){background:#1a2a25;border-color:#00b894}
+    .card-desc{color:#999}
+    .btn-submit{background:#00b894;color:#0a0a0a}
+    .btn-submit:hover{background:#00e6a8}
+    .btn-submit:disabled{background:#333;color:#666}
+    .result-success{background:#0d3325;border:1px solid #00b894;color:#00b894}
+    .result-error{background:#330d0d;border:1px solid #d63031;color:#d63031}
+    .offline-banner{background:#332a0d;border:1px solid #fdcb6e;color:#fdcb6e}
+    .form-footer{color:#555;border-top:1px solid #222}
+    .form-footer a{color:#00b894}
+    .service-category h4{color:#00b894}
+    .pricing-model{background:#252525;color:#888}
+    .price{color:#00b894}
+    .products,.duration{color:#777}
+    /* light theme */
+    @media(prefers-color-scheme:light){
+      body{background:#f5f6fa;color:#2d3436}
+      .subtitle{color:#636e72}
+      fieldset{border:1px solid #dfe6e9;background:#fff}
+      input,select,textarea{background:#fff;border:1px solid #dfe6e9;color:#2d3436}
+      input:focus,select:focus,textarea:focus{border-color:#00b894}
+      input::placeholder,textarea::placeholder{color:#b2bec3}
+      .service-card{background:#fff;border:1px solid #dfe6e9}
+      .service-card:hover{background:#f0fff4;border-color:#00b894}
+      .service-card:has(input:checked){background:#e6fff0;border-color:#00b894}
+      .card-desc{color:#636e72}
+      .btn-submit:disabled{background:#dfe6e9;color:#b2bec3}
+      .result-success{background:#e6fff0;border:1px solid #00b894;color:#00855a}
+      .result-error{background:#ffe6e6;border:1px solid #d63031;color:#b71c1c}
+      .offline-banner{background:#fff9e6;border:1px solid #e17055;color:#c0392b}
+      .form-footer{color:#b2bec3;border-top:1px solid #dfe6e9}
+      .pricing-model{background:#dfe6e9;color:#636e72}
+      .products,.duration{color:#b2bec3}
+    }
     .services-grid{display:flex;flex-direction:column;gap:14px}
     .service-category h4{color:#00d4aa;font-size:.9rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
     .service-card{display:block;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:14px;margin-bottom:6px;cursor:pointer;transition:border-color .2s,background .2s}

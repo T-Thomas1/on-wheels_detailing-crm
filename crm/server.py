@@ -38,6 +38,7 @@ def json_response(handler, data, status=200):
     body = json.dumps(data, default=str).encode('utf-8')
     handler.send_response(status)
     handler.send_header('Content-Type', 'application/json; charset=utf-8')
+    handler.send_header('Access-Control-Allow-Origin', '*')
     handler.send_header('Content-Length', len(body))
     handler.end_headers()
     handler.wfile.write(body)
@@ -116,6 +117,16 @@ class CRMHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         """Suppress default logging noise."""
         pass
+
+    def _cors_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._cors_headers()
+        self.end_headers()
 
     def do_GET(self):
         path = urlparse(self.path).path
@@ -400,6 +411,7 @@ class CRMHandler(BaseHTTPRequestHandler):
         body = html.encode('utf-8')
         self.send_response(200)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self._cors_headers()
         self.send_header('Content-Length', len(body))
         self.end_headers()
         self.wfile.write(body)
