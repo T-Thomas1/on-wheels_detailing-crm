@@ -19,7 +19,8 @@ from crm import (
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
     add_payment, get_appointment_payments, get_deposit_balance,
     create_follow_up, get_pending_follow_ups, mark_follow_up,
-    get_dashboard
+    get_dashboard,
+    DEFAULT_DEPOSIT_LINK,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -231,6 +232,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                 job_address=data.get('job_address') or None,
                 special_requests=data.get('special_requests') or None,
                 status='New Lead',
+                payment_link=DEFAULT_DEPOSIT_LINK,
             )
 
             today = datetime.now().strftime('%Y-%m-%d')

@@ -10,6 +10,9 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
+# Default Stripe deposit link — set once, used in all booking confirmations
+DEFAULT_DEPOSIT_LINK = "https://buy.stripe.com/eVq4gBcqY6kvbhBdqT9ws00"
+
 
 def get_db() -> sqlite3.Connection:
     conn = sqlite3.connect(str(DB_PATH))
