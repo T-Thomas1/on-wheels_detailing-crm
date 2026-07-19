@@ -228,8 +228,8 @@ def seed_services():
          1500, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8),
         ("Signature Detail Package", "Paint Correction & Ceramic", "Signature Detail Package",
          "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.\n"
-         "Sedan $350 | SUV/Hatchback $400 | Large SUV/Truck $450",
-         350, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5),
+         "Sedan $1,150 | SUV/Hatchback $1,350 | Large SUV/Truck $1,600",
+         1150, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5),
     ]
     conn = get_db()
     conn.executemany("""
