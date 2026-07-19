@@ -73,6 +73,7 @@ def init_db():
             status TEXT DEFAULT 'New Lead'
                 CHECK(status IN ('New Lead','Quote Sent','Awaiting Deposit','Confirmed','In Progress','Completed','Cancelled','No Show')),
             quoted_price REAL,
+            payment_link TEXT,
             special_requests TEXT,
             created_at TEXT DEFAULT (datetime('now'))
         );
@@ -233,12 +234,12 @@ def get_services(category=None):
 
 def create_appointment(customer_id, appointment_date, appointment_time=None,
                        vehicle_id=None, service_id=None, job_address=None,
-                       special_requests=None, status='New Lead'):
+                       special_requests=None, status='New Lead', payment_link=None):
     conn = get_db()
     conn.execute("""
-        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests)
-        VALUES (?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests))
+        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link)
+        VALUES (?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link))
     conn.commit()
     appt_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     row = conn.execute("SELECT id FROM appointments WHERE rowid=?", (appt_id,)).fetchone()
