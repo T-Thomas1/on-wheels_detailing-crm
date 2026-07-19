@@ -126,7 +126,7 @@ class CRMHandler(BaseHTTPRequestHandler):
         elif path == '/dashboard':
             stats = get_dashboard()
             appointments = get_upcoming_appointments(days=14)
-            html = render_template('dashboard.html', stats=stats, appointments=appointments)
+            html = self._build_dashboard(stats, appointments)
             self.serve_html_string(html)
         elif path == '/api/services':
             services = get_services()
@@ -321,6 +321,71 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return
 
         self.send_error(404)
+
+    def _build_dashboard(self, stats, appointments):
+        """Build dashboard HTML directly — no template engine needed."""
+        parts = []
+        parts.append('''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — On-Wheels Detailing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>On-Wheels Detailing</h1>
+    <p class="subtitle">CRM Dashboard</p>
+  </div>
+  <div class="dash-stats">
+''')
+        cards = [
+            (stats['total_customers'], 'Total Customers'),
+            (stats['pending_appointments'], 'Pending Jobs'),
+            (stats['upcoming_week'], 'Next 7 Days'),
+            (f"${stats['deposits_paid']:,.0f}", 'Deposits Collected'),
+            (f"${stats['deposits_pending']:,.0f}", 'Deposits Pending'),
+            (stats['pending_follow_ups'], 'Follow-ups Due'),
+        ]
+        for num, label in cards:
+            parts.append(f'    <div class="stat-card"><div class="stat-num">{num}</div><div class="stat-label">{label}</div></div>\n')
+
+        parts.append('  </div>\n  <fieldset>\n    <legend>Upcoming Appointments (Next 14 Days)</legend>\n')
+
+        if appointments:
+            parts.append('''    <table class="appt-table"><thead><tr>
+      <th>Date</th><th>Time</th><th>Customer</th><th>Service</th>
+      <th>Vehicle</th><th>Address</th><th>Status</th><th>Price</th>
+    </tr></thead><tbody>
+''')
+            for a in appointments:
+                status = a['status'].replace(' ', '-')
+                price = f"${a['quoted_price']:,.0f}" if a['quoted_price'] else '--'
+                time = a.get('appointment_time') or '--'
+                svc = a.get('service_name') or '--'
+                veh = a.get('vehicle_desc') or '--'
+                addr = a.get('job_address') or '--'
+                parts.append(
+                    f'      <tr><td>{a["appointment_date"]}</td><td>{time}</td>'
+                    f'<td>{a["full_name"]}<br><small>{a["phone"]}</small></td>'
+                    f'<td>{svc}</td><td>{veh}</td><td>{addr}</td>'
+                    f'<td><span class="status-badge status-{status}">{a["status"]}</span></td>'
+                    f'<td>{price}</td></tr>\n'
+                )
+            parts.append('    </tbody></table>\n')
+        else:
+            parts.append('    <p style="color:#666;text-align:center;padding:20px;">No upcoming appointments. Time to hustle!</p>\n')
+
+        parts.append('''  </fieldset>
+  <footer class="form-footer">
+    <p>On-Wheels Detailing CRM · <a href="/book">Booking Form</a> · <a href="/api/dashboard">API</a></p>
+  </footer>
+</div>
+<script>setTimeout(()=>location.reload(),60000);</script>
+</body></html>''')
+        return ''.join(parts)
 
     def serve_html(self, filename):
         """Serve an HTML template file."""
