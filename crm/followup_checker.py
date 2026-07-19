@@ -59,22 +59,22 @@ def generate_message(follow_up):
 
     templates = {
         'Booking Confirmation': [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I'll reach out shortly to confirm the details and get you locked in. Talk soon!",
-            f"{name}! Your {service} request came through. TaSain will text you with a quote and available times — usually within a couple hours. Appreciate you reaching out!",
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your {service} request. I've got you penciled in. Here's your payment link to lock it in: [STRIPE_LINK]. Once paid, you're confirmed and I'll send a reminder the day before. — TaSain",
+            f"{name}! Your {service} is looking good for the schedule. To confirm, pay here: [STRIPE_LINK]. I'll reach out the day before with your exact arrival time. Talk soon! — TaSain",
         ],
         '24hr Reminder': [
             f"  Tomorrow's the day, {name}! Quick reminder: I'll be out for your {service} tomorrow. Make sure the vehicle's accessible and we're all set. Any changes, just text back. — TaSain, On-Wheels Detailing",
             f"Hey {name}, just confirming we're on for tomorrow — your {service}. I'll text you when I'm heading your way. Excited to get your ride looking right! — TaSain",
         ],
         'Post-Service Check-in': [
-            f"Hey {name}! Been a couple days since your {service} — how's everything looking? If anything needs a touch-up, don't hesitate to let me know. I stand behind my work. — TaSain, On-Wheels",
-            f"Checking in, {name}! How's the {service} holding up? If you're happy, I'd love a review on Google or Facebook — it really helps a small operation like mine. Thanks again for your business! — TaSain",
+            f"Hey {name}! Thanks for trusting me with your vehicle today. Your Zoho invoice is on the way. If anything needs a touch-up, don't hesitate to reach out — I stand behind my work. — TaSain, On-Wheels",
+            f"Appreciate your business, {name}! How's everything looking after the {service}? If you're happy, a Google or Facebook review means the world to a small operation like mine. Thanks! — TaSain",
         ],
         'Re-engagement': [
-            f"Hey {name}! Been a while since your last detail with On-Wheels. If it's time for a refresh, I'm booking for the coming weeks. Text back and let's set something up! — TaSain",
+            f"Hey {name}! Been a while since your last {service} with On-Wheels. If it's time for a refresh, I'm booking for the coming weeks. Text back and let's set something up! — TaSain",
         ],
         'Review Request': [
-            f"Hey {name}! Hope you're still loving the {service} results. If you've got a minute, a quick Google or Facebook review would mean the world to this small business. Thanks a ton! — TaSain, On-Wheels Detailing",
+            f"Hey {name}! Hope you're still loving the {service} results. If you've got a minute, a quick Google or Facebook review would mean the world. Thanks a ton! — TaSain, On-Wheels Detailing",
         ],
         'Thank You': [
             f"Thanks again for choosing On-Wheels Detailing, {name}! It was a pleasure working on your vehicle. Keep me in mind for next time — I'll take care of you. — TaSain",

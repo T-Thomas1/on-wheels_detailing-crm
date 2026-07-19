@@ -147,8 +147,8 @@ var API = (function(){
   if (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1' || loc.port === '5050') {
     return '';
   }
-  // Production: point to the CRM server (update this when deployed)
-  return 'https://crm.onwheelsdetailing.com';  // TODO: replace with real CRM host
+  // Production: CRM server on DigitalOcean droplet
+  return 'https://api.onwheelsdetailing.com';
 })();
 
 document.getElementById('preferred_date').min = new Date().toISOString().split('T')[0];
