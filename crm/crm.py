@@ -210,12 +210,9 @@ def seed_services():
          150, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl", 2),
         ("Premium Interior Restoration", "Interior Detailing", "Premium Interior Restoration",
          "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner.\n"
+         "Includes steam & hot water extraction.\n"
          "Sedan $200 | SUV/Hatchback $240 | Large SUV/Truck $280",
          200, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4),
-        ("Steam & Hot Water Extraction", "Interior Detailing", "Steam & Hot Water Extraction",
-         "Sanitizing steam treatment + hot water extraction for carpets and fabric seats.\n"
-         "Included with Premium Interior Restoration.",
-         180, "Flat Rate", "Steam cleaner, hot water extractor", 3),
         # Paint Correction
         ("Polish & Protect", "Paint Correction & Ceramic", "Polish & Protect",
          "Single-stage polish with premium paint sealant. Perfect maintenance detail.\n"
