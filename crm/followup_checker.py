@@ -161,6 +161,7 @@ def main():
         print(f"  FB: facebook.com/share/16tKSTuW4C/")
 
     print(f"\n{'=' * 60}")
+    print(f"  Full Dashboard: https://api.onwheelsdetailing.com/dashboard")
     print(f"  End of briefing. Go make some vehicles shine.\n")
 
 
