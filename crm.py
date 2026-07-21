@@ -130,14 +130,14 @@ def init_db():
 
     # Update deposit amounts for existing services (safe to re-run)
     deposit_updates = [
-        (50, 'Polish & Protect (Auto)'),
+        (50, "Polish & Protect%"),
         (100, 'Two-Step Paint Correction'),
         (100, 'Ceramic Coating (Auto)'),
         (100, 'Signature Detail Package'),
     ]
     for amount, name in deposit_updates:
         conn.execute(
-            "UPDATE services SET deposit_amount=? WHERE name=? AND deposit_amount IS NULL",
+            "UPDATE services SET deposit_amount=? WHERE name LIKE ? AND deposit_amount IS NULL",
             (amount, name))
     conn.commit()
 
