@@ -137,7 +137,8 @@ def main():
         print(f"  {'─' * 54}")
         for a in new_leads:
             print(f"    {a['full_name']} | {a['phone']} | {a.get('service_name','Unspecified')}")
-            print(f"    From: {a.get('city','')} {a.get('state','')} | {a.get('vehicle_desc','')}")
+            loc = a.get('customer_location') or f"{a.get('city','')} {a.get('state','')}".strip()
+            print(f"    Area: {loc} | {a.get('vehicle_desc','')}")
 
     # Pending follow-ups that need action NOW
     follow_ups = check_pending_follow_ups()

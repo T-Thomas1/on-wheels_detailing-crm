@@ -310,7 +310,7 @@ def create_appointment(customer_id, appointment_date, appointment_time=None,
 def get_appointments(status=None, date_from=None, date_to=None, limit=50):
     conn = get_db()
     query = """
-        SELECT a.*, c.full_name, c.phone, c.email,
+        SELECT a.*, c.full_name, c.phone, c.email, c.location as customer_location,
                v.make||' '||v.model as vehicle_desc,
                s.name as service_name, s.category as service_category
         FROM appointments a
