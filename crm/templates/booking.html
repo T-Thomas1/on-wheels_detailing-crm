@@ -9,6 +9,9 @@
 <body>
 
 <div class="container">
+
+  <!-- ═══ BOOKING FORM ═══ -->
+  <div id="booking-page">
   <div class="header">
     <h1>Book Your Detail</h1>
     <p class="subtitle">Fill this out and TaSain will text you back fast. No apps, no accounts — just good work.</p>
@@ -141,6 +144,17 @@
       </div>
     </fieldset>
 
+    <!-- ── Deposit Agreement (shown only for services requiring deposit) ── -->
+    <fieldset id="deposit-section" style="display:none;">
+      <legend>  Deposit Agreement</legend>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="deposit_agreed" name="deposit_agreed" value="1">
+          <span>I understand a <strong>$50–$100 deposit</strong> is required to secure this booking. Deposits are <strong>nonrefundable</strong> for cancellations made within 48 hours of the appointment.</span>
+        </label>
+      </div>
+    </fieldset>
+
     <!-- ── Submit ── -->
     <button type="submit" class="btn-submit" id="submit-btn">
       <span id="btn-text">Request Your Quote</span>
@@ -152,8 +166,20 @@
 
   <footer class="form-footer">
     <p>  Your info stays private. We'll never spam or sell your data.</p>
-    <p>Questions? Call TaSain: <a href="tel:+15868730656">(586) 873-0656</a></p>
+    <p>Questions? Call TaSain: <a href="tel:+158****0656">(586) 873-0656</a></p>
   </footer>
+  </div><!-- /booking-page -->
+
+  <!-- ═══ CONFIRMATION SCREEN ═══ -->
+  <div id="confirmation-page" class="hidden">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">&#10003;</div>
+      <h2>Booking Received!</h2>
+      <p id="confirmation-message"></p>
+      <p class="confirmation-sub">TaSain will text you shortly to confirm your appointment. You're in good hands.</p>
+      <button type="button" class="btn-submit" id="book-another-btn">Book Another Detail</button>
+    </div>
+  </div><!-- /confirmation-page -->
 </div>
 
 <script>
@@ -185,7 +211,7 @@ async function loadServices() {
           : `<span class="price">Quote Only</span>`;
 
         card.innerHTML = `
-          <input type="radio" name="service_id" value="${svc.id}">
+          <input type="radio" name="service_id" value="${svc.id}" data-deposit="${svc.deposit_amount || ''}">
           <div class="card-body">
             <strong>${svc.name}</strong>
             <span class="pricing-model">${svc.pricing_model}</span>
@@ -193,6 +219,7 @@ async function loadServices() {
             <p class="card-desc">${svc.description || ''}</p>
             ${svc.products_used ? `<small class="products">  Uses: ${svc.products_used}</small>` : ''}
             ${svc.duration_hours ? `<small class="duration">⏱ ~${svc.duration_hours} hrs</small>` : ''}
+            ${svc.deposit_amount ? `<small class="deposit-notice">  $${svc.deposit_amount} deposit required</small>` : ''}
           </div>
         `;
         catDiv.appendChild(card);
@@ -220,8 +247,6 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const formData = new FormData(e.target);
   const payload = Object.fromEntries(formData.entries());
-  // Map snake_case field names
-  payload.name = payload.name;
   payload.source = 'Website';
 
   try {
@@ -232,12 +257,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     });
     const data = await res.json();
 
-    resultDiv.classList.remove('hidden');
     if (res.ok) {
-      resultDiv.className = 'result-success';
-      resultDiv.innerHTML = `<p><strong>${data.message}</strong></p>`;
+      // Show confirmation screen
+      document.getElementById('confirmation-message').textContent = data.message;
+      document.getElementById('booking-page').classList.add('hidden');
+      document.getElementById('confirmation-page').classList.remove('hidden');
       e.target.reset();
+      // Reset deposit section
+      document.getElementById('deposit-section').style.display = 'none';
+      document.getElementById('deposit_agreed').required = false;
     } else {
+      resultDiv.classList.remove('hidden');
       resultDiv.className = 'result-error';
       resultDiv.innerHTML = `<p>${data.error || 'Something went wrong. Call us at (586) 873-0656.'}</p>`;
     }
@@ -252,7 +282,32 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   }
 });
 
+// ── "Book Another" button returns to form ──
+document.getElementById('book-another-btn').addEventListener('click', () => {
+  document.getElementById('confirmation-page').classList.add('hidden');
+  document.getElementById('booking-page').classList.remove('hidden');
+  document.getElementById('result').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 loadServices();
+
+// ── Toggle deposit section when service is selected ──
+document.addEventListener('change', (e) => {
+  if (e.target.name === 'service_id') {
+    const deposit = e.target.dataset.deposit;
+    const section = document.getElementById('deposit-section');
+    const checkbox = document.getElementById('deposit_agreed');
+    if (deposit) {
+      section.style.display = '';
+      checkbox.required = true;
+    } else {
+      section.style.display = 'none';
+      checkbox.required = false;
+      checkbox.checked = false;
+    }
+  }
+});
 </script>
 </body>
 </html>

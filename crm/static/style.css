@@ -166,7 +166,69 @@ textarea { resize: vertical; min-height: 80px; }
 .result-success { background: #0d3325; border: 1px solid #00d4aa; color: #00d4aa; }
 .result-error { background: #330d0d; border: 1px solid #ff4757; color: #ff4757; }
 
-/* ── Footer ── */
+/* ── Confirmation Screen ── */
+.confirmation-card {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.confirmation-icon {
+  font-size: 3.5rem;
+  color: #00d4aa;
+  margin-bottom: 16px;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  background: #0d3325;
+  border: 3px solid #00d4aa;
+}
+
+.confirmation-card h2 {
+  font-size: 1.6rem;
+  color: #e0e0e0;
+  margin-bottom: 12px;
+}
+
+.confirmation-card p {
+  color: #999;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.confirmation-sub {
+  color: #666 !important;
+  font-size: 0.9rem !important;
+  margin-bottom: 28px !important;
+}
+
+/* ── Checkbox Label ── */
+.checkbox-label {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  color: #ccc !important;
+  font-size: 0.88rem !important;
+  line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #00d4aa;
+}
+
+/* ── Deposit notice on service cards ── */
+.deposit-notice {
+  display: inline-block;
+  color: #ffa502;
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
 .form-footer {
   text-align: center;
   color: #555;

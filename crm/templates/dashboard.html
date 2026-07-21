@@ -54,6 +54,7 @@
           <th>Address</th>
           <th>Status</th>
           <th>Price</th>
+          <th>Deposit</th>
         </tr>
       </thead>
       <tbody>
@@ -67,6 +68,7 @@
           <td>{{ a.job_address or '--' }}</td>
           <td><span class="status-badge status-{{ a.status|replace(' ','-') }}">{{ a.status }}</span></td>
           <td>{{ "${:,.0f}".format(a.quoted_price) if a.quoted_price else '--' }}</td>
+          <td>{{ a.deposit_status }}</td>
         </tr>
       {% endfor %}
       </tbody>

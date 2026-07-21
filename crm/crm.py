@@ -10,9 +10,9 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
-# Default Stripe deposit links
-DEFAULT_DEPOSIT_LINK = "https://buy.stripe.com/eVq4gBcqY6kvbhBdqT9ws00"      # $50 standard
-PREMIUM_DEPOSIT_LINK = "https://buy.stripe.com/dRm6oJOIgfV5adx5Yr9ws01"      # $100 premium
+# Stripe payment links
+STRIPE_STANDARD = "https://buy.stripe.com/eVq4gBcqY6kvbhBdqT9ws00"   # $50 deposit
+STRIPE_PREMIUM  = "https://buy.stripe.com/dRm6oJOIgfV5adx5Yr9ws01"   # $100 deposit
 
 
 def get_db() -> sqlite3.Connection:
@@ -36,7 +36,7 @@ def init_db():
             city TEXT,
             state TEXT,
             zip TEXT,
-            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit','Shop - Marysville, MI','Shop - New Haven, MI')),
+            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit')),
             source TEXT CHECK(source IN ('Website','Facebook','Instagram','Referral','Repeat','Other')),
             notes TEXT,
             created_at TEXT DEFAULT (datetime('now'))
@@ -45,8 +45,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS vehicles (
             id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
             customer_id TEXT NOT NULL REFERENCES customers(id),
-            vehicle_type TEXT CHECK(vehicle_type IN ('Car','Truck','SUV','Van','RV','Motorcycle','Other')),
-            vehicle_size TEXT CHECK(vehicle_size IN ('Sedan','SUV/Hatchback','Large SUV/Truck','Other')),
+            vehicle_type TEXT CHECK(vehicle_type IN ('Car','Truck','SUV','Van','Boat','RV','Motorcycle','Other')),
             make TEXT,
             model TEXT,
             year INTEGER,
@@ -64,7 +63,8 @@ def init_db():
             starting_price REAL,
             pricing_model TEXT CHECK(pricing_model IN ('Flat Rate','Per Foot','Hourly','Quote Only')),
             products_used TEXT,
-            duration_hours REAL
+            duration_hours REAL,
+            deposit_amount REAL
         );
 
         CREATE TABLE IF NOT EXISTS appointments (
@@ -78,8 +78,9 @@ def init_db():
             status TEXT DEFAULT 'New Lead'
                 CHECK(status IN ('New Lead','Quote Sent','Awaiting Deposit','Confirmed','In Progress','Completed','Cancelled','No Show')),
             quoted_price REAL,
-            payment_link TEXT,
             special_requests TEXT,
+            payment_link TEXT,
+            deposit_agreed_at TEXT,
             created_at TEXT DEFAULT (datetime('now'))
         );
 
@@ -113,19 +114,34 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_followups_status ON follow_ups(status);
     """)
     conn.commit()
+
+    # ── Schema migrations (safe for existing DBs) ──
+    migrations = [
+        "ALTER TABLE services ADD COLUMN deposit_amount REAL",
+        "ALTER TABLE appointments ADD COLUMN payment_link TEXT",
+        "ALTER TABLE appointments ADD COLUMN deposit_agreed_at TEXT",
+    ]
+    for m in migrations:
+        try:
+            conn.execute(m)
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
+    # Update deposit amounts for existing services (safe to re-run)
+    deposit_updates = [
+        (50, 'Polish & Protect (Auto)'),
+        (100, 'Two-Step Paint Correction'),
+        (100, 'Ceramic Coating (Auto)'),
+        (100, 'Signature Detail Package'),
+    ]
+    for amount, name in deposit_updates:
+        conn.execute(
+            "UPDATE services SET deposit_amount=? WHERE name=? AND deposit_amount IS NULL",
+            (amount, name))
+    conn.commit()
+
     return conn
-
-
-def get_deposit_link(service_id=None):
-    """Return the right deposit link based on service category."""
-    if not service_id:
-        return DEFAULT_DEPOSIT_LINK
-    conn = get_db()
-    row = conn.execute("SELECT category FROM services WHERE id=?", (service_id,)).fetchone()
-    conn.close()
-    if row and row['category'] == 'Paint Correction & Ceramic':
-        return PREMIUM_DEPOSIT_LINK
-    return DEFAULT_DEPOSIT_LINK
 
 
 # ── Customer Operations ──────────────────────────────────────────
@@ -172,14 +188,13 @@ def get_customers(limit=50):
 
 # ── Vehicle Operations ───────────────────────────────────────────
 
-def add_vehicle(customer_id, vehicle_type, vehicle_size=None,
-                make=None, model=None,
+def add_vehicle(customer_id, vehicle_type, make=None, model=None,
                 year=None, color=None, license_plate=None, notes=None):
     conn = get_db()
     conn.execute("""
-        INSERT INTO vehicles (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes)
-        VALUES (?,?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes))
+        INSERT INTO vehicles (customer_id, vehicle_type, make, model, year, color, license_plate, notes)
+        VALUES (?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_type, make, model, year, color, license_plate, notes))
     conn.commit()
     conn.close()
 
@@ -203,38 +218,47 @@ def seed_services():
         return  # Already seeded
 
     services = [
+        # Marine Gel-coat
+        ("Gel-coat Oxidation Removal", "Marine Gel-coat", "Gel-coat Oxidation Removal",
+         "Remove heavy oxidation and restore shine to gel-coat surfaces. Per-foot pricing available.",
+         None, "Per Foot", "Marine-grade compounds, Carpro CQ.UK 3.0", None, None),
+        ("Marine Polish & Protect", "Marine Gel-coat", "Polish & Protect",
+         "One-step polish with premium sealant protection for boats and watercraft.",
+         None, "Per Foot", "Marine polish, sealant", None, None),
+        ("Marine Ceramic Coating", "Marine Gel-coat", "Ceramic Coating",
+         "Carpro CQ.UK 3.0 ceramic coating — 2+ years of UV and water protection.",
+         None, "Per Foot", "Carpro CQ.UK 3.0", None, None),
+        ("Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
+         "Thorough hand wash with premium protectant. Keeps your boat showroom-ready.",
+         None, "Per Foot", "pH-neutral soap, marine sealant", 2, None),
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
-         "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.\n"
-         "Sedan $150 | SUV/Hatchback $180 | Large SUV/Truck $210",
-         150, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl", 2),
+         "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
+         150, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl", 2, None),
         ("Premium Interior Restoration", "Interior Detailing", "Premium Interior Restoration",
-         "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner.\n"
-         "Includes steam & hot water extraction.\n"
-         "Sedan $200 | SUV/Hatchback $240 | Large SUV/Truck $280",
-         200, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4),
+         "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner — the works.",
+         250, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4, None),
+        ("Steam & Hot Water Extraction", "Interior Detailing", "Steam & Hot Water Extraction",
+         "Sanitizing steam treatment + hot water extraction for carpets and fabric seats.",
+         180, "Flat Rate", "Steam cleaner, hot water extractor", 3, None),
         # Paint Correction
-        ("Polish & Protect", "Paint Correction & Ceramic", "Polish & Protect",
-         "Single-stage polish with premium paint sealant. Perfect maintenance detail.\n"
-         "Sedan $375 | SUV/Hatchback $425 | Large SUV/Truck $475",
-         375, "Flat Rate", "Polish, sealant, dual-action polisher", 3),
         ("Two-Step Paint Correction", "Paint Correction & Ceramic", "Two-Step Paint Correction",
-         "Compound + polish to remove swirls, scratches, and oxidation. Restores depth and clarity.\n"
-         "Sedan $525 | SUV/Hatchback $625 | Large SUV/Truck $725",
-         525, "Quote Only", "Compounds, polishes, dual-action polisher", 6),
+         "Compound + polish to remove swirls, light scratches, and oxidation. Restores depth and clarity.",
+         None, "Quote Only", "Compounds, polishes, dual-action polisher", 6, 100),
         ("Ceramic Coating (Auto)", "Paint Correction & Ceramic", "Ceramic Coating",
-         "Carpro CQ.UK 3.0 ceramic coating — 2+ years of hydrophobic protection.\n"
-         "Sedan $1,500 | SUV/Hatchback $1,750 | Large SUV/Truck $2,000",
-         1500, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8),
+         "Carpro CQ.UK 3.0 ceramic coating for cars/trucks. 2+ years of hydrophobic protection.",
+         None, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8, 100),
+        ("Polish & Protect (Auto)", "Paint Correction & Ceramic", "Polish & Protect",
+         "Single-stage polish with premium paint sealant. Perfect maintenance detail.",
+         200, "Flat Rate", "Polish, sealant, dual-action polisher", 3, 50),
         ("Signature Detail Package", "Paint Correction & Ceramic", "Signature Detail Package",
-         "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.\n"
-         "Sedan $1,150 | SUV/Hatchback $1,350 | Large SUV/Truck $1,600",
-         1150, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5),
+         "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.",
+         350, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5, 100),
     ]
     conn = get_db()
     conn.executemany("""
-        INSERT OR IGNORE INTO services (name, category, sub_service, description, starting_price, pricing_model, products_used, duration_hours)
-        VALUES (?,?,?,?,?,?,?,?)
+        INSERT OR IGNORE INTO services (name, category, sub_service, description, starting_price, pricing_model, products_used, duration_hours, deposit_amount)
+        VALUES (?,?,?,?,?,?,?,?,?)
     """, services)
     conn.commit()
     conn.close()
@@ -252,16 +276,30 @@ def get_services(category=None):
     return [dict(r) for r in rows]
 
 
+def get_service_deposit(service_id):
+    """Return (deposit_amount, stripe_link) for a service, or (None, None) if no deposit required."""
+    conn = get_db()
+    row = conn.execute(
+        "SELECT deposit_amount FROM services WHERE id=?", (service_id,)).fetchone()
+    conn.close()
+    if not row or not row['deposit_amount']:
+        return None, None
+    amount = row['deposit_amount']
+    link = STRIPE_PREMIUM if amount >= 100 else STRIPE_STANDARD
+    return amount, link
+
+
 # ── Appointment Operations ───────────────────────────────────────
 
 def create_appointment(customer_id, appointment_date, appointment_time=None,
                        vehicle_id=None, service_id=None, job_address=None,
-                       special_requests=None, status='New Lead', payment_link=None):
+                       special_requests=None, status='New Lead',
+                       payment_link=None, deposit_agreed_at=None):
     conn = get_db()
     conn.execute("""
-        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link)
-        VALUES (?,?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link))
+        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at))
     conn.commit()
     appt_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     row = conn.execute("SELECT id FROM appointments WHERE rowid=?", (appt_id,)).fetchone()

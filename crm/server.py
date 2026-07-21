@@ -15,18 +15,16 @@ from crm import (
     init_db, seed_services,
     create_customer, find_customer, get_customers,
     add_vehicle, get_customer_vehicles,
-    get_services,
+    get_services, get_service_deposit,
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
     add_payment, get_appointment_payments, get_deposit_balance,
     create_follow_up, get_pending_follow_ups, mark_follow_up,
-    get_dashboard,
-    get_deposit_link,
+    get_dashboard
 )
 
 PORT = int(os.environ.get('PORT', 5050))
 STATIC_DIR = Path(__file__).parent / 'static'
 TEMPLATES_DIR = Path(__file__).parent / 'templates'
-SITE_ROOT = Path(__file__).parent.parent  # repo root — serves index.html, about.html, etc.
 
 # Init DB on startup
 init_db()
@@ -38,7 +36,6 @@ def json_response(handler, data, status=200):
     body = json.dumps(data, default=str).encode('utf-8')
     handler.send_response(status)
     handler.send_header('Content-Type', 'application/json; charset=utf-8')
-    handler.send_header('Access-Control-Allow-Origin', '*')
     handler.send_header('Content-Length', len(body))
     handler.end_headers()
     handler.wfile.write(body)
@@ -118,27 +115,23 @@ class CRMHandler(BaseHTTPRequestHandler):
         """Suppress default logging noise."""
         pass
 
-    def _cors_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._cors_headers()
-        self.end_headers()
-
     def do_GET(self):
         path = urlparse(self.path).path
 
-        if path == '/':
-            self.serve_site_file('/index.html')
-        elif path == '/book':
+        if path == '/' or path == '/book':
             self.serve_html('booking.html')
         elif path == '/dashboard':
             stats = get_dashboard()
             appointments = get_upcoming_appointments(days=14)
-            html = self._build_dashboard(stats, appointments)
+            # Precompute deposit status for template
+            for a in appointments:
+                if a.get('deposit_agreed_at'):
+                    a['deposit_status'] = a['deposit_agreed_at'][:10]  # date only
+                elif a.get('payment_link'):
+                    a['deposit_status'] = 'Pending'
+                else:
+                    a['deposit_status'] = '--'
+            html = render_template('dashboard.html', stats=stats, appointments=appointments)
             self.serve_html_string(html)
         elif path == '/api/services':
             services = get_services()
@@ -156,6 +149,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'pricing_model': s['pricing_model'],
                     'products_used': s['products_used'],
                     'duration_hours': s['duration_hours'],
+                    'deposit_amount': s['deposit_amount'],
                 })
             json_response(self, {'services': categorized})
         elif path == '/api/dashboard':
@@ -182,8 +176,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             else:
                 self.send_error(404)
         else:
-            # Serve website static files (index.html, about.html, css/, js/, images/, fonts/)
-            self.serve_site_file(path)
+            self.send_error(404)
 
     def do_POST(self):
         path = urlparse(self.path).path
@@ -223,7 +216,6 @@ class CRMHandler(BaseHTTPRequestHandler):
                 add_vehicle(
                     customer_id=customer_id,
                     vehicle_type=data.get('vehicle_type'),
-                    vehicle_size=data.get('vehicle_size') or None,
                     make=data.get('vehicle_make') or None,
                     model=data.get('vehicle_model') or None,
                     year=data.get('vehicle_year') or None,
@@ -234,16 +226,29 @@ class CRMHandler(BaseHTTPRequestHandler):
                 if vehicles:
                     vehicle_id = vehicles[0]['id']
 
+            # ── Deposit logic ──
+            payment_link = None
+            deposit_agreed_at = None
+            service_id = data.get('service_id')
+            deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
+
+            if service_id:
+                deposit_amount, link = get_service_deposit(service_id)
+                if deposit_amount and deposit_agreed:
+                    payment_link = link
+                    deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
             appointment_id = create_appointment(
                 customer_id=customer_id,
                 appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
                 appointment_time=data.get('preferred_time') or None,
                 vehicle_id=vehicle_id,
-                service_id=data.get('service_id') or None,
+                service_id=service_id,
                 job_address=data.get('job_address') or None,
                 special_requests=data.get('special_requests') or None,
                 status='New Lead',
-                payment_link=get_deposit_link(data.get('service_id')),
+                payment_link=payment_link,
+                deposit_agreed_at=deposit_agreed_at,
             )
 
             today = datetime.now().strftime('%Y-%m-%d')
@@ -284,123 +289,6 @@ class CRMHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404)
 
-    def serve_site_file(self, path):
-        """Serve a static file from the website root (index.html, css/, js/, etc.)."""
-        # Strip leading slash and map to filesystem
-        rel = path.lstrip('/')
-        if not rel:
-            rel = 'index.html'
-        if rel.endswith('/'):
-            rel += 'index.html'
-
-        # Also try .html extension
-        candidates = [SITE_ROOT / rel]
-        if '.' not in rel.split('/')[-1]:
-            candidates.append(SITE_ROOT / f'{rel}.html')
-
-        for filepath in candidates:
-            if filepath.exists() and filepath.is_file():
-                # Security: only serve files within SITE_ROOT
-                try:
-                    filepath.resolve().relative_to(SITE_ROOT.resolve())
-                except ValueError:
-                    self.send_error(403)
-                    return
-
-                ext = filepath.suffix.lower()
-                content_types = {
-                    '.html': 'text/html; charset=utf-8',
-                    '.css': 'text/css',
-                    '.js': 'application/javascript',
-                    '.json': 'application/json',
-                    '.png': 'image/png',
-                    '.jpg': 'image/jpeg',
-                    '.jpeg': 'image/jpeg',
-                    '.gif': 'image/gif',
-                    '.svg': 'image/svg+xml',
-                    '.ico': 'image/x-icon',
-                    '.xml': 'application/xml',
-                    '.txt': 'text/plain',
-                    '.woff': 'font/woff',
-                    '.woff2': 'font/woff2',
-                    '.ttf': 'font/ttf',
-                }
-                content_type = content_types.get(ext, 'application/octet-stream')
-                body = filepath.read_bytes()
-                self.send_response(200)
-                self.send_header('Content-Type', content_type)
-                self.send_header('Content-Length', len(body))
-                self.end_headers()
-                self.wfile.write(body)
-                return
-
-        self.send_error(404)
-
-    def _build_dashboard(self, stats, appointments):
-        """Build dashboard HTML directly — no template engine needed."""
-        parts = []
-        parts.append('''<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — On-Wheels Detailing</title>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1>On-Wheels Detailing</h1>
-    <p class="subtitle">CRM Dashboard</p>
-  </div>
-  <div class="dash-stats">
-''')
-        cards = [
-            (stats['total_customers'], 'Total Customers'),
-            (stats['pending_appointments'], 'Pending Jobs'),
-            (stats['upcoming_week'], 'Next 7 Days'),
-            (f"${stats['deposits_paid']:,.0f}", 'Deposits Collected'),
-            (f"${stats['deposits_pending']:,.0f}", 'Deposits Pending'),
-            (stats['pending_follow_ups'], 'Follow-ups Due'),
-        ]
-        for num, label in cards:
-            parts.append(f'    <div class="stat-card"><div class="stat-num">{num}</div><div class="stat-label">{label}</div></div>\n')
-
-        parts.append('  </div>\n  <fieldset>\n    <legend>Upcoming Appointments (Next 14 Days)</legend>\n')
-
-        if appointments:
-            parts.append('''    <table class="appt-table"><thead><tr>
-      <th>Date</th><th>Time</th><th>Customer</th><th>Service</th>
-      <th>Vehicle</th><th>Address</th><th>Status</th><th>Price</th>
-    </tr></thead><tbody>
-''')
-            for a in appointments:
-                status = a['status'].replace(' ', '-')
-                price = f"${a['quoted_price']:,.0f}" if a['quoted_price'] else '--'
-                time = a.get('appointment_time') or '--'
-                svc = a.get('service_name') or '--'
-                veh = a.get('vehicle_desc') or '--'
-                addr = a.get('job_address') or '--'
-                parts.append(
-                    f'      <tr><td>{a["appointment_date"]}</td><td>{time}</td>'
-                    f'<td>{a["full_name"]}<br><small>{a["phone"]}</small></td>'
-                    f'<td>{svc}</td><td>{veh}</td><td>{addr}</td>'
-                    f'<td><span class="status-badge status-{status}">{a["status"]}</span></td>'
-                    f'<td>{price}</td></tr>\n'
-                )
-            parts.append('    </tbody></table>\n')
-        else:
-            parts.append('    <p style="color:#666;text-align:center;padding:20px;">No upcoming appointments. Time to hustle!</p>\n')
-
-        parts.append('''  </fieldset>
-  <footer class="form-footer">
-    <p>On-Wheels Detailing CRM · <a href="/book">Booking Form</a> · <a href="/api/dashboard">API</a></p>
-  </footer>
-</div>
-<script>setTimeout(()=>location.reload(),60000);</script>
-</body></html>''')
-        return ''.join(parts)
-
     def serve_html(self, filename):
         """Serve an HTML template file."""
         html = render_template(filename)
@@ -411,7 +299,6 @@ class CRMHandler(BaseHTTPRequestHandler):
         body = html.encode('utf-8')
         self.send_response(200)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
-        self._cors_headers()
         self.send_header('Content-Length', len(body))
         self.end_headers()
         self.wfile.write(body)
