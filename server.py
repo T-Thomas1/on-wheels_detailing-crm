@@ -33,7 +33,7 @@ seed_services()
 # Ensure Polish & Protect deposit is set (migration may miss it on some DBs)
 from crm import get_db
 conn = get_db()
-conn.execute("UPDATE services SET deposit_amount=50 WHERE name='Polish & Protect' AND deposit_amount IS NULL")
+conn.execute("UPDATE services SET deposit_amount=50 WHERE name LIKE '%Polish & Protect%' AND name NOT LIKE '%Marine%' AND deposit_amount IS NULL")
 conn.commit()
 conn.close()
 

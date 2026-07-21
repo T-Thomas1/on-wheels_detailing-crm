@@ -45,8 +45,20 @@
           <label for="location">Service Area</label>
           <select id="location" name="location">
             <option value="">-- Choose --</option>
-            <option value="Texas - Harris County">Texas — Harris County</option>
-            <option value="Michigan - Metro Detroit">Michigan — Metro Detroit</option>
+            <optgroup label="Texas — Mobile Service">
+              <option value="Texas - Harris County" data-service-type="mobile">Harris County</option>
+            </optgroup>
+            <optgroup label="Michigan — Shop Locations">
+              <option value="Michigan - Marysville (Shop)" data-service-type="shop">Marysville</option>
+              <option value="Michigan - New Haven (Shop)" data-service-type="shop">New Haven</option>
+            </optgroup>
+            <optgroup label="Michigan — Mobile Service">
+              <option value="Michigan - Metro Detroit" data-service-type="mobile">Metro Detroit</option>
+              <option value="Michigan - St. Clair" data-service-type="mobile">St. Clair</option>
+              <option value="Michigan - Port Huron" data-service-type="mobile">Port Huron</option>
+              <option value="Michigan - Macomb County" data-service-type="mobile">Macomb County</option>
+              <option value="Michigan - St. Clair County" data-service-type="mobile">St. Clair County</option>
+            </optgroup>
           </select>
         </div>
         <div class="form-group">
@@ -186,50 +198,81 @@
 // ── Set min date to tomorrow ──
 document.getElementById('preferred_date').min = new Date().toISOString().split('T')[0];
 
+// ── Service area filtering ──
+// Shop locations = all services. Mobile = interior only.
+function getServiceType() {
+  const locationEl = document.getElementById('location');
+  if (!locationEl || !locationEl.selectedOptions.length) return null;
+  return locationEl.selectedOptions[0].dataset.serviceType || null;
+}
+
 // ── Load services ──
+let cachedServices = null;
+
 async function loadServices() {
   try {
     const res = await fetch('/api/services');
     const data = await res.json();
-    const container = document.getElementById('services-container');
-    container.innerHTML = '';
-
-    for (const [category, services] of Object.entries(data.services)) {
-      const catDiv = document.createElement('div');
-      catDiv.className = 'service-category';
-
-      const catLabel = document.createElement('h4');
-      catLabel.textContent = category;
-      catDiv.appendChild(catLabel);
-
-      services.forEach(svc => {
-        const card = document.createElement('label');
-        card.className = 'service-card';
-
-        const priceText = svc.starting_price
-          ? `<span class="price">from $${svc.starting_price}</span>`
-          : `<span class="price">Quote Only</span>`;
-
-        card.innerHTML = `
-          <input type="radio" name="service_id" value="${svc.id}" data-deposit="${svc.deposit_amount || ''}">
-          <div class="card-body">
-            <strong>${svc.name}</strong>
-            <span class="pricing-model">${svc.pricing_model}</span>
-            ${priceText}
-            <p class="card-desc">${svc.description || ''}</p>
-            ${svc.products_used ? `<small class="products">  Uses: ${svc.products_used}</small>` : ''}
-            ${svc.duration_hours ? `<small class="duration">⏱ ~${svc.duration_hours} hrs</small>` : ''}
-            ${svc.deposit_amount ? `<small class="deposit-notice">  $${svc.deposit_amount} deposit required</small>` : ''}
-          </div>
-        `;
-        catDiv.appendChild(card);
-      });
-
-      container.appendChild(catDiv);
-    }
+    cachedServices = data.services;
+    renderServices(data.services);
   } catch (e) {
     document.getElementById('services-container').innerHTML =
       '<p class="error">Could not load services. Please call (586) 873-0656 to book.</p>';
+  }
+}
+
+function renderServices(services) {
+  const container = document.getElementById('services-container');
+  const serviceType = getServiceType();
+  container.innerHTML = '';
+
+  // No service type selected yet
+  if (!serviceType) {
+    container.innerHTML = '<p class="info">  Select your service area above to see available services.</p>';
+    return;
+  }
+
+  let anyShown = false;
+  for (const [category, svcList] of Object.entries(services)) {
+    // Mobile: only show Interior Detailing
+    if (serviceType === 'mobile' && category !== 'Interior Detailing') continue;
+
+    const catDiv = document.createElement('div');
+    catDiv.className = 'service-category';
+
+    const catLabel = document.createElement('h4');
+    catLabel.textContent = category;
+    catDiv.appendChild(catLabel);
+
+    svcList.forEach(svc => {
+      const card = document.createElement('label');
+      card.className = 'service-card';
+
+      const priceText = svc.starting_price
+        ? `<span class="price">from $${svc.starting_price}</span>`
+        : `<span class="price">Quote Only</span>`;
+
+      card.innerHTML = `
+        <input type="radio" name="service_id" value="${svc.id}" data-deposit="${svc.deposit_amount || ''}">
+        <div class="card-body">
+          <strong>${svc.name}</strong>
+          <span class="pricing-model">${svc.pricing_model}</span>
+          ${priceText}
+          <p class="card-desc">${svc.description || ''}</p>
+          ${svc.products_used ? `<small class="products">  Uses: ${svc.products_used}</small>` : ''}
+          ${svc.duration_hours ? `<small class="duration">⏱ ~${svc.duration_hours} hrs</small>` : ''}
+          ${svc.deposit_amount ? `<small class="deposit-notice">  $${svc.deposit_amount} deposit required</small>` : ''}
+        </div>
+      `;
+      catDiv.appendChild(card);
+    });
+
+    container.appendChild(catDiv);
+    anyShown = true;
+  }
+
+  if (!anyShown) {
+    container.innerHTML = '<p class="error">No services available for this location.</p>';
   }
 }
 
@@ -293,6 +336,7 @@ document.getElementById('book-another-btn').addEventListener('click', () => {
 loadServices();
 
 // ── Toggle deposit section when service is selected ──
+// ── Also re-render services when service area changes ──
 document.addEventListener('change', (e) => {
   if (e.target.name === 'service_id') {
     const deposit = e.target.dataset.deposit;
@@ -306,6 +350,16 @@ document.addEventListener('change', (e) => {
       checkbox.required = false;
       checkbox.checked = false;
     }
+  }
+  // Re-render services when location changes
+  if (e.target.id === 'location' && cachedServices) {
+    // Clear any selected service + deposit section
+    const selected = document.querySelector('input[name="service_id"]:checked');
+    if (selected) selected.checked = false;
+    document.getElementById('deposit-section').style.display = 'none';
+    document.getElementById('deposit_agreed').required = false;
+    document.getElementById('deposit_agreed').checked = false;
+    renderServices(cachedServices);
   }
 });
 </script>
