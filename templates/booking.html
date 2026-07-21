@@ -9,6 +9,9 @@
 <body>
 
 <div class="container">
+
+  <!-- ═══ BOOKING FORM ═══ -->
+  <div id="booking-page">
   <div class="header">
     <h1>Book Your Detail</h1>
     <p class="subtitle">Fill this out and TaSain will text you back fast. No apps, no accounts — just good work.</p>
@@ -163,8 +166,20 @@
 
   <footer class="form-footer">
     <p>  Your info stays private. We'll never spam or sell your data.</p>
-    <p>Questions? Call TaSain: <a href="tel:+15868730656">(586) 873-0656</a></p>
+    <p>Questions? Call TaSain: <a href="tel:+158****0656">(586) 873-0656</a></p>
   </footer>
+  </div><!-- /booking-page -->
+
+  <!-- ═══ CONFIRMATION SCREEN ═══ -->
+  <div id="confirmation-page" class="hidden">
+    <div class="confirmation-card">
+      <div class="confirmation-icon">&#10003;</div>
+      <h2>Booking Received!</h2>
+      <p id="confirmation-message"></p>
+      <p class="confirmation-sub">TaSain will text you shortly to confirm your appointment. You're in good hands.</p>
+      <button type="button" class="btn-submit" id="book-another-btn">Book Another Detail</button>
+    </div>
+  </div><!-- /confirmation-page -->
 </div>
 
 <script>
@@ -232,8 +247,6 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const formData = new FormData(e.target);
   const payload = Object.fromEntries(formData.entries());
-  // Map snake_case field names
-  payload.name = payload.name;
   payload.source = 'Website';
 
   try {
@@ -244,12 +257,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     });
     const data = await res.json();
 
-    resultDiv.classList.remove('hidden');
     if (res.ok) {
-      resultDiv.className = 'result-success';
-      resultDiv.innerHTML = `<p><strong>${data.message}</strong></p>`;
+      // Show confirmation screen
+      document.getElementById('confirmation-message').textContent = data.message;
+      document.getElementById('booking-page').classList.add('hidden');
+      document.getElementById('confirmation-page').classList.remove('hidden');
       e.target.reset();
+      // Reset deposit section
+      document.getElementById('deposit-section').style.display = 'none';
+      document.getElementById('deposit_agreed').required = false;
     } else {
+      resultDiv.classList.remove('hidden');
       resultDiv.className = 'result-error';
       resultDiv.innerHTML = `<p>${data.error || 'Something went wrong. Call us at (586) 873-0656.'}</p>`;
     }
@@ -262,6 +280,14 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     btnText.classList.remove('hidden');
     spinner.classList.add('hidden');
   }
+});
+
+// ── "Book Another" button returns to form ──
+document.getElementById('book-another-btn').addEventListener('click', () => {
+  document.getElementById('confirmation-page').classList.add('hidden');
+  document.getElementById('booking-page').classList.remove('hidden');
+  document.getElementById('result').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 loadServices();
