@@ -30,6 +30,13 @@ TEMPLATES_DIR = Path(__file__).parent / 'templates'
 init_db()
 seed_services()
 
+# Ensure Polish & Protect deposit is set (migration may miss it on some DBs)
+from crm import get_db
+conn = get_db()
+conn.execute("UPDATE services SET deposit_amount=50 WHERE name='Polish & Protect' AND deposit_amount IS NULL")
+conn.commit()
+conn.close()
+
 
 def json_response(handler, data, status=200):
     """Send JSON response."""
