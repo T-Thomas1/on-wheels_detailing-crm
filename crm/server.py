@@ -5,7 +5,7 @@ import os
 import sys
 import json
 import io
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
@@ -19,7 +19,9 @@ from crm import (
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
     add_payment, get_appointment_payments, get_deposit_balance,
     create_follow_up, get_pending_follow_ups, mark_follow_up,
-    get_dashboard
+    get_dashboard,
+    now, today_str, now_str,
+    get_tz_for, tz_display_label, LOCATION_TIMEZONES,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -130,14 +132,17 @@ class CRMHandler(BaseHTTPRequestHandler):
         elif path == '/dashboard':
             stats = get_dashboard()
             appointments = get_upcoming_appointments(days=14)
-            # Precompute deposit status for template
+            # Precompute display fields for template
             for a in appointments:
                 if a.get('deposit_agreed_at'):
-                    a['deposit_status'] = a['deposit_agreed_at'][:10]  # date only
+                    a['deposit_status'] = a['deposit_agreed_at'][:10]
                 elif a.get('payment_link'):
                     a['deposit_status'] = 'Pending'
                 else:
                     a['deposit_status'] = '--'
+                # Timezone: use stored appointment_tz, fall back to location→tz
+                loc = a.get('customer_location') or ''
+                a['tz_label'] = a.get('appointment_tz') or tz_display_label(get_tz_for(loc)) if loc else 'ET'
             html = render_template('dashboard.html', stats=stats, appointments=appointments)
             self.serve_html_string(html)
         elif path == '/api/services':
@@ -159,14 +164,16 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'deposit_amount': s['deposit_amount'],
                 })
             json_response(self, {'services': categorized})
+        elif path == '/api/tz':
+            json_response(self, {'timezones': LOCATION_TIMEZONES})
         elif path == '/api/dashboard':
             json_response(self, get_dashboard())
         elif path == '/api/appointments':
             qs = parse_qs(urlparse(self.path).query)
             status = qs.get('status', [None])[0]
             days = int(qs.get('days', ['7'])[0])
-            date_from = qs.get('from', [datetime.now().strftime('%Y-%m-%d')])[0]
-            date_to = qs.get('to', [(datetime.now() + timedelta(days=days)).strftime('%Y-%m-%d')])[0]
+            date_from = qs.get('from', [today_str()])[0]
+            date_to = qs.get('to', [(now() + timedelta(days=days)).strftime('%Y-%m-%d')])[0]
             appointments = get_appointments(status=status, date_from=date_from, date_to=date_to)
             json_response(self, {'appointments': appointments})
         elif path.startswith('/static/'):
@@ -243,11 +250,18 @@ class CRMHandler(BaseHTTPRequestHandler):
                 deposit_amount, link = get_service_deposit(service_id)
                 if deposit_amount and deposit_agreed:
                     payment_link = link
-                    deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    deposit_agreed_at = now_str()
+
+            # ── Location timezone ──
+            location = data.get('location') or None
+            appointment_tz = None
+            if location:
+                tz = get_tz_for(location)
+                appointment_tz = tz_offset_label(tz)  # store 'EDT', 'CDT', etc.
 
             appointment_id = create_appointment(
                 customer_id=customer_id,
-                appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
+                appointment_date=data.get('preferred_date', today_str()),
                 appointment_time=data.get('preferred_time') or None,
                 vehicle_id=vehicle_id,
                 service_id=service_id,
@@ -256,9 +270,10 @@ class CRMHandler(BaseHTTPRequestHandler):
                 status='New Lead',
                 payment_link=payment_link,
                 deposit_agreed_at=deposit_agreed_at,
+                appointment_tz=appointment_tz,
             )
 
-            today = datetime.now().strftime('%Y-%m-%d')
+            today = today_str()
             create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS')
 
             json_response(self, {
@@ -285,10 +300,10 @@ class CRMHandler(BaseHTTPRequestHandler):
 
             update_appointment_status(appointment_id, new_status)
             if new_status == 'Confirmed':
-                tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+                tomorrow = (now() + timedelta(days=1)).strftime('%Y-%m-%d')
                 create_follow_up(appointment_id, '24hr Reminder', tomorrow, 'SMS')
             elif new_status == 'Completed':
-                check_in = (datetime.now() + timedelta(days=2)).strftime('%Y-%m-%d')
+                check_in = (now() + timedelta(days=2)).strftime('%Y-%m-%d')
                 create_follow_up(appointment_id, 'Post-Service Check-in', check_in, 'SMS')
 
             json_response(self, {'success': True, 'status': new_status})

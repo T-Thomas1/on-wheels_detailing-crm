@@ -8,6 +8,101 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 
+# ── Business Timezone (America/Detroit → EST/EDT auto) ─────────────
+# Uses zoneinfo (stdlib, Python 3.9+) with system tzdata fallback.
+# Set TZ env var to override (e.g., TZ=America/Chicago).
+TZ_NAME = os.environ.get("TZ", "America/Detroit")
+
+def _load_tz():
+    """Load the business timezone. Returns ZoneInfo or None (system local)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo(TZ_NAME)
+    except Exception:
+        try:
+            # Some environments need the backport
+            from backports.zoneinfo import ZoneInfo
+            return ZoneInfo(TZ_NAME)
+        except Exception:
+            return None  # fall back to system local time
+
+BUSINESS_TZ = _load_tz()
+
+# ── Location → Timezone mapping ───────────────────────────────────
+# Each service area maps to its IANA timezone. Used for:
+#  - Booking form dynamic timezone label (JS reads data-tz attrs)
+#  - Storing appointment_tz so follow-ups fire in the right zone
+#  - Dashboard per-appointment timezone display
+LOCATION_TIMEZONES = {
+    'Texas - Harris County':         'America/Chicago',
+    'Michigan - St. Clair':          'America/Detroit',
+    'Michigan - Metro Detroit':      'America/Detroit',
+    'Michigan - Marysville (Shop)':  'America/Detroit',
+    'Michigan - New Haven (Shop)':   'America/Detroit',
+}
+
+def get_tz_for(location):
+    """Return ZoneInfo for a service area location, falling back to BUSINESS_TZ."""
+    tz_name = LOCATION_TIMEZONES.get(location, str(BUSINESS_TZ)) if BUSINESS_TZ else 'America/Detroit'
+    return _load_tz_specific(tz_name)
+
+def _load_tz_specific(tz_name):
+    """Load a specific timezone by name. Returns ZoneInfo or None."""
+    try:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo(tz_name)
+    except Exception:
+        try:
+            from backports.zoneinfo import ZoneInfo
+            return ZoneInfo(tz_name)
+        except Exception:
+            return BUSINESS_TZ  # last resort
+
+def tz_display_label(tz):
+    """Return short timezone display label from a ZoneInfo (e.g. 'Eastern', 'Central')."""
+    if tz is None:
+        return 'Eastern'
+    tn = tz.tzname(datetime.now(tz))
+    if tn in ('EST', 'EDT'):
+        return 'Eastern'
+    if tn in ('CST', 'CDT'):
+        return 'Central'
+    if tn in ('MST', 'MDT'):
+        return 'Mountain'
+    if tn in ('PST', 'PDT'):
+        return 'Pacific'
+    return tn or 'Local'
+
+def tz_offset_label(tz):
+    """Return offset label like 'EDT' or 'CDT' for display."""
+    if tz is None:
+        return 'EDT'
+    return tz.tzname(datetime.now(tz)) or str(tz)
+
+def now_in_tz(tz):
+    """Return current datetime in a specific timezone."""
+    if tz:
+        return datetime.now(tz)
+    return datetime.now()
+
+def now():
+    """Return current datetime in business timezone (America/Detroit)."""
+    return now_in_tz(BUSINESS_TZ)
+
+def today_str():
+    """Return today's date in business timezone as YYYY-MM-DD."""
+    return now().strftime('%Y-%m-%d')
+
+def now_str():
+    """Return current datetime in business timezone as ISO timestamp."""
+    return now().strftime('%Y-%m-%d %H:%M:%S')
+
+def now_display():
+    """Return human-readable current time with timezone label."""
+    t = now()
+    tz_label = "EST" if t.tzname() == "EST" else "EDT"
+    return f"{t.strftime('%A, %B %d, %Y at %I:%M %p')} {tz_label}"
+
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
 # Stripe payment links
@@ -120,6 +215,7 @@ def init_db():
         "ALTER TABLE services ADD COLUMN deposit_amount REAL",
         "ALTER TABLE appointments ADD COLUMN payment_link TEXT",
         "ALTER TABLE appointments ADD COLUMN deposit_agreed_at TEXT",
+        "ALTER TABLE appointments ADD COLUMN appointment_tz TEXT",
     ]
     for m in migrations:
         try:
@@ -130,7 +226,6 @@ def init_db():
 
     # Update deposit amounts for existing services (safe to re-run)
     deposit_updates = [
-        (50, 'Polish & Protect'),
         (50, 'Polish & Protect (Auto)'),
         (100, 'Two-Step Paint Correction'),
         (100, 'Ceramic Coating (Auto)'),
@@ -295,12 +390,13 @@ def get_service_deposit(service_id):
 def create_appointment(customer_id, appointment_date, appointment_time=None,
                        vehicle_id=None, service_id=None, job_address=None,
                        special_requests=None, status='New Lead',
-                       payment_link=None, deposit_agreed_at=None):
+                       payment_link=None, deposit_agreed_at=None,
+                       appointment_tz=None):
     conn = get_db()
     conn.execute("""
-        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at))
+        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz))
     conn.commit()
     appt_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     row = conn.execute("SELECT id FROM appointments WHERE rowid=?", (appt_id,)).fetchone()
@@ -347,8 +443,8 @@ def update_appointment_status(appointment_id, status):
 def get_upcoming_appointments(days=7):
     """Get confirmed appointments in the next N days."""
     conn = get_db()
-    today = datetime.now().strftime('%Y-%m-%d')
-    end = (datetime.now() + timedelta(days=days)).strftime('%Y-%m-%d')
+    today = today_str()
+    end = (now() + timedelta(days=days)).strftime('%Y-%m-%d')
     rows = conn.execute("""
         SELECT a.*, c.full_name, c.phone, c.email,
                v.make||' '||v.model as vehicle_desc,
@@ -372,8 +468,8 @@ def add_payment(appointment_id, amount, payment_type='Deposit',
     conn = get_db()
     conn.execute("""
         INSERT INTO payments (appointment_id, payment_type, amount, method, status, payment_date, notes)
-        VALUES (?,?,?,?,?,datetime('now'),?)
-    """, (appointment_id, payment_type, amount, method, status, notes))
+        VALUES (?,?,?,?,?,?,?)
+    """, (appointment_id, payment_type, amount, method, status, now_str(), notes))
     conn.commit()
     conn.close()
 
@@ -413,7 +509,7 @@ def create_follow_up(appointment_id, follow_type, scheduled_date, channel='SMS')
 def get_pending_follow_ups():
     """Get follow-ups scheduled for today or earlier, not yet sent."""
     conn = get_db()
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = today_str()
     rows = conn.execute("""
         SELECT f.*, a.appointment_date, a.status as appt_status,
                c.full_name, c.phone, c.email,
@@ -444,19 +540,27 @@ def mark_follow_up(follow_up_id, status, message=None):
 def get_dashboard():
     """Quick stats for the business dashboard."""
     conn = get_db()
+    t = now()
+    biz_today = t.strftime('%Y-%m-%d')
+    biz_week_end = (t + timedelta(days=7)).strftime('%Y-%m-%d')
+    tz_label = "EST" if t.tzname() == "EST" else "EDT"
+
     stats = {}
     stats['total_customers'] = conn.execute("SELECT COUNT(*) FROM customers").fetchone()[0]
     stats['pending_appointments'] = conn.execute(
         "SELECT COUNT(*) FROM appointments WHERE status IN ('New Lead','Quote Sent','Awaiting Deposit','Confirmed')").fetchone()[0]
     stats['completed_today'] = conn.execute(
-        "SELECT COUNT(*) FROM appointments WHERE status='Completed' AND appointment_date=date('now')").fetchone()[0]
+        "SELECT COUNT(*) FROM appointments WHERE status='Completed' AND appointment_date=?",
+        (biz_today,)).fetchone()[0]
     stats['upcoming_week'] = conn.execute(
-        "SELECT COUNT(*) FROM appointments WHERE appointment_date BETWEEN date('now') AND date('now','+7 days') AND status IN ('Confirmed','Awaiting Deposit')").fetchone()[0]
+        "SELECT COUNT(*) FROM appointments WHERE appointment_date BETWEEN ? AND ? AND status IN ('Confirmed','Awaiting Deposit')",
+        (biz_today, biz_week_end)).fetchone()[0]
     deposits = get_deposit_balance()
     stats['deposits_pending'] = deposits['pending']
     stats['deposits_paid'] = deposits['paid']
     stats['pending_follow_ups'] = conn.execute(
         "SELECT COUNT(*) FROM follow_ups WHERE status='Pending'").fetchone()[0]
+    stats['as_of'] = now_display()
     conn.close()
     return stats
 
