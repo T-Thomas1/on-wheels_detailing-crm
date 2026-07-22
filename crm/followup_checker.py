@@ -57,13 +57,22 @@ def generate_message(follow_up):
     """Generate a natural-sounding message based on follow-up type."""
     name = follow_up['full_name']
     service = follow_up.get('service_name') or 'detailing service'
-    payment_link = follow_up.get('payment_link') or '[Stripe link here]'
+    payment_link = follow_up.get('payment_link')
     appt_date = follow_up['appointment_date']
 
+    # Deposit-aware booking confirmation — don't mention deposits for non-deposit services
+    if payment_link and payment_link.startswith('https://buy.stripe.com'):
+        deposit_msg = f" To lock it in, here's your deposit link: {payment_link}. Once that's done you're confirmed."
+        deposit_confirm_templates = [
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule.{deposit_msg} Talk soon!",
+        ]
+    else:
+        deposit_confirm_templates = [
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule. I'll text you to confirm the details. Talk soon!",
+        ]
+
     templates = {
-        'Booking Confirmation': [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule. To lock it in, here's your deposit link: {payment_link}. Once that's done you're confirmed. Talk soon!",
-        ],
+        'Booking Confirmation': deposit_confirm_templates,
         '24hr Reminder': [
             f"  Tomorrow's the day, {name}! Reminder: I'll be out for your {service} tomorrow. Balance is due when I arrive (cash or card). Make sure the vehicle's accessible. Any changes, just text. — TaSain, On-Wheels Detailing",
         ],
