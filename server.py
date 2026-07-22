@@ -21,12 +21,13 @@ from crm import (
     create_follow_up, get_pending_follow_ups, mark_follow_up,
     get_dashboard,
     now, today_str, now_str,
-    get_tz_for, tz_display_label, LOCATION_TIMEZONES,
+    get_tz_for, tz_display_label, tz_offset_label, get_tz_info, LOCATION_TIMEZONES,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
 STATIC_DIR = Path(__file__).parent / 'static'
 TEMPLATES_DIR = Path(__file__).parent / 'templates'
+DASHBOARD_TOKEN = os.environ.get('DASHBOARD_TOKEN', 'onwheels2024')
 
 # Init DB on startup
 init_db()
@@ -130,6 +131,19 @@ class CRMHandler(BaseHTTPRequestHandler):
         if path == '/' or path == '/book':
             self.serve_html('booking.html')
         elif path == '/dashboard':
+            qs = parse_qs(urlparse(self.path).query)
+            token = qs.get('token', [''])[0]
+            if token != DASHBOARD_TOKEN:
+                self.serve_html_string("""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard — On-Wheels</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><div class="container" style="max-width:400px;margin-top:60px;">
+<div class="header"><h1>On-Wheels Detailing</h1><p class="subtitle">Dashboard Access</p></div>
+<form method="GET" action="/dashboard"><fieldset><legend>Enter Access Token</legend>
+<input type="password" name="token" placeholder="Token" style="width:100%;padding:10px;font-size:16px;margin:10px 0;" autofocus>
+<button type="submit" class="btn-submit">Open Dashboard</button></fieldset></form>
+</div></body></html>""")
+                return
             stats = get_dashboard()
             appointments = get_upcoming_appointments(days=14)
             # Precompute display fields for template
@@ -140,9 +154,13 @@ class CRMHandler(BaseHTTPRequestHandler):
                     a['deposit_status'] = 'Pending'
                 else:
                     a['deposit_status'] = '--'
-                # Timezone: use stored appointment_tz, fall back to location→tz
-                loc = a.get('customer_location') or ''
-                a['tz_label'] = a.get('appointment_tz') or tz_display_label(get_tz_for(loc)) if loc else 'ET'
+                # Timezone: resolve IANA name to display label (always EST/CST)
+                tz_iana = a.get('appointment_tz') or ''
+                tz_labels = {'America/Detroit': 'EST', 'America/Chicago': 'CST'}
+                a['tz_label'] = tz_labels.get(tz_iana)
+                if not a['tz_label']:
+                    loc = a.get('customer_location') or ''
+                    a['tz_label'] = tz_offset_label(get_tz_for(loc)) if loc else 'EST'
             html = render_template('dashboard.html', stats=stats, appointments=appointments)
             self.serve_html_string(html)
         elif path == '/api/services':
@@ -165,7 +183,9 @@ class CRMHandler(BaseHTTPRequestHandler):
                 })
             json_response(self, {'services': categorized})
         elif path == '/api/tz':
-            json_response(self, {'timezones': LOCATION_TIMEZONES})
+            # Return display-friendly mapping for JS
+            tz_map = {loc: info[1] for loc, info in LOCATION_TIMEZONES.items()}
+            json_response(self, {'timezones': tz_map})
         elif path == '/api/dashboard':
             json_response(self, get_dashboard())
         elif path == '/api/appointments':
@@ -256,8 +276,8 @@ class CRMHandler(BaseHTTPRequestHandler):
             location = data.get('location') or None
             appointment_tz = None
             if location:
-                tz = get_tz_for(location)
-                appointment_tz = tz_offset_label(tz)  # store 'EDT', 'CDT', etc.
+                iana, label, abbrev = get_tz_info(location)
+                appointment_tz = iana  # store IANA name, not abbreviation
 
             appointment_id = create_appointment(
                 customer_id=customer_id,
