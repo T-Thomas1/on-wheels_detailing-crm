@@ -4,7 +4,7 @@
 import os
 import sys
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from flask import Flask, request, jsonify, render_template, send_from_directory
 
@@ -18,7 +18,8 @@ from crm import (
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
     add_payment, get_appointment_payments, get_deposit_balance,
     create_follow_up, get_pending_follow_ups, mark_follow_up,
-    get_dashboard
+    get_dashboard,
+    now, today_str, now_str,
 )
 
 app = Flask(__name__)
@@ -110,12 +111,12 @@ def api_book():
         deposit_amount, link = get_service_deposit(service_id)
         if deposit_amount and deposit_agreed:
             payment_link = link
-            deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            deposit_agreed_at = now_str()
 
     # ── Appointment ───────────────────────────────────────────
     appointment_id = create_appointment(
         customer_id=customer_id,
-        appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
+        appointment_date=data.get('preferred_date', today_str()),
         appointment_time=data.get('preferred_time') or None,
         vehicle_id=vehicle_id,
         service_id=service_id,
@@ -127,7 +128,7 @@ def api_book():
     )
 
     # ── Auto-schedule follow-ups ──────────────────────────────
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = today_str()
     # Booking confirmation - same day
     create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS')
 
@@ -152,8 +153,8 @@ def api_appointments():
     """List upcoming appointments."""
     status = request.args.get('status')
     days = int(request.args.get('days', 7))
-    date_from = request.args.get('from', datetime.now().strftime('%Y-%m-%d'))
-    date_to = request.args.get('to', (datetime.now() + timedelta(days=days)).strftime('%Y-%m-%d'))
+    date_from = request.args.get('from', today_str())
+    date_to = request.args.get('to', (now() + timedelta(days=days)).strftime('%Y-%m-%d'))
     appointments = get_appointments(status=status, date_from=date_from, date_to=date_to)
     return jsonify({'appointments': appointments})
 
@@ -171,11 +172,11 @@ def api_update_status(appointment_id):
     # Auto-schedule follow-ups based on status change
     if new_status == 'Confirmed':
         # Schedule 24hr reminder
-        tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+        tomorrow = (now() + timedelta(days=1)).strftime('%Y-%m-%d')
         create_follow_up(appointment_id, '24hr Reminder', tomorrow, 'SMS')
     elif new_status == 'Completed':
         # Schedule post-service check-in (2 days after)
-        check_in = (datetime.now() + timedelta(days=2)).strftime('%Y-%m-%d')
+        check_in = (now() + timedelta(days=2)).strftime('%Y-%m-%d')
         create_follow_up(appointment_id, 'Post-Service Check-in', check_in, 'SMS')
 
     return jsonify({'success': True, 'status': new_status})

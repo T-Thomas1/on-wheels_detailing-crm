@@ -10,7 +10,7 @@
 <div class="container">
   <div class="header">
     <h1>On-Wheels Detailing</h1>
-    <p class="subtitle">CRM Dashboard</p>
+    <p class="subtitle">CRM Dashboard · {{ stats.as_of }}</p>
   </div>
 
   <div class="dash-stats">
@@ -60,7 +60,7 @@
       <tbody>
       {% for a in appointments %}
         <tr>
-          <td>{{ a.appointment_date }}</td>
+          <td>{{ a.appointment_date }}<br><small style="color:#888;">{{ a.tz_label }}</small></td>
           <td>{{ a.appointment_time or '--' }}</td>
           <td>{{ a.full_name }}<br><small>{{ a.phone }}</small></td>
           <td>{{ a.service_name or '--' }}</td>

@@ -45,11 +45,11 @@
           <label for="location">Service Area</label>
           <select id="location" name="location">
             <option value="">-- Choose --</option>
-            <option value="Texas - Harris County" data-service-type="mobile">Mobile — Houston, Texas Area</option>
-            <option value="Michigan - St. Clair" data-service-type="mobile">Mobile — St. Clair, Michigan</option>
-            <option value="Michigan - Metro Detroit" data-service-type="mobile">Mobile — Metro Detroit, Michigan</option>
-            <option value="Michigan - Marysville (Shop)" data-service-type="shop">In-Shop — Marysville, Michigan</option>
-            <option value="Michigan - New Haven (Shop)" data-service-type="shop">In-Shop — New Haven, Michigan</option>
+            <option value="Texas - Harris County" data-service-type="mobile" data-tz="Central">Mobile — Houston, Texas Area</option>
+            <option value="Michigan - St. Clair" data-service-type="mobile" data-tz="Eastern">Mobile — St. Clair, Michigan</option>
+            <option value="Michigan - Metro Detroit" data-service-type="mobile" data-tz="Eastern">Mobile — Metro Detroit, Michigan</option>
+            <option value="Michigan - Marysville (Shop)" data-service-type="shop" data-tz="Eastern">In-Shop — Marysville, Michigan</option>
+            <option value="Michigan - New Haven (Shop)" data-service-type="shop" data-tz="Eastern">In-Shop — New Haven, Michigan</option>
           </select>
         </div>
         <div class="form-group">
@@ -118,7 +118,7 @@
 
     <!-- ── Schedule ── -->
     <fieldset>
-      <legend>When Works For You?</legend>
+      <legend>When Works For You? <span id="tz-label" style="font-weight:normal;font-size:0.85em;color:#888;">(Select your area above)</span></legend>
       <div class="form-row">
         <div class="form-group">
           <label for="preferred_date">Preferred Date</label>
@@ -351,6 +351,11 @@ document.addEventListener('change', (e) => {
     document.getElementById('deposit_agreed').required = false;
     document.getElementById('deposit_agreed').checked = false;
     renderServices(cachedServices);
+
+    // Update timezone label
+    const tz = e.target.selectedOptions[0]?.dataset.tz;
+    const label = document.getElementById('tz-label');
+    label.textContent = tz ? `(All times ${tz})` : '(Select your area above)';
   }
 });
 </script>
