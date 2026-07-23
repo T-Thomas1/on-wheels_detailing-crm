@@ -125,6 +125,10 @@ class CRMHandler(BaseHTTPRequestHandler):
         """Suppress default logging noise."""
         pass
 
+    def do_HEAD(self):
+        """Support HEAD requests (Google Search Console uses them)."""
+        self.do_GET()
+
     def do_GET(self):
         path = urlparse(self.path).path
 
