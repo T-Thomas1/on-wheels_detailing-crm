@@ -13,7 +13,7 @@ from urllib.parse import urlparse, parse_qs
 sys.path.insert(0, str(Path(__file__).parent))
 from crm import (
     init_db, seed_services,
-    create_customer, find_customer, get_customers,
+    create_customer, find_customer, get_customers, normalize_phone,
     add_vehicle, get_customer_vehicles,
     get_services, get_service_deposit,
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
@@ -133,7 +133,20 @@ class CRMHandler(BaseHTTPRequestHandler):
         elif path == '/dashboard':
             qs = parse_qs(urlparse(self.path).query)
             token = qs.get('token', [''])[0]
-            if token != DASHBOARD_TOKEN:
+            # Check cookie first (returning visitors), then query param
+            cookie_match = ''
+            for c in self.headers.get('Cookie', '').replace(' ', '').split(';'):
+                if c.startswith('dashboard_token='):
+                    cookie_match = c.split('=', 1)[1]
+                    break
+            if token == DASHBOARD_TOKEN:
+                # First visit: set cookie and redirect to strip token from URL
+                self.send_response(302)
+                self.send_header('Location', '/dashboard')
+                self.send_header('Set-Cookie', f'dashboard_token={DASHBOARD_TOKEN}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000')
+                self.end_headers()
+                return
+            if cookie_match != DASHBOARD_TOKEN:
                 self.serve_html_string("""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Dashboard — On-Wheels</title><link rel="stylesheet" href="/static/style.css"></head>
@@ -146,7 +159,6 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return
             stats = get_dashboard()
             appointments = get_upcoming_appointments(days=14)
-            # Precompute display fields for template
             for a in appointments:
                 if a.get('deposit_agreed_at'):
                     a['deposit_status'] = a['deposit_agreed_at'][:10]
@@ -154,7 +166,6 @@ class CRMHandler(BaseHTTPRequestHandler):
                     a['deposit_status'] = 'Pending'
                 else:
                     a['deposit_status'] = '--'
-                # Timezone: resolve IANA name to display label (always EST/CST)
                 tz_iana = a.get('appointment_tz') or ''
                 tz_labels = {'America/Detroit': 'EST', 'America/Chicago': 'CST'}
                 a['tz_label'] = tz_labels.get(tz_iana)
@@ -225,7 +236,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                 return
 
             name = (data.get('name') or '').strip()
-            phone = (data.get('phone') or '').strip()
+            phone = normalize_phone((data.get('phone') or '').strip())
             email = (data.get('email') or '').strip()
             if not name or not phone:
                 json_response(self, {'error': 'Name and phone are required.'}, 400)
