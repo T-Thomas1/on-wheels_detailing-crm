@@ -5,9 +5,9 @@ import os
 import sys
 import json
 import io
-from datetime import timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -320,8 +320,21 @@ class CRMHandler(BaseHTTPRequestHandler):
 
             update_appointment_status(appointment_id, new_status)
             if new_status == 'Confirmed':
-                tomorrow = (now() + timedelta(days=1)).strftime('%Y-%m-%d')
-                create_follow_up(appointment_id, '24hr Reminder', tomorrow, 'SMS')
+                # Schedule reminder for the day BEFORE the appointment (not tomorrow)
+                conn = get_db()
+                row = conn.execute(
+                    "SELECT appointment_date FROM appointments WHERE id=?",
+                    (appointment_id,)).fetchone()
+                conn.close()
+                if row and row['appointment_date']:
+                    try:
+                        appt_date = datetime.strptime(row['appointment_date'], '%Y-%m-%d')
+                        reminder_date = (appt_date - timedelta(days=1)).strftime('%Y-%m-%d')
+                    except ValueError:
+                        reminder_date = (now() + timedelta(days=1)).strftime('%Y-%m-%d')
+                else:
+                    reminder_date = (now() + timedelta(days=1)).strftime('%Y-%m-%d')
+                create_follow_up(appointment_id, '24hr Reminder', reminder_date, 'SMS')
             elif new_status == 'Completed':
                 check_in = (now() + timedelta(days=2)).strftime('%Y-%m-%d')
                 create_follow_up(appointment_id, 'Post-Service Check-in', check_in, 'SMS')
@@ -347,7 +360,7 @@ class CRMHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    server = HTTPServer(('0.0.0.0', PORT), CRMHandler)
+    server = ThreadingHTTPServer(('0.0.0.0', PORT), CRMHandler)
     print(f"\n  On-Wheels Detailing CRM — http://localhost:{PORT}")
     print(f"  Booking form:     http://localhost:{PORT}/")
     print(f"  Dashboard:        http://localhost:{PORT}/dashboard")
