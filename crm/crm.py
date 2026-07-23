@@ -230,6 +230,14 @@ def init_db():
             (amount, name))
     conn.commit()
 
+    # Normalize existing phone numbers to digits-only (dedup migration)
+    all_customers = conn.execute("SELECT id, phone FROM customers WHERE phone IS NOT NULL").fetchall()
+    for row in all_customers:
+        clean = ''.join(c for c in row['phone'] if c.isdigit())
+        if clean and clean != row['phone']:
+            conn.execute("UPDATE customers SET phone=? WHERE id=?", (clean, row['id']))
+    conn.commit()
+
     return conn
 
 
@@ -250,13 +258,29 @@ def create_customer(full_name, phone=None, email=None, address=None,
     return row['id']
 
 
+def normalize_phone(phone):
+    """Strip to digits only for dedup. Returns empty string if no digits."""
+    if not phone:
+        return ''
+    return ''.join(c for c in phone if c.isdigit())
+
+
 def find_customer(phone=None, email=None):
-    """Find customer by phone or email. Returns list of matches."""
+    """Find customer by phone or email. Phone is normalized to digits-only."""
     conn = get_db()
     if phone:
+        clean = normalize_phone(phone)
+        if not clean:
+            conn.close()
+            return []
+        # Try exact digits-only match first, fall back to LIKE for legacy records
         rows = conn.execute(
-            "SELECT * FROM customers WHERE phone LIKE ? ORDER BY created_at DESC",
-            (f'%{phone}%',)).fetchall()
+            "SELECT * FROM customers WHERE phone=? ORDER BY created_at DESC",
+            (clean,)).fetchall()
+        if not rows:
+            rows = conn.execute(
+                "SELECT * FROM customers WHERE phone LIKE ? ORDER BY created_at DESC",
+                (f'%{clean}%',)).fetchall()
     elif email:
         rows = conn.execute(
             "SELECT * FROM customers WHERE email=? ORDER BY created_at DESC",
