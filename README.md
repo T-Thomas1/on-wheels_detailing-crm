@@ -1,6 +1,6 @@
 # On-Wheels Detailing CRM
 
-**Full-stack booking & customer management system for a multi-state mobile auto detailing business.**
+**Full-stack booking & customer management system for a multi-state mobile auto detailing business. Built and operated by SAIN API.**
 
 🔗 **Live:** [onwheelsdetailing.com](https://onwheelsdetailing.com) &nbsp;|&nbsp; 📋 **Book:** [api.onwheelsdetailing.com](https://api.onwheelsdetailing.com)
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-A production CRM powering On-Wheels Detailing — a mobile auto detailing business operating across Harris County, Texas and Metro Detroit, Michigan. Customers browse services, submit bookings with deposit agreements, and receive automated SMS follow-ups. The business owner manages everything through a secure dashboard.
+A production CRM developed by SAIN API for On-Wheels Detailing — a mobile auto detailing business operating across Harris County, Texas and Metro Detroit, Michigan. Customers browse services, submit bookings with deposit agreements, and receive automated SMS follow-ups. The business owner manages everything through a secure dashboard.
 
 Built from scratch with zero frameworks on the backend — just Python's standard library, SQLite, and a Cloudflare Pages frontend.
 
@@ -159,50 +159,7 @@ on-wheels_detailing-crm/
 
 ---
 
-## Local Development
-
-```bash
-# Clone
-git clone https://github.com/T-Thomas1/on-wheels_detailing-crm.git
-cd on-wheels_detailing-crm
-
-# Start the CRM backend
-cd crm
-python3 server.py
-# → http://localhost:5050         (booking form)
-# → http://localhost:5050/dashboard?token=onwheels2024
-
-# For production, set environment variables:
-export ONWHEELS_API_KEY="your-read-key"
-export ONWHEELS_ADMIN_KEY="your-admin-key"
-```
-
-The frontend is static HTML — open any `.html` file in a browser, or serve with `python3 -m http.server`.
-
----
-
-## Deployment
-
-```bash
-# On the droplet:
-cd /opt/onwheels && git pull origin master
-cp templates/booking.html crm/templates/
-cp server.py crm/
-cp crm.py crm/
-cp followup_checker.py crm/
-find /opt/onwheels -name '__pycache__' -exec rm -rf {} + 2>/dev/null
-systemctl restart onwheels
-
-# Verify:
-curl -s -o /dev/null -w '%{http_code}' https://api.onwheelsdetailing.com/
-# → 200
-```
-
-Cloudflare Pages auto-deploys on every push to `master`.
-
----
-
 ## License
 
-Proprietary — built for and operated by On-Wheels Detailing.  
+Proprietary — intellectual property of SAIN API. Built for and operated by On-Wheels Detailing.  
 Developed by TaSain Thomas | [onwheelsdetailing.com](https://onwheelsdetailing.com)
