@@ -161,5 +161,10 @@ on-wheels_detailing-crm/
 
 ## License
 
-Proprietary — intellectual property of SAIN API. Built for and operated by On-Wheels Detailing.  
-Developed by TaSain Thomas | [onwheelsdetailing.com](https://onwheelsdetailing.com)
+Copyright © 2025–2026 SAIN-API. All rights reserved.
+
+This software is the exclusive intellectual property of SAIN-API. Viewing
+permitted for educational and portfolio evaluation purposes only. See
+[LICENSE](LICENSE) for full terms.
+
+Built under contract for On-Wheels Detailing.
