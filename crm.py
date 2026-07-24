@@ -5,96 +5,103 @@ import sqlite3
 import os
 import json
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
 
-# ── Business Timezone ─────────────────────────────────────────────
-# All times hardcoded to Eastern Standard (UTC-5) and Central Standard (UTC-6).
-# No DST auto-switch — displays show EST/CST year-round for consistency.
-# Set TZ env var to override the default offset (e.g., TZ_OFFSET=-6).
+# ── Business Timezone (America/Detroit → EST/EDT auto) ─────────────
+# Uses zoneinfo (stdlib, Python 3.9+) with system tzdata fallback.
+# Set TZ env var to override (e.g., TZ=America/Chicago).
+TZ_NAME = os.environ.get("TZ", "America/Detroit")
 
-_DEFAULT_OFFSET = int(os.environ.get("TZ_OFFSET", "-5"))  # -5 = EST
+def _load_tz():
+    """Load the business timezone. Returns ZoneInfo or None (system local)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo(TZ_NAME)
+    except Exception:
+        try:
+            # Some environments need the backport
+            from backports.zoneinfo import ZoneInfo
+            return ZoneInfo(TZ_NAME)
+        except Exception:
+            return None  # fall back to system local time
 
-def _fixed_tz(offset_hours):
-    """Return a fixed-offset timezone (no DST)."""
-    return timezone(timedelta(hours=offset_hours), 
-                   f"UTC{offset_hours:+d}")
-
-BUSINESS_TZ = _fixed_tz(_DEFAULT_OFFSET)  # EST (UTC-5)
+BUSINESS_TZ = _load_tz()
 
 # ── Location → Timezone mapping ───────────────────────────────────
-# Each area maps to (IANA_name, display_label, display_abbrev, offset).
-# IANA stored in DB for correctness; labels always show standard time.
+# Each service area maps to its IANA timezone. Used for:
+#  - Booking form dynamic timezone label (JS reads data-tz attrs)
+#  - Storing appointment_tz so follow-ups fire in the right zone
+#  - Dashboard per-appointment timezone display
 LOCATION_TIMEZONES = {
-    'Texas - Harris County':         ('America/Chicago', 'Central', 'CST', -6),
-    'Michigan - St. Clair':          ('America/Detroit', 'Eastern', 'EST', -5),
-    'Michigan - Metro Detroit':      ('America/Detroit', 'Eastern', 'EST', -5),
-    'Michigan - Marysville (Shop)':  ('America/Detroit', 'Eastern', 'EST', -5),
-    'Michigan - New Haven (Shop)':   ('America/Detroit', 'Eastern', 'EST', -5),
+    'Texas - Harris County':         'America/Chicago',
+    'Michigan - St. Clair':          'America/Detroit',
+    'Michigan - Metro Detroit':      'America/Detroit',
+    'Michigan - Marysville (Shop)':  'America/Detroit',
+    'Michigan - New Haven (Shop)':   'America/Detroit',
 }
 
 def get_tz_for(location):
-    """Return fixed-offset timezone for a service area. Falls back to EST."""
-    info = LOCATION_TIMEZONES.get(location)
-    offset = info[3] if info else -5
-    return _fixed_tz(offset)
+    """Return ZoneInfo for a service area location, falling back to BUSINESS_TZ."""
+    tz_name = LOCATION_TIMEZONES.get(location, str(BUSINESS_TZ)) if BUSINESS_TZ else 'America/Detroit'
+    return _load_tz_specific(tz_name)
 
-def get_tz_info(location):
-    """Return (iana_name, display_label, display_abbrev) or defaults."""
-    info = LOCATION_TIMEZONES.get(location)
-    if info:
-        return info[0], info[1], info[2]
-    return 'America/Detroit', 'Eastern', 'EST'
+def _load_tz_specific(tz_name):
+    """Load a specific timezone by name. Returns ZoneInfo or None."""
+    try:
+        from zoneinfo import ZoneInfo
+        return ZoneInfo(tz_name)
+    except Exception:
+        try:
+            from backports.zoneinfo import ZoneInfo
+            return ZoneInfo(tz_name)
+        except Exception:
+            return BUSINESS_TZ  # last resort
 
 def tz_display_label(tz):
-    """Return display label ('Eastern', 'Central') — always standard time."""
+    """Return short timezone display label from a ZoneInfo (e.g. 'Eastern', 'Central')."""
     if tz is None:
         return 'Eastern'
-    offset = tz.utcoffset(datetime.now())
-    if offset is None:
+    tn = tz.tzname(datetime.now(tz))
+    if tn in ('EST', 'EDT'):
         return 'Eastern'
-    hours = offset.total_seconds() / 3600
-    if hours == -5:
-        return 'Eastern'
-    if hours == -6:
+    if tn in ('CST', 'CDT'):
         return 'Central'
-    if hours == -7:
+    if tn in ('MST', 'MDT'):
         return 'Mountain'
-    if hours == -8:
+    if tn in ('PST', 'PDT'):
         return 'Pacific'
-    return tz.tzname(None) or 'Local'
+    return tn or 'Local'
 
 def tz_offset_label(tz):
-    """Return abbreviation ('EST', 'CST') — always standard time."""
+    """Return offset label like 'EDT' or 'CDT' for display."""
     if tz is None:
-        return 'EST'
-    offset = tz.utcoffset(datetime.now())
-    if offset is None:
-        return 'EST'
-    hours = offset.total_seconds() / 3600
-    labels = {-5: 'EST', -6: 'CST', -7: 'MST', -8: 'PST'}
-    return labels.get(int(hours), f'UTC{int(hours):+d}')
+        return 'EDT'
+    return tz.tzname(datetime.now(tz)) or str(tz)
 
 def now_in_tz(tz):
     """Return current datetime in a specific timezone."""
-    return datetime.now(tz) if tz else datetime.now()
+    if tz:
+        return datetime.now(tz)
+    return datetime.now()
 
 def now():
-    """Return current datetime in business timezone (EST/UTC-5)."""
-    return datetime.now(BUSINESS_TZ)
+    """Return current datetime in business timezone (America/Detroit)."""
+    return now_in_tz(BUSINESS_TZ)
 
 def today_str():
-    """Return today's date in EST as YYYY-MM-DD."""
+    """Return today's date in business timezone as YYYY-MM-DD."""
     return now().strftime('%Y-%m-%d')
 
 def now_str():
-    """Return current datetime in EST as ISO timestamp."""
+    """Return current datetime in business timezone as ISO timestamp."""
     return now().strftime('%Y-%m-%d %H:%M:%S')
 
 def now_display():
-    """Return human-readable current time (always shows EST)."""
+    """Return human-readable current time with timezone label."""
     t = now()
-    return f"{t.strftime('%A, %B %d, %Y at %I:%M %p')} EST"
+    tz_label = "EST" if t.tzname() == "EST" else "EDT"
+    return f"{t.strftime('%A, %B %d, %Y at %I:%M %p')} {tz_label}"
 
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
@@ -108,6 +115,7 @@ def get_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
+    conn.execute("PRAGMA busy_timeout=5000")  # Wait up to 5s on lock
     return conn
 
 
@@ -491,6 +499,25 @@ def get_deposit_balance():
 
 def create_follow_up(appointment_id, follow_type, scheduled_date, channel='SMS'):
     conn = get_db()
+
+    # ── Deduplication: don't create duplicate follow-ups for same customer on same day ──
+    # If this customer already has this follow-up type for another appointment on the same
+    # appointment date, skip — they don't need two confirmation texts for two vehicles.
+    row = conn.execute("""
+        SELECT a2.id
+        FROM appointments a1
+        JOIN appointments a2 ON a1.customer_id = a2.customer_id
+                              AND a1.appointment_date = a2.appointment_date
+                              AND a1.id != a2.id
+        JOIN follow_ups f ON f.appointment_id = a2.id AND f.follow_type = ?
+        WHERE a1.id = ?
+        LIMIT 1
+    """, (follow_type, appointment_id)).fetchone()
+
+    if row:
+        conn.close()
+        return  # Already covered by the sibling appointment's follow-up
+
     conn.execute("""
         INSERT INTO follow_ups (appointment_id, follow_type, channel, scheduled_date)
         VALUES (?,?,?,?)

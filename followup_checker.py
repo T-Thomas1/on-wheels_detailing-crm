@@ -53,32 +53,63 @@ def format_phone(phone):
     return phone
 
 
+def get_customer_vehicles_for_date(appointment_id):
+    """Get all vehicles for the same customer on the same appointment date.
+    Returns a human-readable string like 'GMC Yukon & Chevrolet Trax' or 'Ford Edge'.
+    """
+    conn = get_db()
+    rows = conn.execute("""
+        SELECT v.make||' '||v.model as vehicle
+        FROM appointments a1
+        JOIN appointments a2 ON a1.customer_id = a2.customer_id
+                            AND a1.appointment_date = a2.appointment_date
+        LEFT JOIN vehicles v ON a2.vehicle_id = v.id
+        WHERE a1.id = ?
+        ORDER BY a2.created_at
+    """, (appointment_id,)).fetchall()
+    conn.close()
+    
+    vehicles = [r[0] for r in rows if r[0]]
+    if not vehicles:
+        return 'your vehicle'
+    if len(vehicles) == 1:
+        return vehicles[0]
+    return ' & '.join(vehicles)
+
+
 def generate_message(follow_up):
     """Generate a natural-sounding message based on follow-up type."""
     name = follow_up['full_name']
     service = follow_up.get('service_name') or 'detailing service'
+    vehicles = get_customer_vehicles_for_date(follow_up['appointment_id'])
     payment_link = follow_up.get('payment_link')
     appt_date = follow_up['appointment_date']
+
+    # Build vehicle-aware service line: "Interior Refresh on your GMC Yukon & Chevrolet Trax"
+    if vehicles and vehicles != 'your vehicle':
+        vehicle_context = f"{service} on your {vehicles}"
+    else:
+        vehicle_context = service
 
     # Deposit-aware booking confirmation — don't mention deposits for non-deposit services
     if payment_link and payment_link.startswith('https://buy.stripe.com'):
         deposit_msg = f" To lock it in, here's your deposit link: {payment_link}. Once that's done you're confirmed."
         deposit_confirm_templates = [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule.{deposit_msg} Talk soon!",
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {vehicle_context}. I've got you on the schedule.{deposit_msg} Talk soon!",
         ]
     else:
         deposit_confirm_templates = [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule. I'll text you to confirm the details. Talk soon!",
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {vehicle_context}. I've got you on the schedule. I'll text you to confirm the details. Talk soon!",
         ]
 
     templates = {
         'Booking Confirmation': deposit_confirm_templates,
         '24hr Reminder': [
-            f"  Tomorrow's the day, {name}! Reminder: I'll be out for your {service} tomorrow. Balance is due when I arrive (cash or card). Make sure the vehicle's accessible. Any changes, just text. — TaSain, On-Wheels Detailing",
+            f"  Tomorrow's the day, {name}! Reminder: I'll be out for your {vehicle_context} tomorrow. Balance is due when I arrive (cash or card). Make sure the vehicle's accessible. Any changes, just text. — TaSain, On-Wheels Detailing",
         ],
         'Post-Service Check-in': [
-            f"Hey {name}! Been a couple days since your {service} — how's everything looking? If anything needs a touch-up, don't hesitate to let me know. I stand behind my work. — TaSain, On-Wheels",
-            f"Checking in, {name}! How's the {service} holding up? If you're happy, I'd love a review on Google or Facebook — it really helps a small operation like mine. Thanks again for your business! — TaSain",
+            f"Hey {name}! Been a couple days since your {vehicle_context} — how's everything looking? If anything needs a touch-up, don't hesitate to let me know. I stand behind my work. — TaSain, On-Wheels",
+            f"Checking in, {name}! How's the {vehicle_context} holding up? If you're happy, I'd love a review on Google or Facebook — it really helps a small operation like mine. Thanks again for your business! — TaSain",
         ],
         'Re-engagement': [
             f"Hey {name}! Been a while since your last detail with On-Wheels. If it's time for a refresh, I'm booking for the coming weeks. Text back and let's set something up! — TaSain",
