@@ -283,6 +283,10 @@ class CRMHandler(BaseHTTPRequestHandler):
         """Suppress default logging — we use audit_log instead."""
         pass
 
+    def do_HEAD(self):
+        """Support HEAD requests (Google Search Console URL inspection)."""
+        self.do_GET()
+
     # ── GET ────────────────────────────────────────────────────
 
     def do_GET(self):
