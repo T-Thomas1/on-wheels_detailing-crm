@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <title>Recent Jobs | On-Wheels Detailing - Auto Detailing Gallery</title>
     <meta name="description" content="Browse our recent auto detailing work in Harris County TX and Metro Detroit MI. See real before &amp; after results — interior detailing and paint correction.">
     <meta name="keywords" content="detailing gallery, before and after detailing, car detailing photos, Harris County detailing gallery, Metro Detroit detailing gallery, Michigan detailing, Texas detailing">
@@ -47,6 +53,91 @@
             .logo img { height: 45px; }
         }
     </style>
+    <!-- Gallery ImageObject Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_2071.jpg",
+          "caption": "Deep black paint correction — swirl-free mirror finish after two-step compound and polish",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_2071-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_3170.JPG",
+          "caption": "Complete interior restoration — carpets, seats, and all surfaces deep cleaned",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_3170-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_3954.JPG",
+          "caption": "Full interior detail with hot water extraction and steam sanitizing",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_3954-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4961.jpeg",
+          "caption": "Ceramic coating application — hydrophobic gloss after paint correction",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4961-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4959.jpeg",
+          "caption": "Before paint correction — swirl marks and oxidation visible on hood",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4959-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4651.JPG",
+          "caption": "Before gel-coat restoration — oxidized and dull boat surface",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4651-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4652.JPG",
+          "caption": "After gel-coat restoration — restored shine and depth on boat hull",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4652-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4960.jpeg",
+          "caption": "Hand wax application — finishing touch after paint correction",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4960-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_4386.jpeg",
+          "caption": "SUV exterior detail — deep gloss finish on large vehicle",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_4386-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_2288.jpeg",
+          "caption": "Full exterior detail — wheels, tires, and trim restored",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_2288-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_2967.jpeg",
+          "caption": "Interior refresh — Koch Chemie ASC on all surfaces, factory-fresh look",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_2967-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_3131.JPG",
+          "caption": "Sedan paint correction — hood reflection after two-step process",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_3131-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_2577.JPG",
+          "caption": "Black truck exterior detail — deep wet-look gloss finish",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_2577-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_2700.JPG",
+          "caption": "SUV full detail — paint correction and ceramic coating completed",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_2700-400w.webp"
+        },        {
+          "@type": "ImageObject",
+          "url": "https://www.onwheelsdetailing.com/images/IMG_3123.JPG",
+          "caption": "Leather interior restoration — Carpro Perl treatment with UV protection",
+          "thumbnail": "https://www.onwheelsdetailing.com/images/IMG_3123-400w.webp"
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
 <!-- Location Reminder Banner - Visible until user selects location -->
@@ -79,7 +170,7 @@
     <div class="container header-content">
         <div class="logo">
             <a href="/">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="180" height="60" loading="eager">
+                <picture><source srcset="images/onwheelsLogo.webp" type="image/webp"><img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="180" height="60" loading="eager"></picture>
             </a>
         </div>
 
@@ -142,49 +233,124 @@
 
         <div class="gallery-full">
             <div class="gallery-item">
-                <img src="images/IMG_2071.jpg" alt="Paint correction results" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_2071-400w.webp 400w, images/IMG_2071-800w.webp 800w, images/IMG_2071-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_2071.jpg" alt="Deep black paint correction — swirl-free mirror finish after two-step compound and polish" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3170.JPG" alt="Interior restoration" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_3170-400w.webp 400w, images/IMG_3170-800w.webp 800w, images/IMG_3170-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_3170.JPG" alt="Complete interior restoration — carpets, seats, and all surfaces deep cleaned" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3954.JPG" alt="Car interior detailing" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_3954-400w.webp 400w, images/IMG_3954-800w.webp 800w, images/IMG_3954-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_3954.JPG" alt="Full interior detail with hot water extraction and steam sanitizing" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4961.jpeg" alt="Car after paint correction" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4961-400w.webp 400w, images/IMG_4961-800w.webp 800w, images/IMG_4961-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4961.jpeg" alt="Ceramic coating application — hydrophobic gloss after paint correction" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4959.jpeg" alt="Car before paint correction" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4959-400w.webp 400w, images/IMG_4959-800w.webp 800w, images/IMG_4959-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4959.jpeg" alt="Before paint correction — swirl marks and oxidation visible on hood" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4651.JPG" alt="Before gel-coat restoration" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4651-400w.webp 400w, images/IMG_4651-800w.webp 800w, images/IMG_4651-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4651.JPG" alt="Before gel-coat restoration — oxidized and dull boat surface" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4652.JPG" alt="After gel-coat restoration" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4652-400w.webp 400w, images/IMG_4652-800w.webp 800w, images/IMG_4652-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4652.JPG" alt="After gel-coat restoration — restored shine and depth on boat hull" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4960.jpeg" alt="Car paint wax application" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4960-400w.webp 400w, images/IMG_4960-800w.webp 800w, images/IMG_4960-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4960.jpeg" alt="Hand wax application — finishing touch after paint correction" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_4386.jpeg" alt="Car exterior detailing" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_4386-400w.webp 400w, images/IMG_4386-800w.webp 800w, images/IMG_4386-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_4386.jpeg" alt="SUV exterior detail — deep gloss finish on large vehicle" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2288.jpeg" alt="Car exterior job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_2288-400w.webp 400w, images/IMG_2288-800w.webp 800w, images/IMG_2288-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_2288.jpeg" alt="Full exterior detail — wheels, tires, and trim restored" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2967.jpeg" alt="Car interior job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_2967-400w.webp 400w, images/IMG_2967-800w.webp 800w, images/IMG_2967-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_2967.jpeg" alt="Interior refresh — Koch Chemie ASC on all surfaces, factory-fresh look" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3131.JPG" alt="Car exterior job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_3131-400w.webp 400w, images/IMG_3131-800w.webp 800w, images/IMG_3131-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_3131.JPG" alt="Sedan paint correction — hood reflection after two-step process" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2577.JPG" alt="Car detailing job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_2577-400w.webp 400w, images/IMG_2577-800w.webp 800w, images/IMG_2577-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_2577.JPG" alt="Black truck exterior detail — deep wet-look gloss finish" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_2700.JPG" alt="Car exterior job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_2700-400w.webp 400w, images/IMG_2700-800w.webp 800w, images/IMG_2700-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_2700.JPG" alt="SUV full detail — paint correction and ceramic coating completed" loading="lazy" width="400" height="300">
+                </picture>
             </div>
             <div class="gallery-item">
-                <img src="images/IMG_3123.JPG" alt="Car interior job" loading="lazy" width="400" height="300">
+                <picture>
+                    <source srcset="images/IMG_3123-400w.webp 400w, images/IMG_3123-800w.webp 800w, images/IMG_3123-1200w.webp 1200w"
+                            type="image/webp"
+                            sizes="(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px">
+                    <img src="images/IMG_3123.JPG" alt="Leather interior restoration — Carpro Perl treatment with UV protection" loading="lazy" width="400" height="300">
+                </picture>
             </div>
         </div>
     </div>
@@ -203,7 +369,7 @@
 <footer>
     <div class="container footer-content">
         <div class="logo">
-            <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="150" height="50" loading="lazy">
+            <picture><source srcset="images/onwheelsLogo.webp" type="image/webp"><img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="150" height="50" loading="lazy"></picture>
             <h2>On-<span>Wheels</span> Detailing</h2>
         </div>
         <div class="footer-info">

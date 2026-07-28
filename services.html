@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <title>Detailing Services | On-Wheels Detailing</title>
     <meta name="description" content="Expert mobile auto detailing — interior, paint correction, ceramic coating &amp; more. Serving Harris County TX and Metro Detroit MI. Free quotes!">
     <meta name="keywords" content="interior detailing, paint correction, ceramic coating, car detailing, mobile detailing Harris County, Metro Detroit detailing, Michigan detailing, Texas detailing">
@@ -47,6 +53,30 @@
             .logo img { height: 45px; }
         }
     </style>
+    <!-- Service Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AutoDetailing",
+      "name": "On-Wheels Detailing",
+      "url": "https://www.onwheelsdetailing.com/services",
+      "telephone": "+15868730656",
+      "description": "Expert mobile auto detailing — interior, paint correction, ceramic coating and more.",
+      "areaServed": ["Metro Detroit","Port Huron","St. Clair","Marysville","New Haven","Detroit","Macomb County","St. Clair County","Houston","Harris County"],
+      "priceRange": "$150-$2000",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Detailing Services",
+        "itemListElement": [
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Interior Refresh"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Premium Interior Restoration"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Two-Step Paint Correction"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Ceramic Coating"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Signature Detail Package"}}
+        ]
+      }
+    }
+    </script>
 </head>
 <body>
 <!-- Location Reminder Banner - Visible until user selects location -->

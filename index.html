@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>On-Wheels Detailing | Mobile Auto Detailing — Detroit, St. Clair &amp; TX</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>On-Wheels Detailing | Premium Mobile Auto Detailing</title>
     <meta name="description" content="Professional mobile auto detailing in Metro Detroit, Port Huron, St. Clair, and Harris County TX. Interior, paint correction, ceramic coating. Free quotes!">
     <meta name="keywords" content="auto detailing Metro Detroit, car detailing Port Huron, paint correction Detroit, ceramic coating St. Clair, interior detailing Marysville, mobile detailing Michigan, car detailing New Haven, Macomb County detailing, St. Clair County detailing, On-Wheels Detailing, polish protect, two-step paint correction">
     <meta name="author" content="On-Wheels Detailing">
@@ -60,7 +66,11 @@
         .dropdown-content { display: none; position: absolute; background-color: #1a1a1a; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1; border-top: 3px solid #e5dfb9; }
         .dropdown:hover .dropdown-content { display: block; }
         .dropdown-content a { color: #f8f8f8; padding: 12px 16px; display: block; text-transform: none; }
-        .hero { background: linear-gradient(rgba(15, 42, 72, 0.7), rgba(15, 42, 72, 0.7)), url('images/hero-car.png') no-repeat center center/cover; min-height: 80vh; display: flex; align-items: center; text-align: center; color: #f8f8f8; padding: 4rem 0; }
+        .hero { position: relative; min-height: 80vh; display: flex; align-items: center; text-align: center; color: #f8f8f8; padding: 4rem 0; overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; z-index: 0; }
+        .hero-bg img, .hero-bg source { width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(rgba(15,42,72,0.7), rgba(15,42,72,0.7)); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         .btn { display: inline-block; background-color: #c63c34; color: #f8f8f8; padding: 0.8rem 1.5rem; border-radius: 5px; text-decoration: none; font-weight: bold; transition: all 0.3s; text-transform: uppercase; }
         footer { background-color: #1a1a1a; color: #f8f8f8; padding: 2rem 0; text-align: center; }
@@ -86,7 +96,10 @@
     <div class="container header-content">
         <div class="logo">
             <a href="/">
-                <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo">
+                <picture>
+                    <source srcset="images/onwheelsLogo.webp" type="image/webp">
+                    <img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" width="200" height="60">
+                </picture>
             </a>
         </div>
 
@@ -140,6 +153,12 @@
 </header>
 
 <section id="home" class="hero">
+    <picture class="hero-bg">
+        <source srcset="images/hero-car-mobile.webp" media="(max-width: 768px)" type="image/webp">
+        <source srcset="images/hero-car.webp" type="image/webp">
+        <img src="images/hero-car.png" alt="Professional auto detailing results" width="1920" height="1080">
+    </picture>
+    <div class="hero-overlay"></div>
     <div class="container hero-content">
         <h1>Premium Mobile Auto Detailing Services</h1>
         <p class="location-specific" data-texas="On-Wheels Detailing brings professional mobile interior detailing to Harris County, Texas. We specialize in interior refresh and premium interior restoration using hot water extraction and steam. Since we have no physical shop, we come directly to you—whether you're in Houston, Katy, Cypress, or anywhere in Harris County. We use premium products like Koch Chemie Pol Star and Carpro Perl to restore and protect your vehicle's interior. Free quotes available!" data-michigan="On-Wheels Detailing offers professional detailing at our garage locations in Marysville and New Haven, plus mobile service throughout Metro Detroit. We specialize in two-step paint correction, Carpro ceramic coating, and premium interior restoration using hot water extraction and steam. Whether you need interior refresh with Pol Star and Perl, or a full signature detail package (interior + exterior), We handle it all. Experience high-quality results with products like Carpro CQ.UK 3.0, Koch Chemie, and Starrybot extraction.">On-Wheels Detailing brings professional mobile interior detailing to Harris County, Texas. We specialize in interior refresh and premium interior restoration using hot water extraction and steam. Since we have no physical shop, we come directly to you—whether you're in Houston, Katy, Cypress, or anywhere in Harris County. We use premium products like Koch Chemie Pol Star and Carpro Perl to restore and protect your vehicle's interior. Free quotes available!</p>
@@ -155,8 +174,8 @@
     <div class="container">
         <div class="section-title"><h2>Our Detailing Services</h2><p>Professional auto detailing services to meet all your needs</p></div>
         <div class="services-grid">
-            <div class="service-card"><img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing" class="service-icon" loading="lazy"><h3>Interior Detailing</h3><p>Complete interior transformation with deep cleaning and protection for all surfaces.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Interior Refresh</li><li>• Premium Interior Restoration</li><li>• Steam & Hot Water Extraction</li><li>• Pol Star & Carpro Perl treatment</li></ul></div>
-            <div class="service-card"><img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction" class="service-icon" loading="lazy"><h3>Paint Correction</h3><p>Professional paint restoration that eliminates swirls, scratches, and oxidation.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Two-step paint correction</li><li>• Ceramic coating (Carpro CQ.UK 3.0)</li><li>• Polish & protect</li><li>• Signature Detail Package (interior + exterior)</li></ul></div>
+            <div class="service-card"><picture><source srcset="images/onwheelsSecondaryOption.webp" type="image/webp"><img src="images/onwheelsSecondaryOption.png" alt="Interior Detailing" class="service-icon" loading="lazy" width="80" height="80"></picture><h3>Interior Detailing</h3><p>Complete interior transformation with deep cleaning and protection for all surfaces.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Interior Refresh</li><li>• Premium Interior Restoration</li><li>• Steam & Hot Water Extraction</li><li>• Pol Star & Carpro Perl treatment</li></ul></div>
+            <div class="service-card"><picture><source srcset="images/onwheelsSecondaryLogo-03.webp" type="image/webp"><img src="images/onwheelsSecondaryLogo-03.png" alt="Paint Correction" class="service-icon" loading="lazy" width="80" height="80"></picture><h3>Paint Correction</h3><p>Professional paint restoration that eliminates swirls, scratches, and oxidation.</p><ul style="margin-top:0.5rem;font-size:0.85rem;list-style:none;padding-left:0"><li>• Two-step paint correction</li><li>• Ceramic coating (Carpro CQ.UK 3.0)</li><li>• Polish & protect</li><li>• Signature Detail Package (interior + exterior)</li></ul></div>
         </div>
         <div class="text-center"><a href="/services" class="btn btn-outline">View All Services</a></div>
     </div>
@@ -164,7 +183,7 @@
 
 <footer>
     <div class="container footer-content">
-        <div class="logo"><img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" loading="lazy"><h2>On-<span>Wheels</span> Detailing</h2></div>
+        <div class="logo"><picture><source srcset="images/onwheelsLogo.webp" type="image/webp"><img src="images/onwheelsLogo.png" alt="On-Wheels Detailing Logo" loading="lazy" width="200" height="60"></picture><h2>On-<span>Wheels</span> Detailing</h2></div>
         <div class="footer-info"><div class="contact-info"><p><i class="fas fa-phone"></i> <a href="tel:+15868730656">(586) 873-0656</a></p><p><i class="fas fa-envelope"></i> <a href="mailto:tasain@onwheelsdetailing.com">tasain@onwheelsdetailing.com</a></p></div><div class="social-icons"><a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a><a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a></div></div>
         <div class="footer-bottom"><p>&copy; 2025 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.</p><p style="margin-top:0.5rem;font-size:0.9rem;" class="location-specific" data-texas="Serving Houston, Harris County, and all surrounding Texas areas with mobile service" data-michigan="📍 Garage Locations: Marysville & New Haven | Mobile: Detroit, Port Huron, St. Clair, Macomb County, St. Clair County & all Metro Detroit">Serving Houston, Harris County, and all surrounding Texas areas with mobile service</p></div>
     </div>

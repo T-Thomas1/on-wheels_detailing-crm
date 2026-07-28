@@ -1,0 +1,21 @@
+{
+  "name": "On-Wheels Detailing",
+  "short_name": "On-Wheels",
+  "description": "Premium mobile auto detailing in Metro Detroit and Harris County TX",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e2f48",
+  "theme_color": "#0e2f48",
+  "icons": [
+    {
+      "src": "/images/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}
