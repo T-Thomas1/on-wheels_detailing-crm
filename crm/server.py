@@ -79,6 +79,11 @@ conn.commit()
 conn.close()
 
 
+# Location constants
+MOBILE_LOCATIONS = {'Texas - Harris County', 'Michigan - St. Clair', 'Michigan - Metro Detroit'}
+VALID_BUSINESS_DAYS = {3, 5, 6}  # Python weekday(): 3=Thu, 5=Sat, 6=Sun
+
+
 # ═══════════════════════════════════════════════════════════════
 #  SECURITY UTILITIES
 # ═══════════════════════════════════════════════════════════════
@@ -408,6 +413,19 @@ class CRMHandler(BaseHTTPRequestHandler):
                 json_response(self, {'error': 'Please provide a valid phone number.'}, 400)
                 return
 
+            # Validate preferred date is Thu, Sat, or Sun
+            preferred_date = data.get('preferred_date', '')
+            if preferred_date:
+                try:
+                    dt = datetime.strptime(preferred_date, '%Y-%m-%d')
+                    if dt.weekday() not in VALID_BUSINESS_DAYS:
+                        json_response(self, {'error': 'We are only open Thursday, Saturday, and Sunday. Please select one of those days.'}, 400)
+                        audit_log('BOOK_FAIL', self._client_ip(), path, f'bad day: {preferred_date} (weekday={dt.weekday()})')
+                        return
+                except ValueError:
+                    json_response(self, {'error': 'Invalid date format.'}, 400)
+                    return
+
             existing = find_customer(phone=phone)
             if existing:
                 customer_id = existing[0]['id']
@@ -464,10 +482,17 @@ class CRMHandler(BaseHTTPRequestHandler):
             today = datetime.now().strftime('%Y-%m-%d')
             create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS')
 
+            # Build confirmation message with mobile fee note if applicable
+            is_mobile = data.get('location', '') in MOBILE_LOCATIONS
+            if is_mobile:
+                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment. \u26a0\ufe0f A $25 mobile service fee applies."
+            else:
+                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment."
+
             audit_log('BOOK_OK', self._client_ip(), path, f'customer={name}, appt={appointment_id[:8]}')
             json_response(self, {
                 'success': True,
-                'message': "Thanks for reaching out! TaSain will text you shortly to confirm your appointment.",
+                'message': confirm_msg,
                 'appointment_id': appointment_id,
             }, 201)
 
