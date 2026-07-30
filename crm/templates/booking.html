@@ -130,8 +130,10 @@
       <div class="form-row">
         <div class="form-group">
           <label for="preferred_date">Preferred Date</label>
-          <input type="date" id="preferred_date" name="preferred_date" min="">
-          <span id="date-error" class="error" style="display:none;font-size:0.82rem;margin-top:4px;">We're open Thursday, Saturday &amp; Sunday only. Please pick one of those days.</span>
+          <select id="preferred_date" name="preferred_date">
+            <option value="">-- Choose a date --</option>
+          </select>
+          <span id="date-hint" style="display:block;font-size:0.78rem;color:#888;margin-top:3px;">We're open Thursday, Saturday &amp; Sunday</span>
         </div>
         <div class="form-group">
           <label for="preferred_time">Preferred Time</label>
@@ -194,8 +196,51 @@
 </div>
 
 <script>
-// ── Set min date to tomorrow ──
-document.getElementById('preferred_date').min = new Date().toISOString().split('T')[0];
+// ── Populate date dropdown with Thu/Sat/Sun only ──
+function populateDates() {
+  const select = document.getElementById('preferred_date');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const endDate = new Date(today);
+  endDate.setDate(endDate.getDate() + 112);
+  
+  let current = new Date(today);
+  current.setDate(current.getDate() + 1);
+  
+  while (select.options.length > 1) select.remove(1);
+  
+  let currentMonth = -1;
+  let optgroup = null;
+  
+  while (current <= endDate) {
+    const day = current.getDay();
+    if (day === 0 || day === 4 || day === 6) {
+      const month = current.getMonth();
+      if (month !== currentMonth) {
+        currentMonth = month;
+        const monthName = current.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        optgroup = document.createElement('optgroup');
+        optgroup.label = monthName;
+        select.appendChild(optgroup);
+      }
+      const yyyy = current.getFullYear();
+      const mm = String(current.getMonth() + 1).padStart(2, '0');
+      const dd = String(current.getDate()).padStart(2, '0');
+      const dateStr = yyyy + '-' + mm + '-' + dd;
+      const dayName = current.toLocaleDateString('en-US', { weekday: 'short' });
+      const displayStr = dayName + ' ' + current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      
+      const option = document.createElement('option');
+      option.value = dateStr;
+      option.textContent = displayStr;
+      if (optgroup) optgroup.appendChild(option);
+      else select.appendChild(option);
+    }
+    current.setDate(current.getDate() + 1);
+  }
+}
+populateDates();
 
 // ── Service area filtering ──
 // Shop locations = all services. Mobile = interior only.
@@ -369,28 +414,8 @@ document.addEventListener('change', (e) => {
 
     updatePriceSummary();
   }
-  // Validate date is Thu, Sat, or Sun
-  if (e.target.id === 'preferred_date') {
-    validateDate(e.target.value);
-  }
+  // Date dropdown only shows valid days — no validation needed
 });
-
-// ── Date validation: Thu (4), Sat (6), Sun (0) only ──
-function validateDate(dateStr) {
-  const errorEl = document.getElementById('date-error');
-  if (!dateStr) {
-    errorEl.style.display = 'none';
-    return true;
-  }
-  const d = new Date(dateStr + 'T12:00:00');  // noon to avoid TZ shift
-  const day = d.getDay();  // 0=Sun, 4=Thu, 6=Sat
-  if (day !== 0 && day !== 4 && day !== 6) {
-    errorEl.style.display = '';
-    return false;
-  }
-  errorEl.style.display = 'none';
-  return true;
-}
 
 // ── Price Summary: shows estimate when service + location selected ──
 function updatePriceSummary() {

@@ -29,6 +29,7 @@ from crm import (
     get_dashboard,
     now, today_str, now_str,
     get_tz_for, tz_display_label, tz_offset_label, LOCATION_TIMEZONES,
+    classify_vehicle_size, get_service_tier_price, get_vehicle_size_short,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -452,15 +453,19 @@ class CRMHandler(BaseHTTPRequestHandler):
                 )
 
             vehicle_id = None
+            vehicle_size = None
             if data.get('vehicle_type'):
+                raw_type = sanitize_input(data.get('vehicle_type', ''), 50)
+                vehicle_size = classify_vehicle_size(raw_type)
                 add_vehicle(
                     customer_id=customer_id,
-                    vehicle_type=sanitize_input(data.get('vehicle_type', ''), 50),
+                    vehicle_type=raw_type,
                     make=sanitize_input(data.get('vehicle_make', ''), 50),
                     model=sanitize_input(data.get('vehicle_model', ''), 50),
                     year=data.get('vehicle_year'),
                     color=sanitize_input(data.get('vehicle_color', ''), 30),
                     license_plate=sanitize_input(data.get('license_plate', ''), 20),
+                    vehicle_size=vehicle_size,
                 )
                 vehicles = get_customer_vehicles(customer_id)
                 if vehicles:
