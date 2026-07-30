@@ -328,9 +328,10 @@ VEHICLE_SIZE_MAP = {
     'SUV':        'SUV/Hatchback',
     'Truck':      'Large SUV/Truck',
     'Van':        'Large SUV/Truck',
-    'RV':         'RV',
-    'Motorcycle': 'Motorcycle',
-    'Other':      'Sedan',
+    'RV':         'Other',       # CHECK constraint only allows Sedan/SUV-H/Lg/Other
+    'Motorcycle': 'Other',
+    'Boat':       'Other',
+    'Other':      'Other',
 }
 
 # Service pricing tiers by vehicle size
@@ -383,15 +384,14 @@ def get_service_tier_price(service_name, vehicle_size):
 
 
 def get_vehicle_size_short(vehicle_size):
-    """Short label for display: 'Sedan', 'SUV', 'Lg SUV'."""
+    """Short label for display: 'Sedan', 'SUV', 'Lg SUV', 'RV', 'Moto'."""
     if not vehicle_size:
         return '?'
     return {
         'Sedan': 'Sedan',
         'SUV/Hatchback': 'SUV',
         'Large SUV/Truck': 'Lg SUV',
-        'RV': 'RV',
-        'Motorcycle': 'Moto',
+        'Other': 'Other',
     }.get(vehicle_size, vehicle_size[:6])
 
 
