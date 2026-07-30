@@ -5,103 +5,96 @@ import sqlite3
 import os
 import json
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-# ── Business Timezone (America/Detroit → EST/EDT auto) ─────────────
-# Uses zoneinfo (stdlib, Python 3.9+) with system tzdata fallback.
-# Set TZ env var to override (e.g., TZ=America/Chicago).
-TZ_NAME = os.environ.get("TZ", "America/Detroit")
+# ── Business Timezone ─────────────────────────────────────────────
+# All times hardcoded to Eastern Standard (UTC-5) and Central Standard (UTC-6).
+# No DST auto-switch — displays show EST/CST year-round for consistency.
+# Set TZ env var to override the default offset (e.g., TZ_OFFSET=-6).
 
-def _load_tz():
-    """Load the business timezone. Returns ZoneInfo or None (system local)."""
-    try:
-        from zoneinfo import ZoneInfo
-        return ZoneInfo(TZ_NAME)
-    except Exception:
-        try:
-            # Some environments need the backport
-            from backports.zoneinfo import ZoneInfo
-            return ZoneInfo(TZ_NAME)
-        except Exception:
-            return None  # fall back to system local time
+_DEFAULT_OFFSET = int(os.environ.get("TZ_OFFSET", "-5"))  # -5 = EST
 
-BUSINESS_TZ = _load_tz()
+def _fixed_tz(offset_hours):
+    """Return a fixed-offset timezone (no DST)."""
+    return timezone(timedelta(hours=offset_hours), 
+                   f"UTC{offset_hours:+d}")
+
+BUSINESS_TZ = _fixed_tz(_DEFAULT_OFFSET)  # EST (UTC-5)
 
 # ── Location → Timezone mapping ───────────────────────────────────
-# Each service area maps to its IANA timezone. Used for:
-#  - Booking form dynamic timezone label (JS reads data-tz attrs)
-#  - Storing appointment_tz so follow-ups fire in the right zone
-#  - Dashboard per-appointment timezone display
+# Each area maps to (IANA_name, display_label, display_abbrev, offset).
+# IANA stored in DB for correctness; labels always show standard time.
 LOCATION_TIMEZONES = {
-    'Texas - Harris County':         'America/Chicago',
-    'Michigan - St. Clair':          'America/Detroit',
-    'Michigan - Metro Detroit':      'America/Detroit',
-    'Michigan - Marysville (Shop)':  'America/Detroit',
-    'Michigan - New Haven (Shop)':   'America/Detroit',
+    'Texas - Harris County':         ('America/Chicago', 'Central', 'CST', -6),
+    'Michigan - St. Clair':          ('America/Detroit', 'Eastern', 'EST', -5),
+    'Michigan - Metro Detroit':      ('America/Detroit', 'Eastern', 'EST', -5),
+    'Michigan - Marysville (Shop)':  ('America/Detroit', 'Eastern', 'EST', -5),
+    'Michigan - New Haven (Shop)':   ('America/Detroit', 'Eastern', 'EST', -5),
 }
 
 def get_tz_for(location):
-    """Return ZoneInfo for a service area location, falling back to BUSINESS_TZ."""
-    tz_name = LOCATION_TIMEZONES.get(location, str(BUSINESS_TZ)) if BUSINESS_TZ else 'America/Detroit'
-    return _load_tz_specific(tz_name)
+    """Return fixed-offset timezone for a service area. Falls back to EST."""
+    info = LOCATION_TIMEZONES.get(location)
+    offset = info[3] if info else -5
+    return _fixed_tz(offset)
 
-def _load_tz_specific(tz_name):
-    """Load a specific timezone by name. Returns ZoneInfo or None."""
-    try:
-        from zoneinfo import ZoneInfo
-        return ZoneInfo(tz_name)
-    except Exception:
-        try:
-            from backports.zoneinfo import ZoneInfo
-            return ZoneInfo(tz_name)
-        except Exception:
-            return BUSINESS_TZ  # last resort
+def get_tz_info(location):
+    """Return (iana_name, display_label, display_abbrev) or defaults."""
+    info = LOCATION_TIMEZONES.get(location)
+    if info:
+        return info[0], info[1], info[2]
+    return 'America/Detroit', 'Eastern', 'EST'
 
 def tz_display_label(tz):
-    """Return short timezone display label from a ZoneInfo (e.g. 'Eastern', 'Central')."""
+    """Return display label ('Eastern', 'Central') — always standard time."""
     if tz is None:
         return 'Eastern'
-    tn = tz.tzname(datetime.now(tz))
-    if tn in ('EST', 'EDT'):
+    offset = tz.utcoffset(datetime.now())
+    if offset is None:
         return 'Eastern'
-    if tn in ('CST', 'CDT'):
+    hours = offset.total_seconds() / 3600
+    if hours == -5:
+        return 'Eastern'
+    if hours == -6:
         return 'Central'
-    if tn in ('MST', 'MDT'):
+    if hours == -7:
         return 'Mountain'
-    if tn in ('PST', 'PDT'):
+    if hours == -8:
         return 'Pacific'
-    return tn or 'Local'
+    return tz.tzname(None) or 'Local'
 
 def tz_offset_label(tz):
-    """Return offset label like 'EDT' or 'CDT' for display."""
+    """Return abbreviation ('EST', 'CST') — always standard time."""
     if tz is None:
-        return 'EDT'
-    return tz.tzname(datetime.now(tz)) or str(tz)
+        return 'EST'
+    offset = tz.utcoffset(datetime.now())
+    if offset is None:
+        return 'EST'
+    hours = offset.total_seconds() / 3600
+    labels = {-5: 'EST', -6: 'CST', -7: 'MST', -8: 'PST'}
+    return labels.get(int(hours), f'UTC{int(hours):+d}')
 
 def now_in_tz(tz):
     """Return current datetime in a specific timezone."""
-    if tz:
-        return datetime.now(tz)
-    return datetime.now()
+    return datetime.now(tz) if tz else datetime.now()
 
 def now():
-    """Return current datetime in business timezone (America/Detroit)."""
-    return now_in_tz(BUSINESS_TZ)
+    """Return current datetime in business timezone (EST/UTC-5)."""
+    return datetime.now(BUSINESS_TZ)
 
 def today_str():
-    """Return today's date in business timezone as YYYY-MM-DD."""
+    """Return today's date in EST as YYYY-MM-DD."""
     return now().strftime('%Y-%m-%d')
 
 def now_str():
-    """Return current datetime in business timezone as ISO timestamp."""
+    """Return current datetime in EST as ISO timestamp."""
     return now().strftime('%Y-%m-%d %H:%M:%S')
 
 def now_display():
-    """Return human-readable current time with timezone label."""
+    """Return human-readable current time (always shows EST)."""
     t = now()
-    tz_label = "EST" if t.tzname() == "EST" else "EDT"
-    return f"{t.strftime('%A, %B %d, %Y at %I:%M %p')} {tz_label}"
+    return f"{t.strftime('%A, %B %d, %Y at %I:%M %p')} EST"
 
 DB_PATH = Path(os.environ.get("ONWHEELS_DB", Path(__file__).parent / "onwheels.db"))
 
@@ -115,7 +108,6 @@ def get_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
-    conn.execute("PRAGMA busy_timeout=5000")  # Wait up to 5s on lock
     return conn
 
 
@@ -238,6 +230,35 @@ def init_db():
             (amount, name))
     conn.commit()
 
+    # Insert RV/Marine per-foot services into existing DBs (safe to re-run)
+    rv_services = [
+        ("RV/Marine Wash Only", "Marine Gel-coat", "Wash Only",
+         "Hand wash, wheels, and windows \u2014 no protectant. Per-foot pricing.",
+         8, "Per Foot", "pH-neutral soap", 2, None),
+        ("RV/Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
+         "Thorough wash with gelcoat-safe wax/sealant + UV protection. Per-foot.",
+         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, None),
+        ("RV/Marine Premium Detail", "Marine Gel-coat", "Premium Detail",
+         "Wash & protect + roof treatment + awning cleaning. All-in-one per-foot.",
+         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, None),
+        ("RV/Marine Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
+         "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
+         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, None),
+    ]
+    for svc in rv_services:
+        conn.execute(
+            "INSERT OR IGNORE INTO services (name, category, sub_service, description, starting_price, pricing_model, products_used, duration_hours, deposit_amount) VALUES (?,?,?,?,?,?,?,?,?)",
+            svc)
+    conn.commit()
+
+    # Normalize existing phone numbers to digits-only (dedup migration)
+    all_customers = conn.execute("SELECT id, phone FROM customers WHERE phone IS NOT NULL").fetchall()
+    for row in all_customers:
+        clean = ''.join(c for c in row['phone'] if c.isdigit())
+        if clean and clean != row['phone']:
+            conn.execute("UPDATE customers SET phone=? WHERE id=?", (clean, row['id']))
+    conn.commit()
+
     return conn
 
 
@@ -258,13 +279,29 @@ def create_customer(full_name, phone=None, email=None, address=None,
     return row['id']
 
 
+def normalize_phone(phone):
+    """Strip to digits only for dedup. Returns empty string if no digits."""
+    if not phone:
+        return ''
+    return ''.join(c for c in phone if c.isdigit())
+
+
 def find_customer(phone=None, email=None):
-    """Find customer by phone or email. Returns list of matches."""
+    """Find customer by phone or email. Phone is normalized to digits-only."""
     conn = get_db()
     if phone:
+        clean = normalize_phone(phone)
+        if not clean:
+            conn.close()
+            return []
+        # Try exact digits-only match first, fall back to LIKE for legacy records
         rows = conn.execute(
-            "SELECT * FROM customers WHERE phone LIKE ? ORDER BY created_at DESC",
-            (f'%{phone}%',)).fetchall()
+            "SELECT * FROM customers WHERE phone=? ORDER BY created_at DESC",
+            (clean,)).fetchall()
+        if not rows:
+            rows = conn.execute(
+                "SELECT * FROM customers WHERE phone LIKE ? ORDER BY created_at DESC",
+                (f'%{clean}%',)).fetchall()
     elif email:
         rows = conn.execute(
             "SELECT * FROM customers WHERE email=? ORDER BY created_at DESC",
@@ -283,15 +320,93 @@ def get_customers(limit=50):
     return [dict(r) for r in rows]
 
 
+# ── Vehicle Size Classification ─────────────────────────────────
+
+# Maps booking-form vehicle_type → pricing tier
+VEHICLE_SIZE_MAP = {
+    'Car':        'Sedan',
+    'SUV':        'SUV/Hatchback',
+    'Truck':      'Large SUV/Truck',
+    'Van':        'Large SUV/Truck',
+    'RV':         'RV',
+    'Motorcycle': 'Motorcycle',
+    'Other':      'Sedan',
+}
+
+# Service pricing tiers by vehicle size
+# Prices: [Sedan, SUV/Hatchback, Large SUV/Truck]
+SERVICE_PRICE_TIERS = {
+    'Interior Refresh':               [150,  180,  210],
+    'Premium Interior Restoration':   [200,  240,  280],
+    'Polish & Protect':               [375,  425,  475],
+    'Signature Detail Package':       [1150, 1350, 1600],
+    'Two-Step Paint Correction':      [525,  625,  725],
+    'Ceramic Coating (Auto)':         [1500, 1750, 2000],
+}
+
+# Marine / RV services (per-foot pricing)
+PER_FOOT_SERVICES = {'Marine Wash & Protect', 'RV Wash & Protect'}
+PER_FOOT_RATE = 20  # dollars per foot
+
+
+def classify_vehicle_size(vehicle_type):
+    """Map vehicle_type from booking form to size tier for pricing."""
+    if not vehicle_type:
+        return 'Sedan'  # conservative default
+    return VEHICLE_SIZE_MAP.get(vehicle_type, 'Sedan')
+
+
+def get_vehicle_size_label(vehicle_size):
+    """Return user-friendly size label."""
+    if vehicle_size == 'SUV/Hatchback':
+        return 'SUV'
+    elif vehicle_size == 'Large SUV/Truck':
+        return 'Large SUV/Truck'
+    return vehicle_size or 'Sedan'
+
+
+def get_service_tier_price(service_name, vehicle_size):
+    """Return the price for a given service + vehicle size combination."""
+    if not service_name or not vehicle_size:
+        return None
+    
+    tiers = SERVICE_PRICE_TIERS.get(service_name)
+    if not tiers:
+        base = service_name.replace(' (Auto)', '')
+        tiers = SERVICE_PRICE_TIERS.get(base)
+    if not tiers:
+        return None
+    
+    idx_map = {'Sedan': 0, 'SUV/Hatchback': 1, 'Large SUV/Truck': 2}
+    idx = idx_map.get(vehicle_size, 0)
+    return tiers[idx]
+
+
+def get_vehicle_size_short(vehicle_size):
+    """Short label for display: 'Sedan', 'SUV', 'Lg SUV'."""
+    if not vehicle_size:
+        return '?'
+    return {
+        'Sedan': 'Sedan',
+        'SUV/Hatchback': 'SUV',
+        'Large SUV/Truck': 'Lg SUV',
+        'RV': 'RV',
+        'Motorcycle': 'Moto',
+    }.get(vehicle_size, vehicle_size[:6])
+
+
 # ── Vehicle Operations ───────────────────────────────────────────
 
 def add_vehicle(customer_id, vehicle_type, make=None, model=None,
-                year=None, color=None, license_plate=None, notes=None):
+                year=None, color=None, license_plate=None, notes=None,
+                vehicle_size=None):
     conn = get_db()
+    if vehicle_size is None:
+        vehicle_size = classify_vehicle_size(vehicle_type)
     conn.execute("""
-        INSERT INTO vehicles (customer_id, vehicle_type, make, model, year, color, license_plate, notes)
-        VALUES (?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_type, make, model, year, color, license_plate, notes))
+        INSERT INTO vehicles (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes)
+        VALUES (?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes))
     conn.commit()
     conn.close()
 
@@ -328,6 +443,19 @@ def seed_services():
         ("Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
          "Thorough hand wash with premium protectant. Keeps your boat showroom-ready.",
          None, "Per Foot", "pH-neutral soap, marine sealant", 2, None),
+        # RV & Marine Per-Foot Services
+        ("RV/Marine Wash Only", "Marine Gel-coat", "Wash Only",
+         "Hand wash, wheels, and windows — no protectant. Per-foot pricing.",
+         8, "Per Foot", "pH-neutral soap", 2, None),
+        ("RV/Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
+         "Thorough wash with gelcoat-safe wax/sealant + UV protection. Per-foot.",
+         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, None),
+        ("RV/Marine Premium Detail", "Marine Gel-coat", "Premium Detail",
+         "Wash & protect + roof treatment + awning cleaning. All-in-one per-foot.",
+         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, None),
+        ("RV/Marine Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
+         "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
+         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, None),
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
          "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
@@ -409,7 +537,9 @@ def get_appointments(status=None, date_from=None, date_to=None, limit=50):
     conn = get_db()
     query = """
         SELECT a.*, c.full_name, c.phone, c.email, c.location as customer_location,
+               c.city, c.state,
                v.make||' '||v.model as vehicle_desc,
+               v.vehicle_type, v.vehicle_size,
                s.name as service_name, s.category as service_category
         FROM appointments a
         LEFT JOIN customers c ON a.customer_id = c.id
@@ -448,7 +578,9 @@ def get_upcoming_appointments(days=7):
     end = (now() + timedelta(days=days)).strftime('%Y-%m-%d')
     rows = conn.execute("""
         SELECT a.*, c.full_name, c.phone, c.email,
+               c.city, c.state,
                v.make||' '||v.model as vehicle_desc,
+               v.vehicle_type, v.vehicle_size,
                s.name as service_name, s.category as service_category
         FROM appointments a
         JOIN customers c ON a.customer_id = c.id
@@ -499,25 +631,6 @@ def get_deposit_balance():
 
 def create_follow_up(appointment_id, follow_type, scheduled_date, channel='SMS'):
     conn = get_db()
-
-    # ── Deduplication: don't create duplicate follow-ups for same customer on same day ──
-    # If this customer already has this follow-up type for another appointment on the same
-    # appointment date, skip — they don't need two confirmation texts for two vehicles.
-    row = conn.execute("""
-        SELECT a2.id
-        FROM appointments a1
-        JOIN appointments a2 ON a1.customer_id = a2.customer_id
-                              AND a1.appointment_date = a2.appointment_date
-                              AND a1.id != a2.id
-        JOIN follow_ups f ON f.appointment_id = a2.id AND f.follow_type = ?
-        WHERE a1.id = ?
-        LIMIT 1
-    """, (follow_type, appointment_id)).fetchone()
-
-    if row:
-        conn.close()
-        return  # Already covered by the sibling appointment's follow-up
-
     conn.execute("""
         INSERT INTO follow_ups (appointment_id, follow_type, channel, scheduled_date)
         VALUES (?,?,?,?)
