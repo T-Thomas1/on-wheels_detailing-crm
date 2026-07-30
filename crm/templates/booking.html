@@ -115,6 +115,15 @@
       </div>
     </fieldset>
 
+    <!-- ── Price Summary (shown when service + location selected) ── -->
+    <fieldset id="price-summary" style="display:none;">
+      <legend>  Price Estimate</legend>
+      <div id="price-summary-body"></div>
+      <p id="mobile-fee-notice" style="display:none;font-size:0.8rem;color:#ffa502;margin-top:8px;">
+        ⚠ A <strong>$25 mobile service fee</strong> applies to all mobile appointments. Shop drop-offs are fee-free.
+      </p>
+    </fieldset>
+
     <!-- ── Schedule ── -->
     <fieldset>
       <legend>When Works For You? <span id="tz-label" style="font-weight:normal;font-size:0.85em;color:#888;">(Select your area above)</span></legend>
@@ -122,15 +131,15 @@
         <div class="form-group">
           <label for="preferred_date">Preferred Date</label>
           <input type="date" id="preferred_date" name="preferred_date" min="">
+          <span id="date-error" class="error" style="display:none;font-size:0.82rem;margin-top:4px;">We're open Thursday, Saturday &amp; Sunday only. Please pick one of those days.</span>
         </div>
         <div class="form-group">
           <label for="preferred_time">Preferred Time</label>
           <select id="preferred_time" name="preferred_time">
             <option value="">-- Flexible --</option>
-            <option value="Morning (8-11am)">Morning (8-11am)</option>
-            <option value="Midday (11am-2pm)">Midday (11am-2pm)</option>
-            <option value="Afternoon (2-5pm)">Afternoon (2-5pm)</option>
-            <option value="Evening (5-7pm)">Evening (5-7pm)</option>
+            <option value="Morning (9am-12pm)">Morning (9am-12pm)</option>
+            <option value="Afternoon (12pm-3pm)">Afternoon (12pm-3pm)</option>
+            <option value="Late Afternoon (3pm-5pm)">Late Afternoon (3pm-5pm)</option>
           </select>
         </div>
       </div>
@@ -243,7 +252,7 @@ function renderServices(services) {
         : `<span class="price">Quote Only</span>`;
 
       card.innerHTML = `
-        <input type="radio" name="service_id" value="${svc.id}" data-deposit="${svc.deposit_amount || ''}">
+        <input type="radio" name="service_id" value="${svc.id}" data-deposit="${svc.deposit_amount || ''}" data-price="${svc.starting_price || 0}">
         <div class="card-body">
           <strong>${svc.name}</strong>
           <span class="pricing-model">${svc.pricing_model}</span>
@@ -327,6 +336,7 @@ loadServices();
 
 // ── Toggle deposit section when service is selected ──
 // ── Also re-render services when service area changes ──
+// ── Also update price summary & date validation ──
 document.addEventListener('change', (e) => {
   if (e.target.name === 'service_id') {
     const deposit = e.target.dataset.deposit;
@@ -340,6 +350,7 @@ document.addEventListener('change', (e) => {
       checkbox.required = false;
       checkbox.checked = false;
     }
+    updatePriceSummary();
   }
   // Re-render services when location changes
   if (e.target.id === 'location' && cachedServices) {
@@ -355,8 +366,73 @@ document.addEventListener('change', (e) => {
     const tz = e.target.selectedOptions[0]?.dataset.tz;
     const label = document.getElementById('tz-label');
     label.textContent = tz ? `(All times ${tz})` : '(Select your area above)';
+
+    updatePriceSummary();
+  }
+  // Validate date is Thu, Sat, or Sun
+  if (e.target.id === 'preferred_date') {
+    validateDate(e.target.value);
   }
 });
+
+// ── Date validation: Thu (4), Sat (6), Sun (0) only ──
+function validateDate(dateStr) {
+  const errorEl = document.getElementById('date-error');
+  if (!dateStr) {
+    errorEl.style.display = 'none';
+    return true;
+  }
+  const d = new Date(dateStr + 'T12:00:00');  // noon to avoid TZ shift
+  const day = d.getDay();  // 0=Sun, 4=Thu, 6=Sat
+  if (day !== 0 && day !== 4 && day !== 6) {
+    errorEl.style.display = '';
+    return false;
+  }
+  errorEl.style.display = 'none';
+  return true;
+}
+
+// ── Price Summary: shows estimate when service + location selected ──
+function updatePriceSummary() {
+  const summary = document.getElementById('price-summary');
+  const body = document.getElementById('price-summary-body');
+  const feeNotice = document.getElementById('mobile-fee-notice');
+  const locationEl = document.getElementById('location');
+  const selectedService = document.querySelector('input[name="service_id"]:checked');
+
+  // Need both service AND location selected
+  if (!selectedService || !locationEl.value) {
+    summary.style.display = 'none';
+    return;
+  }
+
+  const price = parseFloat(selectedService.dataset.price) || 0;
+  const svcName = selectedService.closest('.service-card')?.querySelector('strong')?.textContent || 'Service';
+  const isMobile = locationEl.selectedOptions[0]?.dataset.serviceType === 'mobile';
+  const mobileFee = isMobile ? 25 : 0;
+  const total = price + mobileFee;
+
+  let html = '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #222;">';
+  html += `<span style="color:#aaa;">${svcName}</span>`;
+  html += price ? `<span style="color:#00d4aa;font-weight:600;">from $${price}</span>` : '<span style="color:#888;">Quote Only</span>';
+  html += '</div>';
+
+  if (isMobile) {
+    html += '<div style="display:flex;justify-content:space-between;padding:6px 0;">';
+    html += '<span style="color:#aaa;">Mobile Service Fee</span>';
+    html += '<span style="color:#ffa502;">+$25</span>';
+    html += '</div>';
+  }
+
+  html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #00d4aa;margin-top:4px;font-weight:700;font-size:1.05rem;">';
+  html += '<span style="color:#e0e0e0;">Estimated Total</span>';
+  html += total ? `<span style="color:#00d4aa;">~$${total}</span>` : '<span style="color:#888;">Quote Only</span>';
+  html += '</div>';
+
+  body.innerHTML = html;
+  feeNotice.style.display = isMobile ? '' : 'none';
+  summary.style.display = '';
+}
 </script>
 </body>
 </html>

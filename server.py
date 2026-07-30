@@ -20,7 +20,7 @@ from urllib.parse import urlparse, parse_qs
 sys.path.insert(0, str(Path(__file__).parent))
 from crm import (
     init_db, seed_services,
-    create_customer, find_customer, get_customers, normalize_phone,
+    create_customer, find_customer, get_customers,
     add_vehicle, get_customer_vehicles,
     get_services, get_service_deposit,
     create_appointment, get_appointments, update_appointment_status, get_upcoming_appointments,
@@ -28,7 +28,7 @@ from crm import (
     create_follow_up, get_pending_follow_ups, mark_follow_up,
     get_dashboard,
     now, today_str, now_str,
-    get_tz_for, tz_display_label, tz_offset_label, get_tz_info, LOCATION_TIMEZONES,
+    get_tz_for, tz_display_label, tz_offset_label, LOCATION_TIMEZONES,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -77,6 +77,19 @@ conn = get_db()
 conn.execute("UPDATE services SET deposit_amount=50 WHERE name LIKE '%Polish & Protect%' AND name NOT LIKE '%Marine%' AND deposit_amount IS NULL")
 conn.commit()
 conn.close()
+
+
+# Location constants
+MOBILE_LOCATIONS = {'Texas - Harris County', 'Michigan - St. Clair', 'Michigan - Metro Detroit'}
+
+# Map booking form location values to DB constraint values
+# The customers table CHECK constraint expects these specific values
+LOCATION_DB_MAP = {
+    'Michigan - Marysville (Shop)': 'Shop - Marysville, MI',
+    'Michigan - New Haven (Shop)': 'Shop - New Haven, MI',
+}
+
+VALID_BUSINESS_DAYS = {3, 5, 6}  # Python weekday(): 3=Thu, 5=Sat, 6=Sun
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -408,6 +421,22 @@ class CRMHandler(BaseHTTPRequestHandler):
                 json_response(self, {'error': 'Please provide a valid phone number.'}, 400)
                 return
 
+            # Validate preferred date is Thu, Sat, or Sun
+            preferred_date = data.get('preferred_date', '')
+            if preferred_date:
+                try:
+                    dt = datetime.strptime(preferred_date, '%Y-%m-%d')
+                    if dt.weekday() not in VALID_BUSINESS_DAYS:
+                        json_response(self, {'error': 'We are only open Thursday, Saturday, and Sunday. Please select one of those days.'}, 400)
+                        audit_log('BOOK_FAIL', self._client_ip(), path, f'bad day: {preferred_date} (weekday={dt.weekday()})')
+                        return
+                except ValueError:
+                    json_response(self, {'error': 'Invalid date format.'}, 400)
+                    return
+
+            location_raw = sanitize_input(data.get('location', ''), 100)
+            location_db = LOCATION_DB_MAP.get(location_raw, location_raw)
+
             existing = find_customer(phone=phone)
             if existing:
                 customer_id = existing[0]['id']
@@ -418,7 +447,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     city=sanitize_input(data.get('city', ''), 100),
                     state=sanitize_input(data.get('state', ''), 50),
                     zip_code=sanitize_input(data.get('zip', ''), 20),
-                    location=sanitize_input(data.get('location', ''), 100),
+                    location=location_db,
                     source=sanitize_input(data.get('source', 'Website'), 50),
                 )
 
@@ -464,10 +493,17 @@ class CRMHandler(BaseHTTPRequestHandler):
             today = datetime.now().strftime('%Y-%m-%d')
             create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS')
 
+            # Build confirmation message with mobile fee note if applicable
+            is_mobile = data.get('location', '') in MOBILE_LOCATIONS
+            if is_mobile:
+                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment. \u26a0\ufe0f A $25 mobile service fee applies."
+            else:
+                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment."
+
             audit_log('BOOK_OK', self._client_ip(), path, f'customer={name}, appt={appointment_id[:8]}')
             json_response(self, {
                 'success': True,
-                'message': "Thanks for reaching out! TaSain will text you shortly to confirm your appointment.",
+                'message': confirm_msg,
                 'appointment_id': appointment_id,
             }, 201)
 
