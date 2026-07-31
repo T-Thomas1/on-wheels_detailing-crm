@@ -230,27 +230,6 @@ def init_db():
             (amount, name))
     conn.commit()
 
-    # Insert RV/Marine per-foot services into existing DBs (safe to re-run)
-    rv_services = [
-        ("RV/Marine Wash Only", "Marine Gel-coat", "Wash Only",
-         "Hand wash, wheels, and windows \u2014 no protectant. Per-foot pricing.",
-         8, "Per Foot", "pH-neutral soap", 2, None),
-        ("RV/Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
-         "Thorough wash with gelcoat-safe wax/sealant + UV protection. Per-foot.",
-         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, None),
-        ("RV/Marine Premium Detail", "Marine Gel-coat", "Premium Detail",
-         "Wash & protect + roof treatment + awning cleaning. All-in-one per-foot.",
-         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, None),
-        ("RV/Marine Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
-         "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
-         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, None),
-    ]
-    for svc in rv_services:
-        conn.execute(
-            "INSERT OR IGNORE INTO services (name, category, sub_service, description, starting_price, pricing_model, products_used, duration_hours, deposit_amount) VALUES (?,?,?,?,?,?,?,?,?)",
-            svc)
-    conn.commit()
-
     # Normalize existing phone numbers to digits-only (dedup migration)
     all_customers = conn.execute("SELECT id, phone FROM customers WHERE phone IS NOT NULL").fetchall()
     for row in all_customers:
@@ -430,32 +409,19 @@ def seed_services():
         return  # Already seeded
 
     services = [
-        # Marine Gel-coat
-        ("Gel-coat Oxidation Removal", "Marine Gel-coat", "Gel-coat Oxidation Removal",
-         "Remove heavy oxidation and restore shine to gel-coat surfaces. Per-foot pricing available.",
-         None, "Per Foot", "Marine-grade compounds, Carpro CQ.UK 3.0", None, None),
-        ("Marine Polish & Protect", "Marine Gel-coat", "Polish & Protect",
-         "One-step polish with premium sealant protection for boats and watercraft.",
-         None, "Per Foot", "Marine polish, sealant", None, None),
-        ("Marine Ceramic Coating", "Marine Gel-coat", "Ceramic Coating",
-         "Carpro CQ.UK 3.0 ceramic coating — 2+ years of UV and water protection.",
-         None, "Per Foot", "Carpro CQ.UK 3.0", None, None),
-        ("Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
-         "Thorough hand wash with premium protectant. Keeps your boat showroom-ready.",
-         None, "Per Foot", "pH-neutral soap, marine sealant", 2, None),
-        # RV & Marine Per-Foot Services
-        ("RV/Marine Wash Only", "Marine Gel-coat", "Wash Only",
-         "Hand wash, wheels, and windows — no protectant. Per-foot pricing.",
-         8, "Per Foot", "pH-neutral soap", 2, None),
-        ("RV/Marine Wash & Protect", "Marine Gel-coat", "Wash & Protect",
+        # RV Detailing (Per-Foot)
+        ("RV Wash Only", "Marine Gel-coat", "Wash Only",
+         "Hand wash, wheels, and windows. Per-foot pricing for RVs and campers.",
+         8, "Per Foot", "pH-neutral soap", 2, 50),
+        ("RV Wash & Protect", "Marine Gel-coat", "Wash & Protect",
          "Thorough wash with gelcoat-safe wax/sealant + UV protection. Per-foot.",
-         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, None),
-        ("RV/Marine Premium Detail", "Marine Gel-coat", "Premium Detail",
+         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, 100),
+        ("RV Premium Detail", "Marine Gel-coat", "Premium Detail",
          "Wash & protect + roof treatment + awning cleaning. All-in-one per-foot.",
-         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, None),
-        ("RV/Marine Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
+         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, 100),
+        ("RV Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
          "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
-         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, None),
+         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, 100),
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
          "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",

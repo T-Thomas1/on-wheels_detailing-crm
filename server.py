@@ -74,7 +74,7 @@ seed_services()
 
 from crm import get_db
 conn = get_db()
-conn.execute("UPDATE services SET deposit_amount=50 WHERE name LIKE '%Polish & Protect%' AND name NOT LIKE '%Marine%' AND deposit_amount IS NULL")
+conn.execute("UPDATE services SET deposit_amount=50 WHERE name LIKE '%Polish & Protect%' AND deposit_amount IS NULL")
 conn.commit()
 conn.close()
 
