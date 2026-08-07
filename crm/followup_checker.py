@@ -21,14 +21,37 @@ from crm import (
     get_dashboard,
     now, today_str, now_display,
     get_tz_for, tz_display_label, tz_offset_label,
-    classify_vehicle_size, get_service_tier_price, get_vehicle_size_short,
 )
 
 
+# Days after scheduled_date before a follow-up is auto-retired (assumed done).
+# Prevents stale outreach from clogging the pipeline when TaSain completes
+# tasks manually without updating the DB.
+OVERDUE_THRESHOLDS = {
+    'Booking Confirmation':    7,   # more than a week = he confirmed it
+    '24hr Reminder':           3,   # more than 3 days = appointment passed
+    'Post-Service Check-in':   7,   # more than a week = he did the check-in
+    'Review Request':         14,   # two weeks = either done or not happening
+    'Thank You':               7,
+    'Re-engagement':          30,   # re-engagement is looser
+}
+
 def check_pending_follow_ups():
-    """Find follow-ups that need action today."""
+    """Find follow-ups that need action today.
+    Auto-retires follow-ups past their overdue threshold — assumes TaSain
+    completed the outreach manually without updating the DB."""
     conn = get_db()
     today = today_str()
+
+    # Auto-retire follow-ups past their threshold
+    for follow_type, days in OVERDUE_THRESHOLDS.items():
+        conn.execute("""
+            UPDATE follow_ups SET status = 'Sent'
+            WHERE status = 'Pending'
+              AND follow_type = ?
+              AND scheduled_date < date(?)
+              AND julianday(date(?)) - julianday(date(scheduled_date)) > ?
+        """, (follow_type, today, today, days))
 
     rows = conn.execute("""
         SELECT f.*, a.appointment_date, a.status as appt_status,
@@ -43,6 +66,7 @@ def check_pending_follow_ups():
           AND f.status = 'Pending'
         ORDER BY f.follow_type, f.scheduled_date ASC
     """, (today,)).fetchall()
+    conn.commit()
     conn.close()
     return [dict(r) for r in rows]
 
@@ -54,32 +78,63 @@ def format_phone(phone):
     return phone
 
 
+def get_customer_vehicles_for_date(appointment_id):
+    """Get all vehicles for the same customer on the same appointment date.
+    Returns a human-readable string like 'GMC Yukon & Chevrolet Trax' or 'Ford Edge'.
+    """
+    conn = get_db()
+    rows = conn.execute("""
+        SELECT v.make||' '||v.model as vehicle
+        FROM appointments a1
+        JOIN appointments a2 ON a1.customer_id = a2.customer_id
+                            AND a1.appointment_date = a2.appointment_date
+        LEFT JOIN vehicles v ON a2.vehicle_id = v.id
+        WHERE a1.id = ?
+        ORDER BY a2.created_at
+    """, (appointment_id,)).fetchall()
+    conn.close()
+    
+    vehicles = [r[0] for r in rows if r[0]]
+    if not vehicles:
+        return 'your vehicle'
+    if len(vehicles) == 1:
+        return vehicles[0]
+    return ' & '.join(vehicles)
+
+
 def generate_message(follow_up):
     """Generate a natural-sounding message based on follow-up type."""
     name = follow_up['full_name']
     service = follow_up.get('service_name') or 'detailing service'
+    vehicles = get_customer_vehicles_for_date(follow_up['appointment_id'])
     payment_link = follow_up.get('payment_link')
     appt_date = follow_up['appointment_date']
+
+    # Build vehicle-aware service line: "Interior Refresh on your GMC Yukon & Chevrolet Trax"
+    if vehicles and vehicles != 'your vehicle':
+        vehicle_context = f"{service} on your {vehicles}"
+    else:
+        vehicle_context = service
 
     # Deposit-aware booking confirmation — don't mention deposits for non-deposit services
     if payment_link and payment_link.startswith('https://buy.stripe.com'):
         deposit_msg = f" To lock it in, here's your deposit link: {payment_link}. Once that's done you're confirmed."
         deposit_confirm_templates = [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule.{deposit_msg} Talk soon!",
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {vehicle_context}. I've got you on the schedule.{deposit_msg} Talk soon!",
         ]
     else:
         deposit_confirm_templates = [
-            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {service}. I've got you on the schedule. I'll text you to confirm the details. Talk soon!",
+            f"Hey {name}! TaSain here from On-Wheels Detailing. Got your booking for {vehicle_context}. I've got you on the schedule. I'll text you to confirm the details. Talk soon!",
         ]
 
     templates = {
         'Booking Confirmation': deposit_confirm_templates,
         '24hr Reminder': [
-            f"  Tomorrow's the day, {name}! Reminder: I'll be out for your {service} tomorrow. Balance is due when I arrive (cash or card). Make sure the vehicle's accessible. Any changes, just text. — TaSain, On-Wheels Detailing",
+            f"  Tomorrow's the day, {name}! Reminder: I'll be out for your {vehicle_context} tomorrow. Balance is due when I arrive (cash or card). Make sure the vehicle's accessible. Any changes, just text. — TaSain, On-Wheels Detailing",
         ],
         'Post-Service Check-in': [
-            f"Hey {name}! Been a couple days since your {service} — how's everything looking? If anything needs a touch-up, don't hesitate to let me know. I stand behind my work. — TaSain, On-Wheels",
-            f"Checking in, {name}! How's the {service} holding up? If you're happy, I'd love a review on Google or Facebook — it really helps a small operation like mine. Thanks again for your business! — TaSain",
+            f"Hey {name}! Been a couple days since your {vehicle_context} — how's everything looking? If anything needs a touch-up, don't hesitate to let me know. I stand behind my work. — TaSain, On-Wheels",
+            f"Checking in, {name}! How's the {vehicle_context} holding up? If you're happy, I'd love a review on Google or Facebook — it really helps a small operation like mine. Thanks again for your business! — TaSain",
         ],
         'Re-engagement': [
             f"Hey {name}! Been a while since your last detail with On-Wheels. If it's time for a refresh, I'm booking for the coming weeks. Text back and let's set something up! — TaSain",
@@ -136,60 +191,23 @@ def main():
             vehicle = a.get('vehicle_desc') or ''
             svc = a.get('service_name') or 'Unspecified'
             addr = a.get('job_address') or a.get('city') or ''
-            
-            # Compute price from service tier + vehicle size
-            vsize = a.get('vehicle_size') or classify_vehicle_size(a.get('vehicle_type',''))
-            tier_price = get_service_tier_price(svc, vsize)
-            if tier_price:
-                price = f"${tier_price:,.0f}"
-            elif a['quoted_price']:
-                price = f"${a['quoted_price']:,.0f}"
-            else:
-                price = 'TBD'
-            
+            price = f"${a['quoted_price']:,.0f}" if a['quoted_price'] else 'TBD'
             loc = a.get('customer_location') or ''
             tz = a.get('appointment_tz') or tz_offset_label(get_tz_for(loc)) if loc else 'ET'
-            size_short = get_vehicle_size_short(vsize)
             print(f"  {a['appointment_date']} ({tz:4s}) | {a.get('appointment_time','--'):20s} | {a['full_name']:20s}")
-            print(f"  {'':11s}| {svc:20s} | {size_short:6s} {vehicle} | {price}")
+            print(f"  {'':11s}| {svc:20s} | {vehicle} | {price}")
             print()
 
-        # New leads (last 24h) — with vehicle size classification + pricing
+    # New leads (last 24h)
     yesterday = (now() - timedelta(days=1)).strftime('%Y-%m-%d')
     new_leads = get_appointments(status='New Lead', date_from=yesterday)
     if new_leads:
         print(f"\n  NEW LEADS (Last 24 Hours)")
         print(f"  {'─' * 54}")
         for a in new_leads:
-            # Vehicle size classification
-            vtype = a.get('vehicle_type') or ''
-            vsize = a.get('vehicle_size') or classify_vehicle_size(vtype) if vtype else '?'
-            size_label = get_vehicle_size_short(vsize)
-            
-            # Service pricing
-            svc_name = a.get('service_name') or 'Unspecified'
-            price = get_service_tier_price(svc_name, vsize)
-            price_str = f" — ${price:,.0f}" if price else ''
-            
-            # Location
-            loc = a.get('customer_location') or ''
-            if not loc:
-                city = a.get('city') or ''
-                state = a.get('state') or ''
-                loc = f"{city} {state}".strip()
-            if 'Shop' in (loc or ''):
-                loc_label = loc  # Already says "Shop - Marysville, MI" etc.
-            elif loc:
-                loc_label = f"Mobile — {loc}"
-            else:
-                loc_label = 'No location selected'
-            
-            print(f"    {a['full_name']} | {a['phone']}")
-            print(f"    {size_label:6s} | {a.get('vehicle_desc','No vehicle')}")
-            print(f"    Service: {svc_name}{price_str}")
-            print(f"    {loc_label} | {a['appointment_date']} {a.get('appointment_time') or ''}")
-            if a.get('special_requests'):
-                print(f"    Note: {a['special_requests'][:80]}")
+            print(f"    {a['full_name']} | {a['phone']} | {a.get('service_name','Unspecified')}")
+            loc = a.get('customer_location') or f"{a.get('city','')} {a.get('state','')}".strip()
+            print(f"    Area: {loc} | {a.get('vehicle_desc','')}")
 
     # Pending follow-ups that need action NOW
     follow_ups = check_pending_follow_ups()
