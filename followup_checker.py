@@ -24,10 +24,34 @@ from crm import (
 )
 
 
+# Days after scheduled_date before a follow-up is auto-retired (assumed done).
+# Prevents stale outreach from clogging the pipeline when TaSain completes
+# tasks manually without updating the DB.
+OVERDUE_THRESHOLDS = {
+    'Booking Confirmation':    7,   # more than a week = he confirmed it
+    '24hr Reminder':           3,   # more than 3 days = appointment passed
+    'Post-Service Check-in':   7,   # more than a week = he did the check-in
+    'Review Request':         14,   # two weeks = either done or not happening
+    'Thank You':               7,
+    'Re-engagement':          30,   # re-engagement is looser
+}
+
 def check_pending_follow_ups():
-    """Find follow-ups that need action today."""
+    """Find follow-ups that need action today.
+    Auto-retires follow-ups past their overdue threshold — assumes TaSain
+    completed the outreach manually without updating the DB."""
     conn = get_db()
     today = today_str()
+
+    # Auto-retire follow-ups past their threshold
+    for follow_type, days in OVERDUE_THRESHOLDS.items():
+        conn.execute("""
+            UPDATE follow_ups SET status = 'Sent'
+            WHERE status = 'Pending'
+              AND follow_type = ?
+              AND scheduled_date < date(?)
+              AND julianday(date(?)) - julianday(date(scheduled_date)) > ?
+        """, (follow_type, today, today, days))
 
     rows = conn.execute("""
         SELECT f.*, a.appointment_date, a.status as appt_status,
@@ -42,6 +66,7 @@ def check_pending_follow_ups():
           AND f.status = 'Pending'
         ORDER BY f.follow_type, f.scheduled_date ASC
     """, (today,)).fetchall()
+    conn.commit()
     conn.close()
     return [dict(r) for r in rows]
 
