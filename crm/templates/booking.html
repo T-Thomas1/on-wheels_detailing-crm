@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book a Detail — On-Wheels Detailing</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=1786629654">
 </head>
 <body>
 
@@ -12,6 +12,7 @@
 
   <!-- ═══ BOOKING FORM ═══ -->
   <div id="booking-page">
+  <a href="https://www.onwheelsdetailing.com/" aria-label="Back to home" style="display:inline-block;margin:0 0 20px;color:#00d4aa;text-decoration:none;font-size:0.9rem;font-weight:600;">&larr; Back to Home</a>
   <div class="header">
     <h1>Book Your Detail</h1>
     <p class="subtitle">Fill this out and TaSain will text you back fast. No apps, no accounts — just good work.</p>
@@ -109,7 +110,7 @@
 
     <!-- ── Service Selection ── -->
     <fieldset>
-      <legend>What Do You Need Done?</legend>
+      <legend>What Do You Need Done? <span style="color:#ff4757;">*</span></legend>
       <div id="services-container" class="services-grid">
         <p class="loading">Loading services...</p>
       </div>
@@ -327,6 +328,16 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const btnText = document.getElementById('btn-text');
   const spinner = document.getElementById('btn-spinner');
   const resultDiv = document.getElementById('result');
+
+  // Require a package to be selected before submitting
+  const selectedService = document.querySelector('input[name="service_id"]:checked');
+  if (!selectedService) {
+    resultDiv.classList.remove('hidden');
+    resultDiv.className = 'result-error';
+    resultDiv.innerHTML = '<p>Please select a package to continue. (Choose your service area above if none are listed.)</p>';
+    document.getElementById('services-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
   btn.disabled = true;
   btnText.classList.add('hidden');
