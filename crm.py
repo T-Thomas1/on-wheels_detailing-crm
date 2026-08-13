@@ -31,6 +31,9 @@ LOCATION_TIMEZONES = {
     'Michigan - Metro Detroit':      ('America/Detroit', 'Eastern', 'EST', -5),
     'Michigan - Marysville (Shop)':  ('America/Detroit', 'Eastern', 'EST', -5),
     'Michigan - New Haven (Shop)':   ('America/Detroit', 'Eastern', 'EST', -5),
+    # DB-stored (mapped) values — same zones, keyed by what's written to the DB
+    'Shop - Marysville, MI':         ('America/Detroit', 'Eastern', 'EST', -5),
+    'Shop - New Haven, MI':          ('America/Detroit', 'Eastern', 'EST', -5),
 }
 
 def get_tz_for(location):
@@ -108,6 +111,9 @@ def get_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
+    conn.execute("PRAGMA busy_timeout=5000")
+    conn.execute("PRAGMA synchronous=NORMAL")
+    conn.execute("PRAGMA mmap_size=33554432")
     return conn
 
 
@@ -124,7 +130,7 @@ def init_db():
             city TEXT,
             state TEXT,
             zip TEXT,
-            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit')),
+            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit','Shop - Marysville, MI','Shop - New Haven, MI')),
             source TEXT CHECK(source IN ('Website','Facebook','Instagram','Referral','Repeat','Other')),
             notes TEXT,
             created_at TEXT DEFAULT (datetime('now'))
@@ -217,6 +223,41 @@ def init_db():
         except sqlite3.OperationalError:
             pass  # Column already exists
 
+    # ── Widen customers.location CHECK to include shop locations ──
+    # SQLite cannot ALTER a CHECK constraint, so rebuild the table when it still
+    # carries the legacy two-value constraint. Idempotent: skips when the shop
+    # values are already present (e.g. the live DB that was migrated manually).
+    cust_row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='customers'"
+    ).fetchone()
+    if cust_row and 'Shop - Marysville, MI' not in (cust_row['sql'] or ''):
+        new_sql = cust_row['sql'].replace(
+            "location IN ('Texas - Harris County','Michigan - Metro Detroit')",
+            "location IN ('Texas - Harris County','Michigan - Metro Detroit',"
+            "'Shop - Marysville, MI','Shop - New Haven, MI')",
+        ).replace("CREATE TABLE customers", "CREATE TABLE customers_new", 1)
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("PRAGMA legacy_alter_table=ON")
+        try:
+            conn.execute("BEGIN")
+            conn.execute("ALTER TABLE customers RENAME TO customers_old")
+            conn.execute(new_sql)
+            conn.execute(
+                "INSERT INTO customers_new (id, full_name, phone, email, address,"
+                " city, state, zip, location, source, notes, created_at)"
+                " SELECT id, full_name, phone, email, address, city, state, zip,"
+                " location, source, notes, created_at FROM customers_old"
+            )
+            conn.execute("DROP TABLE customers_old")
+            conn.execute("ALTER TABLE customers_new RENAME TO customers")
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.execute("PRAGMA legacy_alter_table=OFF")
+            conn.execute("PRAGMA foreign_keys=ON")
+
     # Update deposit amounts for existing services (safe to re-run)
     deposit_updates = [
         (50, 'Polish & Protect (Auto)'),
@@ -237,24 +278,27 @@ def init_db():
         if clean and clean != row['phone']:
             conn.execute("UPDATE customers SET phone=? WHERE id=?", (clean, row['id']))
     conn.commit()
-
-    return conn
+    conn.close()
+    return
 
 
 # ── Customer Operations ──────────────────────────────────────────
 
 def create_customer(full_name, phone=None, email=None, address=None,
                     city=None, state=None, zip_code=None, location=None,
-                    source='Website', notes=None):
-    conn = get_db()
+                    source='Website', notes=None, conn=None):
+    _close = conn is None
+    if _close:
+        conn = get_db()
     cust_id = conn.execute("""
         INSERT INTO customers (full_name, phone, email, address, city, state, zip, location, source, notes)
         VALUES (?,?,?,?,?,?,?,?,?,?)
     """, (full_name, phone, email, address, city, state, zip_code, location, source, notes)).lastrowid
-    conn.commit()
     # Get the real ID
     row = conn.execute("SELECT id FROM customers WHERE rowid=?", (cust_id,)).fetchone()
-    conn.close()
+    if _close:
+        conn.commit()
+        conn.close()
     return row['id']
 
 
@@ -265,13 +309,16 @@ def normalize_phone(phone):
     return ''.join(c for c in phone if c.isdigit())
 
 
-def find_customer(phone=None, email=None):
+def find_customer(phone=None, email=None, conn=None):
     """Find customer by phone or email. Phone is normalized to digits-only."""
-    conn = get_db()
+    _close = conn is None
+    if _close:
+        conn = get_db()
     if phone:
         clean = normalize_phone(phone)
         if not clean:
-            conn.close()
+            if _close:
+                conn.close()
             return []
         # Try exact digits-only match first, fall back to LIKE for legacy records
         rows = conn.execute(
@@ -287,7 +334,8 @@ def find_customer(phone=None, email=None):
             (email,)).fetchall()
     else:
         rows = []
-    conn.close()
+    if _close:
+        conn.close()
     return [dict(r) for r in rows]
 
 
@@ -378,23 +426,29 @@ def get_vehicle_size_short(vehicle_size):
 
 def add_vehicle(customer_id, vehicle_type, make=None, model=None,
                 year=None, color=None, license_plate=None, notes=None,
-                vehicle_size=None):
-    conn = get_db()
+                vehicle_size=None, conn=None):
+    _close = conn is None
+    if _close:
+        conn = get_db()
     if vehicle_size is None:
         vehicle_size = classify_vehicle_size(vehicle_type)
     conn.execute("""
         INSERT INTO vehicles (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes)
         VALUES (?,?,?,?,?,?,?,?,?)
     """, (customer_id, vehicle_type, vehicle_size, make, model, year, color, license_plate, notes))
-    conn.commit()
-    conn.close()
+    if _close:
+        conn.commit()
+        conn.close()
 
 
-def get_customer_vehicles(customer_id):
-    conn = get_db()
+def get_customer_vehicles(customer_id, conn=None):
+    _close = conn is None
+    if _close:
+        conn = get_db()
     rows = conn.execute(
         "SELECT * FROM vehicles WHERE customer_id=? ORDER BY rowid DESC", (customer_id,)).fetchall()
-    conn.close()
+    if _close:
+        conn.close()
     return [dict(r) for r in rows]
 
 
@@ -467,12 +521,15 @@ def get_services(category=None):
     return [dict(r) for r in rows]
 
 
-def get_service_deposit(service_id):
+def get_service_deposit(service_id, conn=None):
     """Return (deposit_amount, stripe_link) for a service, or (None, None) if no deposit required."""
-    conn = get_db()
+    _close = conn is None
+    if _close:
+        conn = get_db()
     row = conn.execute(
         "SELECT deposit_amount FROM services WHERE id=?", (service_id,)).fetchone()
-    conn.close()
+    if _close:
+        conn.close()
     if not row or not row['deposit_amount']:
         return None, None
     amount = row['deposit_amount']
@@ -486,16 +543,19 @@ def create_appointment(customer_id, appointment_date, appointment_time=None,
                        vehicle_id=None, service_id=None, job_address=None,
                        special_requests=None, status='New Lead',
                        payment_link=None, deposit_agreed_at=None,
-                       appointment_tz=None):
-    conn = get_db()
+                       appointment_tz=None, conn=None):
+    _close = conn is None
+    if _close:
+        conn = get_db()
     conn.execute("""
         INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz)
         VALUES (?,?,?,?,?,?,?,?,?,?,?)
     """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz))
-    conn.commit()
     appt_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     row = conn.execute("SELECT id FROM appointments WHERE rowid=?", (appt_id,)).fetchone()
-    conn.close()
+    if _close:
+        conn.commit()
+        conn.close()
     return row['id']
 
 
@@ -595,14 +655,17 @@ def get_deposit_balance():
 
 # ── Follow-up Operations ─────────────────────────────────────────
 
-def create_follow_up(appointment_id, follow_type, scheduled_date, channel='SMS'):
-    conn = get_db()
+def create_follow_up(appointment_id, follow_type, scheduled_date, channel='SMS', conn=None):
+    _close = conn is None
+    if _close:
+        conn = get_db()
     conn.execute("""
         INSERT INTO follow_ups (appointment_id, follow_type, channel, scheduled_date)
         VALUES (?,?,?,?)
     """, (appointment_id, follow_type, channel, scheduled_date))
-    conn.commit()
-    conn.close()
+    if _close:
+        conn.commit()
+        conn.close()
 
 
 def get_pending_follow_ups():

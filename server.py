@@ -29,6 +29,7 @@ from crm import (
     get_dashboard,
     now, today_str, now_str,
     get_tz_for, tz_display_label, tz_offset_label, LOCATION_TIMEZONES,
+    classify_vehicle_size, get_service_tier_price, get_vehicle_size_short,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -69,7 +70,7 @@ AUDIT_LOG_PATH = Path(__file__).parent / 'audit.log'
 PUBLIC_PATHS = {'/', '/book', '/api/book', '/api/services', '/static/'}
 
 # Init DB on startup
-init_db()
+_db = init_db()
 seed_services()
 
 from crm import get_db
@@ -87,6 +88,7 @@ MOBILE_LOCATIONS = {'Texas - Harris County', 'Michigan - St. Clair', 'Michigan -
 LOCATION_DB_MAP = {
     'Michigan - Marysville (Shop)': 'Shop - Marysville, MI',
     'Michigan - New Haven (Shop)': 'Shop - New Haven, MI',
+    'Michigan - St. Clair': 'Michigan - Metro Detroit',
 }
 
 VALID_BUSINESS_DAYS = {3, 5, 6}  # Python weekday(): 3=Thu, 5=Sat, 6=Sun
@@ -163,6 +165,7 @@ def json_response(handler, data, status=200):
     handler.send_response(status)
     handler.send_header('Content-Type', 'application/json; charset=utf-8')
     handler.send_header('Content-Length', len(body))
+    handler.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
     handler.send_header('X-Content-Type-Options', 'nosniff')
     handler.send_header('X-Frame-Options', 'DENY')
     handler.send_header('X-XSS-Protection', '1; mode=block')
@@ -397,115 +400,151 @@ class CRMHandler(BaseHTTPRequestHandler):
                 json_response(self, {'error': 'Request too large'}, 413)
                 return
 
-            body = self.rfile.read(content_length)
             try:
-                data = json.loads(body)
-            except json.JSONDecodeError:
-                json_response(self, {'error': 'Invalid JSON'}, 400)
-                audit_log('BOOK_FAIL', self._client_ip(), path, 'invalid JSON')
-                return
-
-            # Sanitize inputs
-            name = sanitize_input(data.get('name', ''), 100)
-            phone = sanitize_input(data.get('phone', ''), 20)
-            email = sanitize_input(data.get('email', ''), 100)
-            special_requests = sanitize_input(data.get('special_requests', ''), 500)
-
-            if not name or not phone:
-                json_response(self, {'error': 'Name and phone are required.'}, 400)
-                return
-
-            # Validate phone contains mostly digits
-            phone_digits = ''.join(c for c in phone if c.isdigit())
-            if len(phone_digits) < 10:
-                json_response(self, {'error': 'Please provide a valid phone number.'}, 400)
-                return
-
-            # Validate preferred date is Thu, Sat, or Sun
-            preferred_date = data.get('preferred_date', '')
-            if preferred_date:
+                body = self.rfile.read(content_length)
                 try:
-                    dt = datetime.strptime(preferred_date, '%Y-%m-%d')
-                    if dt.weekday() not in VALID_BUSINESS_DAYS:
-                        json_response(self, {'error': 'We are only open Thursday, Saturday, and Sunday. Please select one of those days.'}, 400)
-                        audit_log('BOOK_FAIL', self._client_ip(), path, f'bad day: {preferred_date} (weekday={dt.weekday()})')
+                    data = json.loads(body)
+                except json.JSONDecodeError:
+                    json_response(self, {'error': 'Invalid JSON'}, 400)
+                    audit_log('BOOK_FAIL', self._client_ip(), path, 'invalid JSON')
+                    return
+    
+                # Sanitize inputs
+                name = sanitize_input(data.get('name', ''), 100)
+                phone = sanitize_input(data.get('phone', ''), 20)
+                email = sanitize_input(data.get('email', ''), 100)
+                special_requests = sanitize_input(data.get('special_requests', ''), 500)
+    
+                if not name or not phone:
+                    json_response(self, {'error': 'Name and phone are required.'}, 400)
+                    return
+    
+                # Validate phone contains mostly digits
+                phone_digits = ''.join(c for c in phone if c.isdigit())
+                if len(phone_digits) < 10:
+                    json_response(self, {'error': 'Please provide a valid phone number.'}, 400)
+                    return
+    
+                # Validate preferred date is Thu, Sat, or Sun
+                preferred_date = data.get('preferred_date', '')
+                if preferred_date:
+                    try:
+                        dt = datetime.strptime(preferred_date, '%Y-%m-%d')
+                        if dt.weekday() not in VALID_BUSINESS_DAYS:
+                            json_response(self, {'error': 'We are only open Thursday, Saturday, and Sunday. Please select one of those days.'}, 400)
+                            audit_log('BOOK_FAIL', self._client_ip(), path, f'bad day: {preferred_date} (weekday={dt.weekday()})')
+                            return
+                    except ValueError:
+                        json_response(self, {'error': 'Invalid date format.'}, 400)
                         return
-                except ValueError:
-                    json_response(self, {'error': 'Invalid date format.'}, 400)
+    
+                # Require a package (service) to be selected
+                service_id = data.get('service_id')
+                if not service_id:
+                    json_response(self, {'error': 'Please select a package to continue.'}, 400)
+                    audit_log('BOOK_FAIL', self._client_ip(), path, 'no service selected')
                     return
 
-            location_raw = sanitize_input(data.get('location', ''), 100)
-            location_db = LOCATION_DB_MAP.get(location_raw, location_raw)
-
-            existing = find_customer(phone=phone)
-            if existing:
-                customer_id = existing[0]['id']
-            else:
-                customer_id = create_customer(
-                    full_name=name, phone=phone, email=email or None,
-                    address=sanitize_input(data.get('address', ''), 200),
-                    city=sanitize_input(data.get('city', ''), 100),
-                    state=sanitize_input(data.get('state', ''), 50),
-                    zip_code=sanitize_input(data.get('zip', ''), 20),
-                    location=location_db,
-                    source=sanitize_input(data.get('source', 'Website'), 50),
-                )
-
-            vehicle_id = None
-            if data.get('vehicle_type'):
-                add_vehicle(
+                location_raw = sanitize_input(data.get('location', ''), 100)
+                location_db = LOCATION_DB_MAP.get(location_raw, location_raw)
+    
+                # ── Single-connection transaction boundary ──
+                conn = get_db()
+                conn.execute('BEGIN IMMEDIATE')
+    
+                existing = find_customer(phone=phone, conn=conn)
+                if existing:
+                    customer_id = existing[0]['id']
+                else:
+                    customer_id = create_customer(
+                        full_name=name, phone=phone, email=email or None,
+                        address=sanitize_input(data.get('address', ''), 200),
+                        city=sanitize_input(data.get('city', ''), 100),
+                        state=sanitize_input(data.get('state', ''), 50),
+                        zip_code=sanitize_input(data.get('zip', ''), 20),
+                        location=location_db,
+                        source=sanitize_input(data.get('source', 'Website'), 50),
+                        conn=conn,
+                    )
+    
+                vehicle_id = None
+                vehicle_size = None
+                if data.get('vehicle_type'):
+                    raw_type = sanitize_input(data.get('vehicle_type', ''), 50)
+                    vehicle_size = classify_vehicle_size(raw_type)
+                    add_vehicle(
+                        customer_id=customer_id,
+                        vehicle_type=raw_type,
+                        make=sanitize_input(data.get('vehicle_make', ''), 50),
+                        model=sanitize_input(data.get('vehicle_model', ''), 50),
+                        year=data.get('vehicle_year'),
+                        color=sanitize_input(data.get('vehicle_color', ''), 30),
+                        license_plate=sanitize_input(data.get('license_plate', ''), 20),
+                        vehicle_size=vehicle_size,
+                        conn=conn,
+                    )
+                    vehicles = get_customer_vehicles(customer_id, conn=conn)
+                    if vehicles:
+                        vehicle_id = vehicles[0]['id']
+    
+                payment_link = None
+                deposit_agreed_at = None
+                deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
+    
+                if service_id:
+                    deposit_amount, link = get_service_deposit(service_id, conn=conn)
+                    if deposit_amount and deposit_agreed:
+                        payment_link = link
+                        deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+                appointment_id = create_appointment(
                     customer_id=customer_id,
-                    vehicle_type=sanitize_input(data.get('vehicle_type', ''), 50),
-                    make=sanitize_input(data.get('vehicle_make', ''), 50),
-                    model=sanitize_input(data.get('vehicle_model', ''), 50),
-                    year=data.get('vehicle_year'),
-                    color=sanitize_input(data.get('vehicle_color', ''), 30),
-                    license_plate=sanitize_input(data.get('license_plate', ''), 20),
+                    appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
+                    appointment_time=data.get('preferred_time') or None,
+                    vehicle_id=vehicle_id,
+                    service_id=service_id,
+                    job_address=sanitize_input(data.get('job_address', ''), 200),
+                    special_requests=special_requests or None,
+                    status='New Lead',
+                    payment_link=payment_link,
+                    deposit_agreed_at=deposit_agreed_at,
+                    conn=conn,
                 )
-                vehicles = get_customer_vehicles(customer_id)
-                if vehicles:
-                    vehicle_id = vehicles[0]['id']
+    
+                today = datetime.now().strftime('%Y-%m-%d')
+                create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS', conn=conn)
+    
+                conn.commit()
+                conn.close()
+    
+                # Build confirmation message with mobile fee note if applicable
+                is_mobile = data.get('location', '') in MOBILE_LOCATIONS
+                if is_mobile:
+                    confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment. \u26a0\ufe0f A $25 mobile service fee applies."
+                else:
+                    confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment."
+    
+                audit_log('BOOK_OK', self._client_ip(), path, f'customer={name}, appt={appointment_id[:8]}')
+                json_response(self, {
+                    'success': True,
+                    'message': confirm_msg,
+                    'appointment_id': appointment_id,
+                }, 201)
+            except Exception as e:
+                try:
+                    conn.rollback()
+                except:
+                    pass
+                try:
+                    conn.close()
+                except:
+                    pass
+                audit_log('BOOK_FAIL', self._client_ip(), path, 'DB error: ' + str(e))
+                json_response(self, {
+                    'success': False,
+                    'error': 'Booking temporarily unavailable. Please try again or call (586) 873-0656.'
+                }, 503)
 
-            payment_link = None
-            deposit_agreed_at = None
-            service_id = data.get('service_id')
-            deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
-
-            if service_id:
-                deposit_amount, link = get_service_deposit(service_id)
-                if deposit_amount and deposit_agreed:
-                    payment_link = link
-                    deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-            appointment_id = create_appointment(
-                customer_id=customer_id,
-                appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
-                appointment_time=data.get('preferred_time') or None,
-                vehicle_id=vehicle_id,
-                service_id=service_id,
-                job_address=sanitize_input(data.get('job_address', ''), 200),
-                special_requests=special_requests or None,
-                status='New Lead',
-                payment_link=payment_link,
-                deposit_agreed_at=deposit_agreed_at,
-            )
-
-            today = datetime.now().strftime('%Y-%m-%d')
-            create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS')
-
-            # Build confirmation message with mobile fee note if applicable
-            is_mobile = data.get('location', '') in MOBILE_LOCATIONS
-            if is_mobile:
-                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment. \u26a0\ufe0f A $25 mobile service fee applies."
-            else:
-                confirm_msg = "Thanks for reaching out! TaSain will text you shortly to confirm your appointment."
-
-            audit_log('BOOK_OK', self._client_ip(), path, f'customer={name}, appt={appointment_id[:8]}')
-            json_response(self, {
-                'success': True,
-                'message': confirm_msg,
-                'appointment_id': appointment_id,
-            }, 201)
 
         elif path.startswith('/api/appointments/') and path.endswith('/status'):
             # Requires ADMIN key
