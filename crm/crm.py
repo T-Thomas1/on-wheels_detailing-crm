@@ -31,6 +31,9 @@ LOCATION_TIMEZONES = {
     'Michigan - Metro Detroit':      ('America/Detroit', 'Eastern', 'EST', -5),
     'Michigan - Marysville (Shop)':  ('America/Detroit', 'Eastern', 'EST', -5),
     'Michigan - New Haven (Shop)':   ('America/Detroit', 'Eastern', 'EST', -5),
+    # DB-stored (mapped) values — same zones, keyed by what's written to the DB
+    'Shop - Marysville, MI':         ('America/Detroit', 'Eastern', 'EST', -5),
+    'Shop - New Haven, MI':          ('America/Detroit', 'Eastern', 'EST', -5),
 }
 
 def get_tz_for(location):
@@ -127,7 +130,7 @@ def init_db():
             city TEXT,
             state TEXT,
             zip TEXT,
-            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit')),
+            location TEXT CHECK(location IN ('Texas - Harris County','Michigan - Metro Detroit','Shop - Marysville, MI','Shop - New Haven, MI')),
             source TEXT CHECK(source IN ('Website','Facebook','Instagram','Referral','Repeat','Other')),
             notes TEXT,
             created_at TEXT DEFAULT (datetime('now'))
@@ -219,6 +222,41 @@ def init_db():
             conn.commit()
         except sqlite3.OperationalError:
             pass  # Column already exists
+
+    # ── Widen customers.location CHECK to include shop locations ──
+    # SQLite cannot ALTER a CHECK constraint, so rebuild the table when it still
+    # carries the legacy two-value constraint. Idempotent: skips when the shop
+    # values are already present (e.g. the live DB that was migrated manually).
+    cust_row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='customers'"
+    ).fetchone()
+    if cust_row and 'Shop - Marysville, MI' not in (cust_row['sql'] or ''):
+        new_sql = cust_row['sql'].replace(
+            "location IN ('Texas - Harris County','Michigan - Metro Detroit')",
+            "location IN ('Texas - Harris County','Michigan - Metro Detroit',"
+            "'Shop - Marysville, MI','Shop - New Haven, MI')",
+        ).replace("CREATE TABLE customers", "CREATE TABLE customers_new", 1)
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("PRAGMA legacy_alter_table=ON")
+        try:
+            conn.execute("BEGIN")
+            conn.execute("ALTER TABLE customers RENAME TO customers_old")
+            conn.execute(new_sql)
+            conn.execute(
+                "INSERT INTO customers_new (id, full_name, phone, email, address,"
+                " city, state, zip, location, source, notes, created_at)"
+                " SELECT id, full_name, phone, email, address, city, state, zip,"
+                " location, source, notes, created_at FROM customers_old"
+            )
+            conn.execute("DROP TABLE customers_old")
+            conn.execute("ALTER TABLE customers_new RENAME TO customers")
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.execute("PRAGMA legacy_alter_table=OFF")
+            conn.execute("PRAGMA foreign_keys=ON")
 
     # Update deposit amounts for existing services (safe to re-run)
     deposit_updates = [

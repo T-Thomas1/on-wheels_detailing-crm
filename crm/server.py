@@ -88,6 +88,7 @@ MOBILE_LOCATIONS = {'Texas - Harris County', 'Michigan - St. Clair', 'Michigan -
 LOCATION_DB_MAP = {
     'Michigan - Marysville (Shop)': 'Shop - Marysville, MI',
     'Michigan - New Haven (Shop)': 'Shop - New Haven, MI',
+    'Michigan - St. Clair': 'Michigan - Metro Detroit',
 }
 
 VALID_BUSINESS_DAYS = {3, 5, 6}  # Python weekday(): 3=Thu, 5=Sat, 6=Sun
@@ -437,6 +438,13 @@ class CRMHandler(BaseHTTPRequestHandler):
                         json_response(self, {'error': 'Invalid date format.'}, 400)
                         return
     
+                # Require a package (service) to be selected
+                service_id = data.get('service_id')
+                if not service_id:
+                    json_response(self, {'error': 'Please select a package to continue.'}, 400)
+                    audit_log('BOOK_FAIL', self._client_ip(), path, 'no service selected')
+                    return
+
                 location_raw = sanitize_input(data.get('location', ''), 100)
                 location_db = LOCATION_DB_MAP.get(location_raw, location_raw)
     
@@ -481,7 +489,6 @@ class CRMHandler(BaseHTTPRequestHandler):
     
                 payment_link = None
                 deposit_agreed_at = None
-                service_id = data.get('service_id')
                 deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
     
                 if service_id:
