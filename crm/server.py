@@ -339,7 +339,6 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'description': s['description'],
                     'starting_price': s['starting_price'],
                     'pricing_model': s['pricing_model'],
-                    'products_used': s['products_used'],
                     'duration_hours': s['duration_hours'],
                     'deposit_amount': s['deposit_amount'],
                 })

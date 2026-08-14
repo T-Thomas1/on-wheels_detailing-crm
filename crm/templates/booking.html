@@ -304,7 +304,6 @@ function renderServices(services) {
           <span class="pricing-model">${svc.pricing_model}</span>
           ${priceText}
           <p class="card-desc">${svc.description || ''}</p>
-          ${svc.products_used ? `<small class="products">  Uses: ${svc.products_used}</small>` : ''}
           ${svc.duration_hours ? `<small class="duration">⏱ ~${svc.duration_hours} hrs</small>` : ''}
           ${svc.deposit_amount ? `<small class="deposit-notice">  $${svc.deposit_amount} deposit required</small>` : ''}
         </div>
@@ -367,7 +366,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     } else {
       resultDiv.classList.remove('hidden');
       resultDiv.className = 'result-error';
-      resultDiv.innerHTML = `<p>${data.error || 'Something went wrong. Call us at (586) 873-0656.'}</p>`;
+      resultDiv.textContent = data.error || 'Something went wrong. Call us at (586) 873-0656.';
     }
   } catch (err) {
     resultDiv.classList.remove('hidden');
