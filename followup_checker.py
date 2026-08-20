@@ -154,6 +154,33 @@ def generate_message(follow_up):
     return random.choice(options)
 
 
+def get_recent_completed_jobs(days=14):
+    """Get appointments marked Completed in the last N days (by service date).
+
+    Powers the Facebook Tier-1 post — real vehicle/service from finished work.
+    No completed_at column exists, so recency keys off appointment_date
+    (the day service was performed).
+    """
+    conn = get_db()
+    today = today_str()
+    start = (now() - timedelta(days=days)).strftime('%Y-%m-%d')
+    rows = conn.execute("""
+        SELECT a.*, c.full_name, c.phone,
+               v.make||' '||v.model as vehicle_desc,
+               v.vehicle_type, v.vehicle_size,
+               s.name as service_name, s.category as service_category
+        FROM appointments a
+        JOIN customers c ON a.customer_id = c.id
+        LEFT JOIN vehicles v ON a.vehicle_id = v.id
+        LEFT JOIN services s ON a.service_id = s.id
+        WHERE a.status = 'Completed'
+          AND a.appointment_date BETWEEN ? AND ?
+        ORDER BY a.appointment_date DESC
+    """, (start, today)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else 'full'
 
@@ -209,6 +236,14 @@ def main():
             loc = a.get('customer_location') or f"{a.get('city','')} {a.get('state','')}".strip()
             print(f"    Area: {loc} | {a.get('vehicle_desc','')}")
 
+    # Recently completed jobs — grounds the Facebook Tier-1 post
+    completed = get_recent_completed_jobs(days=14)
+    if completed:
+        print(f"\n  RECENTLY COMPLETED JOBS (Last 14 Days)")
+        print(f"  {'─' * 54}")
+        for a in completed:
+            print(f"    {a['appointment_date']} | {a['full_name']:20s} | {a.get('vehicle_desc') or 'Vehicle'} | {a.get('service_name') or 'Unspecified'}")
+
     # Pending follow-ups that need action NOW
     follow_ups = check_pending_follow_ups()
     if follow_ups:
@@ -225,7 +260,7 @@ def main():
                 print(f"  │ {line}")
             print(f"  └{'─' * 52}")
 
-    if not upcoming and not new_leads and not follow_ups:
+    if not upcoming and not new_leads and not follow_ups and not completed:
         print(f"\n  All quiet today. Time to prospect or post on social!")
         print(f"  IG: @on_wheelsdetailing")
         print(f"  FB: facebook.com/share/16tKSTuW4C/")

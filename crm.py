@@ -140,6 +140,7 @@ def init_db():
             id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
             customer_id TEXT NOT NULL REFERENCES customers(id),
             vehicle_type TEXT CHECK(vehicle_type IN ('Car','Truck','SUV','Van','Boat','RV','Motorcycle','Other')),
+            vehicle_size TEXT,
             make TEXT,
             model TEXT,
             year INTEGER,
@@ -211,6 +212,7 @@ def init_db():
 
     # ── Schema migrations (safe for existing DBs) ──
     migrations = [
+        "ALTER TABLE vehicles ADD COLUMN vehicle_size TEXT",
         "ALTER TABLE services ADD COLUMN deposit_amount REAL",
         "ALTER TABLE appointments ADD COLUMN payment_link TEXT",
         "ALTER TABLE appointments ADD COLUMN deposit_agreed_at TEXT",
