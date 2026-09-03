@@ -19,7 +19,7 @@ from urllib.parse import urlparse, parse_qs
 
 sys.path.insert(0, str(Path(__file__).parent))
 from crm import (
-    init_db, seed_services,
+    init_db, seed_services, seed_expansion_services,
     create_customer, find_customer, get_customers,
     add_vehicle, get_customer_vehicles,
     get_services, get_service_deposit,
@@ -59,6 +59,14 @@ RATE_LIMIT_WINDOW = 60       # seconds
 RATE_LIMIT_MAX = 30          # requests per window (generous for normal use)
 BOOK_RATE_LIMIT_MAX = 5      # booking submissions per window
 
+# CORS — allow the marketing site + dev origins only (never '*')
+CORS_ALLOWED_ORIGINS = {
+    'https://www.onwheelsdetailing.com',
+    'https://onwheelsdetailing.com',
+    'http://localhost:4321',
+    'http://127.0.0.1:4321',
+}
+
 # Sensitive field names to strip from public API responses
 PII_REDACT_FIELDS = {'email', 'payment_link'}
 PHONE_REDACT_LENGTH = 4  # show last 4 digits only
@@ -72,6 +80,7 @@ PUBLIC_PATHS = {'/', '/book', '/api/book', '/api/services', '/static/'}
 # Init DB on startup
 _db = init_db()
 seed_services()
+seed_expansion_services()
 
 from crm import get_db
 conn = get_db()
@@ -101,6 +110,14 @@ VALID_BUSINESS_DAYS = {3, 5, 6}  # Python weekday(): 3=Thu, 5=Sat, 6=Sun
 def constant_time_compare(a: str, b: str) -> bool:
     """Timing-attack-safe string comparison."""
     return hmac.compare_digest(a.encode(), b.encode())
+
+
+def cors_origin(handler) -> str:
+    """Return the request Origin if allowed, else '' (no CORS header sent)."""
+    origin = handler.headers.get('Origin', '')
+    if origin in CORS_ALLOWED_ORIGINS or origin.endswith('.pages.dev'):
+        return origin
+    return ''
 
 
 def audit_log(event: str, ip: str, path: str = '', detail: str = ''):
@@ -170,6 +187,10 @@ def json_response(handler, data, status=200):
     handler.send_header('X-Frame-Options', 'DENY')
     handler.send_header('X-XSS-Protection', '1; mode=block')
     handler.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
+    origin = cors_origin(handler)
+    if origin:
+        handler.send_header('Access-Control-Allow-Origin', origin)
+        handler.send_header('Vary', 'Origin')
     handler.end_headers()
     handler.wfile.write(body)
 
@@ -302,6 +323,20 @@ class CRMHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         """Support HEAD requests (Google Search Console URL inspection)."""
         self.do_GET()
+
+    def do_OPTIONS(self):
+        """CORS preflight for cross-origin booking requests."""
+        origin = cors_origin(self)
+        if origin:
+            self.send_response(204)
+            self.send_header('Access-Control-Allow-Origin', origin)
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-API-Key')
+            self.send_header('Access-Control-Max-Age', '86400')
+            self.send_header('Vary', 'Origin')
+        else:
+            self.send_response(403)
+        self.end_headers()
 
     # ── GET ────────────────────────────────────────────────────
 

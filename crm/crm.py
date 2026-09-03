@@ -152,7 +152,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS services (
             id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
             name TEXT NOT NULL,
-            category TEXT CHECK(category IN ('Marine Gel-coat','Interior Detailing','Paint Correction & Ceramic')),
+            category TEXT CHECK(category IN ('Marine Gel-coat','Interior Detailing','Paint Correction & Ceramic','Window Tinting','Undercoating')),
             sub_service TEXT,
             description TEXT,
             starting_price REAL,
@@ -252,6 +252,36 @@ def init_db():
             )
             conn.execute("DROP TABLE customers_old")
             conn.execute("ALTER TABLE customers_new RENAME TO customers")
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.execute("PRAGMA legacy_alter_table=OFF")
+            conn.execute("PRAGMA foreign_keys=ON")
+
+    # ── Widen services.category CHECK to include tinting + undercoating ──
+    # Mirrors the customers.location rebuild above. Idempotent: skips once the
+    # new categories are present. Copies every row — no data loss.
+    svc_row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='services'"
+    ).fetchone()
+    if svc_row and 'Window Tinting' not in (svc_row['sql'] or ''):
+        new_sql = svc_row['sql'].replace(
+            "'Marine Gel-coat','Interior Detailing','Paint Correction & Ceramic'",
+            "'Marine Gel-coat','Interior Detailing','Paint Correction & Ceramic',"
+            "'Window Tinting','Undercoating'",
+            1,
+        ).replace("CREATE TABLE services", "CREATE TABLE services_new", 1)
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("PRAGMA legacy_alter_table=ON")
+        try:
+            conn.execute("BEGIN")
+            conn.execute("ALTER TABLE services RENAME TO services_old")
+            conn.execute(new_sql)
+            conn.execute("INSERT INTO services_new SELECT * FROM services_old")
+            conn.execute("DROP TABLE services_old")
+            conn.execute("ALTER TABLE services_new RENAME TO services")
             conn.commit()
         except Exception:
             conn.rollback()
@@ -372,6 +402,8 @@ SERVICE_PRICE_TIERS = {
     'Signature Detail Package':       [1150, 1350, 1600],
     'Two-Step Paint Correction':      [525,  625,  725],
     'Ceramic Coating (Auto)':         [1500, 1750, 2000],
+    'Undercoating — Fluid Film':      [175, 225, 300],
+    'Undercoating — Woolwax':         [175, 225, 300],
 }
 
 # Marine / RV services (per-foot pricing)
@@ -507,6 +539,44 @@ def seed_services():
         INSERT OR IGNORE INTO services (name, category, sub_service, description, starting_price, pricing_model, products_used, duration_hours, deposit_amount)
         VALUES (?,?,?,?,?,?,?,?,?)
     """, services)
+    conn.commit()
+    conn.close()
+
+
+def seed_expansion_services():
+    """Idempotently add 2026 expansion services (window tinting + undercoating).
+
+    Inserts only when a service name is absent — never touches existing rows.
+    Safe to run on a live database.
+    """
+    conn = get_db()
+    services = [
+        # Window Tinting (GEOShield) — quote-only until cert + pricing are final
+        ("Window Tinting — Ceramic", "Window Tinting", "Ceramic Film",
+         "GEOShield ceramic tint — maximum IR/UV rejection, clearest optics.",
+         None, "Quote Only", "GEOShield Ceramic", 4, 50),
+        ("Window Tinting — Nano-Ceramic", "Window Tinting", "Nano-Ceramic Film",
+         "GEOShield nano-ceramic tint — superior heat rejection, no signal interference.",
+         None, "Quote Only", "GEOShield Nano-Ceramic", 3, 50),
+        ("Window Tinting — Carbon", "Window Tinting", "Carbon Film",
+         "GEOShield carbon tint — great heat rejection, classic smoked look.",
+         None, "Quote Only", "GEOShield Carbon", 3, 50),
+        # Undercoating (Fluid Film / Woolwax) — tiered by vehicle size
+        ("Undercoating — Fluid Film", "Undercoating", "Fluid Film",
+         "Lanolin-based rust protection that creeps into seams. Yearly reapplication.",
+         175, "Flat Rate", "Fluid Film", 2, 50),
+        ("Undercoating — Woolwax", "Undercoating", "Woolwax",
+         "Thicker, longer-lasting lanolin coating. Two-year reapplication.",
+         175, "Flat Rate", "Woolwax", 2, 50),
+    ]
+    for s in services:
+        exists = conn.execute(
+            "SELECT 1 FROM services WHERE name=?", (s[0],)).fetchone()
+        if not exists:
+            conn.execute(
+                "INSERT INTO services (name, category, sub_service, description,"
+                " starting_price, pricing_model, products_used, duration_hours,"
+                " deposit_amount) VALUES (?,?,?,?,?,?,?,?,?)", s)
     conn.commit()
     conn.close()
 
