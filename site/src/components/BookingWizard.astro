@@ -101,7 +101,7 @@ const locations = [
         type="number"
         class="border-navy/15 rounded-lg border p-3"
       />
-      <select data-type class="border-navy/15 rounded-lg border p-3">
+      <select data-type class="border-navy/15 rounded-lg border p-3" required>
         <option value="">Vehicle type</option>
         <option>Car</option><option>SUV</option><option>Truck</option><option
           >Van</option
@@ -144,22 +144,42 @@ const locations = [
     </h2>
     <div class="mt-4 grid gap-3 sm:grid-cols-2">
       <input
-        data-name
-        placeholder="Full name"
+        data-first
+        placeholder="First name"
+        autocomplete="given-name"
+        required
+        class="border-navy/15 rounded-lg border p-3"
+      />
+      <input
+        data-last
+        placeholder="Last name"
+        autocomplete="family-name"
         class="border-navy/15 rounded-lg border p-3"
       />
       <input
         data-phone
-        placeholder="Phone"
+        placeholder="Phone (US)"
         type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        required
         class="border-navy/15 rounded-lg border p-3"
       />
       <input
         data-email
         placeholder="Email (optional)"
         type="email"
-        class="border-navy/15 rounded-lg border p-3 sm:col-span-2"
+        autocomplete="email"
+        class="border-navy/15 rounded-lg border p-3"
       />
+      <div data-address-wrap class="sm:col-span-2">
+        <input
+          data-address
+          placeholder="Service address (required for mobile details)"
+          autocomplete="street-address"
+          class="border-navy/15 w-full rounded-lg border p-3"
+        />
+      </div>
       <textarea
         data-notes
         placeholder="Anything we should know? (condition, pet hair, etc.)"
@@ -319,6 +339,7 @@ const locations = [
   const radio = (name: string) =>
     el.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)
       ?.value ?? "";
+  const isMobile = () => !radio("location").includes("(Shop)");
 
   const summary = () =>
     [
@@ -380,18 +401,49 @@ const locations = [
     }
   }
 
+  const addressWrap = el.querySelector<HTMLElement>("[data-address-wrap]")!;
+  const syncAddress = () => addressWrap.classList.toggle("hidden", !isMobile());
+
   el.querySelectorAll<HTMLInputElement>('input[name="location"]').forEach(
     (r) => {
       r.addEventListener("change", () => {
         serviceSelect.value = "";
         renderServices();
+        syncAddress();
       });
     },
   );
 
+  // US phone auto-format: (XXX) XXX-XXXX
+  el.querySelector<HTMLInputElement>("[data-phone]")!.addEventListener(
+    "input",
+    (e) => {
+      const t = e.target as HTMLInputElement;
+      const d = t.value.replace(/\D/g, "").slice(0, 10);
+      if (!d) {
+        t.value = "";
+        return;
+      }
+      t.value =
+        d.length > 6
+          ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`
+          : d.length > 3
+            ? `(${d.slice(0, 3)}) ${d.slice(3)}`
+            : `(${d}`;
+    },
+  );
+
+  // No past dates
+  el.querySelector<HTMLInputElement>("[data-date]")!.min = new Date()
+    .toISOString()
+    .split("T")[0];
+
+  syncAddress();
+
   const validStep = (): boolean => {
     if (step === 0) return !!radio("location");
     if (step === 1) return !!serviceSelect.value;
+    if (step === 2) return !!val("[data-type]");
     if (step === 3) {
       const d = val("[data-date]");
       if (!d) return false;
@@ -400,8 +452,9 @@ const locations = [
     }
     if (step === 4)
       return (
-        !!val("[data-name]") &&
-        val("[data-phone]").replace(/\D/g, "").length >= 10
+        !!val("[data-first]").trim() &&
+        val("[data-phone]").replace(/\D/g, "").length === 10 &&
+        (!isMobile() || !!val("[data-address]").trim())
       );
     return true;
   };
@@ -411,7 +464,13 @@ const locations = [
       statusEl.textContent =
         step === 3
           ? "Please pick a Thursday, Saturday, or Sunday."
-          : "Please fill in the highlighted step.";
+          : step === 2
+            ? "Please select your vehicle type."
+            : step === 4 && isMobile() && !val("[data-address]").trim()
+              ? "Please add your service address for mobile details."
+              : step === 4
+                ? "Please add your first name and a valid US phone number."
+                : "Please fill in the highlighted step.";
       statusEl.className = "mt-4 block text-sm font-semibold text-crimson";
       return;
     }
@@ -436,10 +495,12 @@ const locations = [
     statusEl.className = "mt-4 block text-sm font-semibold text-navy/70";
     statusEl.textContent = "Submitting…";
     const payload = {
-      name: val("[data-name]"),
+      name: [val("[data-first]"), val("[data-last]")].filter(Boolean).join(" "),
       phone: val("[data-phone]"),
       email: val("[data-email]"),
       location: radio("location"),
+      job_address: val("[data-address]"),
+      address: val("[data-address]"),
       vehicle_type: val("[data-type]"),
       vehicle_make: val("[data-make]"),
       vehicle_model: val("[data-model]"),
