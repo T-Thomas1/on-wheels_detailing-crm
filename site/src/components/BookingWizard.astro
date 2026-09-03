@@ -1,10 +1,13 @@
 ---
-// Booking wizard — multi-step, posts to the existing CRM API.
+// Booking wizard, multi-step, posts to the existing CRM API.
 // Fails open: if the API is unreachable (e.g. local dev), it falls back to a
 // bundled service list and a "call to book" confirmation instead of erroring.
 const locations = [
-  { value: "Michigan - Metro Detroit", label: "Mobile — Metro Detroit" },
-  { value: "Michigan - St. Clair", label: "Mobile — St. Clair / Port Huron" },
+  {
+    value: "Michigan - Metro Detroit",
+    label: "Mobile, Port Huron & St. Clair area",
+  },
+  { value: "Michigan - St. Clair", label: "Mobile, St. Clair / Port Huron" },
   {
     value: "Michigan - Marysville (Shop)",
     label: "Marysville garage (tinting)",
@@ -13,7 +16,7 @@ const locations = [
     value: "Michigan - New Haven (Shop)",
     label: "New Haven garage (tinting + undercoating)",
   },
-  { value: "Texas - Harris County", label: "Mobile — Houston, TX" },
+  { value: "Texas - Harris County", label: "Mobile, Houston, TX" },
 ];
 ---
 
@@ -235,31 +238,31 @@ const locations = [
     },
     {
       id: "tint-ceramic",
-      name: "Window Tinting — Ceramic",
+      name: "Window Tinting, Ceramic",
       category: "Window Tinting",
       price: "quote",
     },
     {
       id: "tint-nano",
-      name: "Window Tinting — Nano-Ceramic",
+      name: "Window Tinting, Nano-Ceramic",
       category: "Window Tinting",
       price: "quote",
     },
     {
       id: "tint-carbon",
-      name: "Window Tinting — Carbon",
+      name: "Window Tinting, Carbon",
       category: "Window Tinting",
       price: "quote",
     },
     {
       id: "undercoat-fluid",
-      name: "Undercoating — Fluid Film",
+      name: "Undercoating, Fluid Film",
       category: "Undercoating",
       price: "$175–$300",
     },
     {
       id: "undercoat-woolwax",
-      name: "Undercoating — Woolwax",
+      name: "Undercoating, Woolwax",
       category: "Undercoating",
       price: "$175–$300",
     },
@@ -465,7 +468,7 @@ const locations = [
       }
     } catch (e) {
       statusEl.className = "mt-4 block text-sm font-semibold text-crimson";
-      statusEl.textContent = `Online booking isn't reachable right now — call or text (586) 873-0656 and we'll get you scheduled.`;
+      statusEl.textContent = `Online booking isn't reachable right now, call or text (586) 873-0656 and we'll get you scheduled.`;
     } finally {
       nextBtn.disabled = false;
     }

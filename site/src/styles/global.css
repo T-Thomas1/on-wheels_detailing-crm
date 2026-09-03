@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────
-   On-Wheels Detailing — Brand design tokens
-   (from docs/onwheelsBrandGuideLines.png — do not change)
+   On-Wheels Detailing, Brand design tokens
+   (from docs/onwheelsBrandGuideLines.png, do not change)
    ───────────────────────────────────────────────────────────── */
 @theme {
-  --color-navy: #0d2e48; /* primary — deep navy */
-  --color-slate: #2a4358; /* secondary — slate navy */
-  --color-cream: #f1eed9; /* background — cream */
-  --color-sand: #e4e1b9; /* background alt — sand */
-  --color-accent: #e6863a; /* CTA — burnt orange */
-  --color-gold: #edb760; /* accent — gold */
-  --color-crimson: #c83c34; /* error / alert — red */
+  --color-navy: #0d2e48; /* primary, deep navy */
+  --color-slate: #2a4358; /* secondary, slate navy */
+  --color-cream: #f1eed9; /* background, cream */
+  --color-sand: #e4e1b9; /* background alt, sand */
+  --color-accent: #e6863a; /* CTA, burnt orange */
+  --color-gold: #edb760; /* accent, gold */
+  --color-crimson: #c83c34; /* error / alert, red */
 
   --font-display: "FH Oscar Condensed", "Oswald", "Arial Narrow", sans-serif;
   --font-sans:
     "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Display font — FH Oscar Condensed (logo/brand typeface) */
+/* Display font, FH Oscar Condensed (logo/brand typeface) */
 @font-face {
   font-family: "FH Oscar Condensed";
   src: url("/fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf")

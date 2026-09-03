@@ -19,7 +19,7 @@ const services = [
   {
     name: "Window Tinting",
     href: "/tinting",
-    desc: "GEOShield films — ceramic, nano-ceramic & carbon. See your shade.",
+    desc: "GEOShield films, ceramic, nano-ceramic & carbon. See your shade.",
     price: "By film",
   },
   {
@@ -44,6 +44,8 @@ const brands = [
   "Oberk",
   "GEOShield",
   "Fluid Film",
+  "3D",
+  "Meguiar's",
 ];
 
 const ldJson = {
@@ -56,19 +58,24 @@ const ldJson = {
   priceRange: "$150-$2000",
   founder: { "@type": "Person", name: "TaSain" },
   areaServed: [
-    "Metro Detroit",
     "Port Huron",
     "St. Clair",
     "Marysville",
     "New Haven",
+    "Algonac",
+    "Yale",
+    "Lexington",
+    "Richmond",
+    "Mt. Clemens",
+    "St. Clair Shores",
     "Houston",
   ],
 };
 ---
 
 <BaseLayout
-  title="On-Wheels Detailing — Mobile & In-Shop Auto Detailing | Michigan & Texas"
-  description="Premium mobile and in-shop auto detailing, ceramic coating, window tinting, and undercoating. Founded by TaSain — serving Metro Detroit and Houston."
+  title="On-Wheels Detailing | Mobile & In-Shop Auto Detailing | Michigan & Texas"
+  description="Premium mobile and in-shop auto detailing, ceramic coating, window tinting, and undercoating. Founded by TaSain, serving Port Huron, St. Clair & Macomb County and Houston."
 >
   <!-- HERO -->
   <section class="bg-navy relative overflow-hidden">
@@ -143,11 +150,12 @@ const ldJson = {
       <p class="text-navy/75 mt-5">
         On-Wheels Detailing started in 2025 with one buffer and one promise:
         treat every car like it's my own. Today that's grown into mobile
-        detailing across Metro Detroit, two garage locations, an undercoating
-        bay, and window tinting — all still built on the same hands-on standard.
+        detailing across Port Huron, St. Clair & Macomb County, two garage
+        locations, an undercoating bay, and window tinting, all still built on
+        the same hands-on standard.
       </p>
       <ul class="text-navy/80 mt-6 space-y-2">
-        <li>• Certified, pro-grade products — no parts-store shortcuts</li>
+        <li>• Certified, pro-grade products, no parts-store shortcuts</li>
         <li>• Real before/after results, not stock photos</li>
         <li>• A personal guarantee: if it's not right, I'll make it right</li>
       </ul>
@@ -159,7 +167,7 @@ const ldJson = {
       </a>
     </div>
     <Placeholder
-      label="Owner portrait — TaSain at work"
+      label="Owner portrait, TaSain at work"
       note="Upload: images/owner-ta-sain.webp · 1200×900"
       class="aspect-[4/3]"
     />
@@ -171,7 +179,7 @@ const ldJson = {
       <div class="text-center">
         <h2 class="text-navy text-4xl font-bold md:text-5xl">What we do</h2>
         <p class="text-navy/70 mx-auto mt-3 max-w-xl">
-          Four ways to protect and transform your vehicle — all under one roof.
+          Four ways to protect and transform your vehicle, all under one roof.
         </p>
       </div>
       <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -205,7 +213,7 @@ const ldJson = {
         The proof is in the paint
       </h2>
       <p class="text-navy/70 mx-auto mt-3 max-w-xl">
-        Interactive before/after slider coming here — drag to see the
+        Interactive before/after slider coming here, drag to see the
         transformation.
       </p>
     </div>
@@ -216,7 +224,7 @@ const ldJson = {
         alt="Paint correction demo"
       />
       <p class="text-navy/50 mt-3 text-center text-xs">
-        Demo images — replace with a real before/after pair.
+        Demo images, replace with a real before/after pair.
       </p>
     </div>
   </section>
@@ -258,25 +266,25 @@ const ldJson = {
               ★★★★★
             </div>
             <blockquote class="text-navy/80 mt-3">
-              "SAMPLE REVIEW — replace with a real customer quote naming the
+              "SAMPLE REVIEW, replace with a real customer quote naming the
               service and town."
             </blockquote>
             <figcaption class="text-navy mt-4 text-sm font-semibold">
-              — Customer name, City
+              , Customer name, City
             </figcaption>
           </figure>
         ))
       }
     </div>
     <p class="text-navy/60 mt-6 text-center text-sm">
-      Review us on
+      Review us on{" "}
       <a
         href="https://g.page/r/CS4aNgHfsCsaEBM/review"
         target="_blank"
         rel="noopener"
         class="text-accent font-semibold hover:underline">Google</a
       >
-      ·
+      {" · "}
       <a
         href="https://www.facebook.com/share/1JHbMqPWnt/"
         target="_blank"
@@ -293,8 +301,8 @@ const ldJson = {
         Ready to book your detail?
       </h2>
       <p class="text-cream/75 mx-auto mt-4 max-w-xl">
-        Text or call (586) 873-0656, or book online — serving Metro Detroit and
-        Houston.
+        Text or call (586) 873-0656, or book online, serving Port Huron, St.
+        Clair & Macomb County and Houston.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-4">
         <a

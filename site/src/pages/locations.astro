@@ -4,29 +4,29 @@ import Placeholder from "../components/Placeholder.astro";
 
 const miLocations = [
   {
-    name: "Marysville — Garage",
+    name: "Marysville, Garage",
     line: "Storefront & full detailing",
     note: "Undercoating listed here",
   },
   {
-    name: "New Haven — Garage",
+    name: "New Haven, Garage",
     line: "Undercoating bay (lift + drain)",
     note: "Fixed location, not mobile",
   },
   {
-    name: "Mobile — Metro Detroit",
-    line: "Detroit · Port Huron · St. Clair · Macomb & St. Clair County",
+    name: "Mobile, Port Huron & St. Clair area",
+    line: "Port Huron · St. Clair · Algonac · New Haven · Yale · Lexington · Richmond · Mt. Clemens · St. Clair Shores",
   },
 ];
 
 const txLocations = [
-  { name: "Houston — Mobile", line: "Harris County & surrounding areas" },
+  { name: "Houston, Mobile", line: "Harris County & surrounding areas" },
 ];
 ---
 
 <BaseLayout
-  title="Locations — Michigan & Texas | On-Wheels Detailing"
-  description="On-Wheels Detailing serves Michigan (Marysville and New Haven garages plus mobile across Metro Detroit) and Houston, Texas."
+  title="Locations | Michigan & Texas | On-Wheels Detailing"
+  description="On-Wheels Detailing serves Michigan (Marysville and New Haven garages plus mobile across Port Huron, St. Clair & Macomb County) and Houston, Texas."
 >
   <section class="bg-navy py-20 text-center">
     <div class="container-x">
@@ -39,7 +39,7 @@ const txLocations = [
 
   <section class="container-x py-16">
     <h2 class="text-navy text-3xl font-bold">
-      Michigan <span class="text-accent">— home base</span>
+      Michigan <span class="text-accent">, home base</span>
     </h2>
     <div class="mt-8 grid gap-6 md:grid-cols-3">
       {
@@ -73,7 +73,7 @@ const txLocations = [
   <section class="border-navy/10 bg-sand border-t py-16">
     <div class="container-x">
       <h2 class="text-navy text-3xl font-bold">
-        Texas <span class="text-accent">— mobile service</span>
+        Texas <span class="text-accent">, mobile service</span>
       </h2>
       <div class="mt-8 grid items-center gap-8 md:grid-cols-2">
         <div>
