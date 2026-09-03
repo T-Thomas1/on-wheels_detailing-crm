@@ -18,6 +18,18 @@ const locations = [
   },
   { value: "Texas - Harris County", label: "Mobile, Houston, TX" },
 ];
+
+const timeSlots = [
+  "9:00 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "1:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+];
 ---
 
 <div
@@ -41,6 +53,8 @@ const locations = [
       ))
     }
   </ol>
+
+  <p class="text-navy/40 mb-4 text-xs font-medium">* Required</p>
 
   <!-- Step 1: Location -->
   <div data-step="1">
@@ -75,7 +89,7 @@ const locations = [
       class="border-navy/15 text-navy mt-4 w-full rounded-lg border bg-white p-3"
       required
     >
-      <option value="">Choose a service…</option>
+      <option value="">Choose a service *</option>
     </select>
   </div>
 
@@ -99,10 +113,11 @@ const locations = [
         data-year
         placeholder="Year"
         type="number"
+        min="1970"
         class="border-navy/15 rounded-lg border p-3"
       />
       <select data-type class="border-navy/15 rounded-lg border p-3" required>
-        <option value="">Vehicle type</option>
+        <option value="">Vehicle type *</option>
         <option>Car</option><option>SUV</option><option>Truck</option><option
           >Van</option
         ><option>RV</option><option>Other</option>
@@ -120,19 +135,13 @@ const locations = [
     <h2 class="font-display text-navy text-2xl font-bold uppercase">
       Pick a day
     </h2>
-    <p class="text-navy/50 mt-1 text-xs">
-      We detail Thursday, Saturday &amp; Sunday, 9am–5pm.
-    </p>
     <div class="mt-4 grid gap-3 sm:grid-cols-2">
-      <input
-        data-date
-        type="date"
-        class="border-navy/15 rounded-lg border p-3"
-      />
-      <select data-time class="border-navy/15 rounded-lg border p-3">
-        <option value="">Time</option>
-        <option>9:00 AM</option><option>11:00 AM</option><option>1:00 PM</option
-        ><option>3:00 PM</option>
+      <select data-date class="border-navy/15 rounded-lg border p-3" required>
+        <option value="">Choose a date *</option>
+      </select>
+      <select data-time class="border-navy/15 rounded-lg border p-3" required>
+        <option value="">Time *</option>
+        {timeSlots.map((t) => <option>{t}</option>)}
       </select>
     </div>
   </div>
@@ -145,7 +154,7 @@ const locations = [
     <div class="mt-4 grid gap-3 sm:grid-cols-2">
       <input
         data-first
-        placeholder="First name"
+        placeholder="First name *"
         autocomplete="given-name"
         required
         class="border-navy/15 rounded-lg border p-3"
@@ -158,7 +167,7 @@ const locations = [
       />
       <input
         data-phone
-        placeholder="Phone (US)"
+        placeholder="Phone (US) *"
         type="tel"
         inputmode="tel"
         autocomplete="tel"
@@ -175,7 +184,7 @@ const locations = [
       <div data-address-wrap class="sm:col-span-2">
         <input
           data-address
-          placeholder="Service address (required for mobile details)"
+          placeholder="Service address *"
           autocomplete="street-address"
           class="border-navy/15 w-full rounded-lg border p-3"
         />
@@ -348,7 +357,8 @@ const locations = [
       val("[data-make]"),
       val("[data-model]"),
       val("[data-year]"),
-      val("[data-date]"),
+      el.querySelector<HTMLSelectElement>("[data-date]")?.selectedOptions[0]
+        ?.textContent,
       val("[data-time]"),
     ]
       .filter(Boolean)
@@ -382,7 +392,7 @@ const locations = [
     .finally(renderServices);
 
   function renderServices() {
-    serviceSelect.innerHTML = '<option value="">Choose a service…</option>';
+    serviceSelect.innerHTML = '<option value="">Choose a service *</option>';
     const allowed = locationCategories[radio("location")] ?? [];
     const visible = allowed.length
       ? services.filter((s) => allowed.includes(s.category))
@@ -433,44 +443,71 @@ const locations = [
     },
   );
 
-  // No past dates
-  el.querySelector<HTMLInputElement>("[data-date]")!.min = new Date()
-    .toISOString()
-    .split("T")[0];
+  // Populate the date picker with the next Thu/Sat/Sun only
+  const dateSelect = el.querySelector<HTMLSelectElement>("[data-date]")!;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const iso = (d: Date) =>
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  {
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    let added = 0;
+    while (added < 12) {
+      if ([4, 6, 0].includes(cursor.getDay())) {
+        const o = document.createElement("option");
+        o.value = iso(cursor);
+        o.textContent = cursor.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+        dateSelect.appendChild(o);
+        added++;
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  }
+
+  // Year bounds: no negatives, nothing before 1970, nothing absurdly future
+  el.querySelector<HTMLInputElement>("[data-year]")!.max = String(
+    new Date().getFullYear() + 1,
+  );
 
   syncAddress();
 
-  const validStep = (): boolean => {
-    if (step === 0) return !!radio("location");
-    if (step === 1) return !!serviceSelect.value;
-    if (step === 2) return !!val("[data-type]");
-    if (step === 3) {
-      const d = val("[data-date]");
-      if (!d) return false;
-      const day = new Date(d + "T12:00:00").getDay(); // Thu=4, Sat=6, Sun=0
-      return [4, 6, 0].includes(day);
+  const validStep = (): string => {
+    if (step === 0) return radio("location") ? "" : "Please choose a location.";
+    if (step === 1)
+      return serviceSelect.value ? "" : "Please choose a service.";
+    if (step === 2) {
+      if (!val("[data-type]")) return "Please select your vehicle type.";
+      const y = Number(val("[data-year]"));
+      if (val("[data-year]") && (y < 1970 || y > new Date().getFullYear() + 1))
+        return "Please enter a valid year (1970 or newer).";
+      return "";
     }
-    if (step === 4)
-      return (
-        !!val("[data-first]").trim() &&
-        val("[data-phone]").replace(/\D/g, "").length === 10 &&
-        (!isMobile() || !!val("[data-address]").trim())
-      );
-    return true;
+    if (step === 3) {
+      if (!val("[data-date]"))
+        return "Please pick a Thursday, Saturday, or Sunday.";
+      if (!val("[data-time]"))
+        return "Please choose a time between 9am and 5pm.";
+      return "";
+    }
+    if (step === 4) {
+      if (!val("[data-first]").trim()) return "Please enter your first name.";
+      if (val("[data-phone]").replace(/\D/g, "").length !== 10)
+        return "Please enter a valid US phone number.";
+      if (isMobile() && !val("[data-address]").trim())
+        return "Please enter your service address for mobile details.";
+      return "";
+    }
+    return "";
   };
 
   nextBtn.addEventListener("click", () => {
-    if (!validStep()) {
-      statusEl.textContent =
-        step === 3
-          ? "Please pick a Thursday, Saturday, or Sunday."
-          : step === 2
-            ? "Please select your vehicle type."
-            : step === 4 && isMobile() && !val("[data-address]").trim()
-              ? "Please add your service address for mobile details."
-              : step === 4
-                ? "Please add your first name and a valid US phone number."
-                : "Please fill in the highlighted step.";
+    const err = validStep();
+    if (err) {
+      statusEl.textContent = err;
       statusEl.className = "mt-4 block text-sm font-semibold text-crimson";
       return;
     }
