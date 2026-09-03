@@ -1,12 +1,12 @@
 ---
 const quickLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'Window Tinting', href: '/tinting' },
-  { label: 'Undercoating', href: '/undercoating' },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Locations', href: '/locations' },
-  { label: 'About', href: '/about' },
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
+  { label: "Window Tinting", href: "/tinting" },
+  { label: "Undercoating", href: "/undercoating" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Locations", href: "/locations" },
+  { label: "About", href: "/about" },
 ];
 ---
 
@@ -23,50 +23,83 @@ const quickLinks = [
           loading="lazy"
         />
       </a>
-      <p class="mt-4 max-w-xs text-sm text-cream/70">
-        Showroom finish. Mobile convenience. One detailer who treats your car like his own.
+      <p class="text-cream/70 mt-4 max-w-xs text-sm">
+        Showroom finish. Mobile convenience. One detailer who treats your car
+        like his own.
       </p>
     </div>
 
     <div>
-      <h3 class="font-display text-sm font-bold uppercase tracking-wider text-gold">Explore</h3>
+      <h3
+        class="font-display text-gold text-sm font-bold tracking-wider uppercase"
+      >
+        Explore
+      </h3>
       <ul class="mt-4 grid grid-cols-2 gap-2">
-        {quickLinks.map((l) => (
-          <li>
-            <a href={l.href} class="text-sm text-cream/80 hover:text-accent">{l.label}</a>
-          </li>
-        ))}
+        {
+          quickLinks.map((l) => (
+            <li>
+              <a href={l.href} class="text-cream/80 hover:text-accent text-sm">
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
 
     <div>
-      <h3 class="font-display text-sm font-bold uppercase tracking-wider text-gold">Contact</h3>
-      <ul class="mt-4 space-y-2 text-sm text-cream/80">
+      <h3
+        class="font-display text-gold text-sm font-bold tracking-wider uppercase"
+      >
+        Contact
+      </h3>
+      <ul class="text-cream/80 mt-4 space-y-2 text-sm">
         <li>
-          <a href="tel:+15868730656" class="hover:text-accent">(586) 873-0656</a>
+          <a href="tel:+15868730656" class="hover:text-accent">(586) 873-0656</a
+          >
         </li>
         <li>
-          <a href="mailto:tasain@onwheelsdetailing.com" class="hover:text-accent">tasain@onwheelsdetailing.com</a>
+          <a
+            href="mailto:tasain@onwheelsdetailing.com"
+            class="hover:text-accent">tasain@onwheelsdetailing.com</a
+          >
         </li>
         <li class="flex gap-3 pt-1">
-          <a href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr" target="_blank" rel="noopener noreferrer" class="text-cream/80 hover:text-accent" aria-label="Facebook">Facebook</a>
+          <a
+            href="https://www.facebook.com/share/16tKSTuW4C/?mibextid=wwXlfr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-cream/80 hover:text-accent"
+            aria-label="Facebook">Facebook</a
+          >
           <span class="text-cream/30">·</span>
-          <a href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr" target="_blank" rel="noopener noreferrer" class="text-cream/80 hover:text-accent" aria-label="Instagram">Instagram</a>
+          <a
+            href="https://www.instagram.com/on_wheelsdetailing?igsh=OGtkY2FjdmRhOHBo&utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-cream/80 hover:text-accent"
+            aria-label="Instagram">Instagram</a
+          >
         </li>
       </ul>
     </div>
   </div>
 
-  <div class="border-t border-cream/15">
+  <div class="border-cream/15 border-t">
     <div class="container-x py-5">
-      <p class="text-sm text-cream/60">
-        📍 Garage Locations: Marysville &amp; New Haven &nbsp;|&nbsp; Mobile: Detroit, Port Huron, St. Clair, Macomb County, St. Clair County &amp; all Metro Detroit
+      <p class="text-cream/60 text-sm">
+        📍 Garage Locations: Marysville &amp; New Haven &nbsp;|&nbsp; Mobile:
+        Detroit, Port Huron, St. Clair, Macomb County, St. Clair County &amp;
+        all Metro Detroit
       </p>
-      <p class="mt-1 text-sm text-cream/60">
-        Serving Houston, Harris County &amp; all surrounding Texas areas with mobile service
+      <p class="text-cream/60 mt-1 text-sm">
+        Serving Houston, Harris County &amp; all surrounding Texas areas with
+        mobile service
       </p>
-      <p class="mt-4 text-xs text-cream/50">
-        &copy; 2026 SAIN API. All rights reserved. Developed and hosted for On-Wheels Detailing.
+      <p class="text-cream/50 mt-4 text-xs">
+        &copy; 2026 SAIN API. All rights reserved. Developed and hosted for
+        On-Wheels Detailing.
       </p>
     </div>
   </div>

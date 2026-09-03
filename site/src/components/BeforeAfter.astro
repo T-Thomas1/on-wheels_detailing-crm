@@ -6,11 +6,24 @@ interface Props {
   class?: string;
 }
 
-const { before, after, alt = 'Before and after comparison', class: className = 'aspect-[4/3]' } = Astro.props;
+const {
+  before,
+  after,
+  alt = "Before and after comparison",
+  class: className = "aspect-[4/3]",
+} = Astro.props;
 ---
 
-<div class:list={['ba relative overflow-hidden rounded-xl select-none', className]} data-ba>
-  <img src={after} alt={`${alt} — after`} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+<div
+  class:list={["ba relative overflow-hidden rounded-xl select-none", className]}
+  data-ba
+>
+  <img
+    src={after}
+    alt={`${alt} — after`}
+    class="absolute inset-0 h-full w-full object-cover"
+    loading="lazy"
+  />
   <img
     src={before}
     alt={`${alt} — before`}
@@ -19,33 +32,57 @@ const { before, after, alt = 'Before and after comparison', class: className = '
     style="clip-path: inset(0 50% 0 0)"
     loading="lazy"
   />
-  <div class="absolute inset-y-0 z-10 w-0.5 cursor-ew-resize bg-white shadow" data-ba-handle style="left: 50%">
-    <span class="absolute left-1/2 top-1/2 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-navy shadow-md" aria-hidden="true">⇄</span>
+  <div
+    class="absolute inset-y-0 z-10 w-0.5 cursor-ew-resize bg-white shadow"
+    data-ba-handle
+    style="left: 50%"
+  >
+    <span
+      class="text-navy absolute top-1/2 left-1/2 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white shadow-md"
+      aria-hidden="true">⇄</span
+    >
   </div>
-  <span class="absolute left-3 top-3 rounded bg-navy/80 px-2 py-0.5 text-xs font-semibold text-cream">Before</span>
-  <span class="absolute right-3 top-3 rounded bg-accent/90 px-2 py-0.5 text-xs font-semibold text-white">After</span>
+  <span
+    class="bg-navy/80 text-cream absolute top-3 left-3 rounded px-2 py-0.5 text-xs font-semibold"
+    >Before</span
+  >
+  <span
+    class="bg-accent/90 absolute top-3 right-3 rounded px-2 py-0.5 text-xs font-semibold text-white"
+    >After</span
+  >
 </div>
 
 <script>
-  for (const el of document.querySelectorAll('[data-ba]')) {
-    const before = el.querySelector<HTMLElement>('[data-ba-before]')!;
-    const handle = el.querySelector<HTMLElement>('[data-ba-handle]')!;
+  for (const el of document.querySelectorAll<HTMLElement>("[data-ba]")) {
+    const before = el.querySelector<HTMLElement>("[data-ba-before]")!;
+    const handle = el.querySelector<HTMLElement>("[data-ba-handle]")!;
     let dragging = false;
 
     const set = (clientX: number) => {
       const r = el.getBoundingClientRect();
-      const pct = Math.max(0, Math.min(100, ((clientX - r.left) / r.width) * 100));
+      const pct = Math.max(
+        0,
+        Math.min(100, ((clientX - r.left) / r.width) * 100),
+      );
       before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
       handle.style.left = `${pct}%`;
     };
 
-    handle.addEventListener('pointerdown', (e) => {
+    handle.addEventListener("pointerdown", (e: PointerEvent) => {
       dragging = true;
       handle.setPointerCapture(e.pointerId);
     });
-    handle.addEventListener('pointermove', (e) => { if (dragging) set(e.clientX); });
-    handle.addEventListener('pointerup', () => { dragging = false; });
-    handle.addEventListener('pointercancel', () => { dragging = false; });
-    el.addEventListener('pointermove', (e) => { if (dragging) set(e.clientX); });
+    handle.addEventListener("pointermove", (e: PointerEvent) => {
+      if (dragging) set(e.clientX);
+    });
+    handle.addEventListener("pointerup", () => {
+      dragging = false;
+    });
+    handle.addEventListener("pointercancel", () => {
+      dragging = false;
+    });
+    el.addEventListener("pointermove", (e: PointerEvent) => {
+      if (dragging) set(e.clientX);
+    });
   }
 </script>

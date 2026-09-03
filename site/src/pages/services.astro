@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Placeholder from "../components/Placeholder.astro";
 ---
 
 <BaseLayout
@@ -9,73 +9,115 @@ import Placeholder from '../components/Placeholder.astro';
 >
   <section class="bg-navy py-20 text-center">
     <div class="container-x">
-      <h1 class="text-5xl font-bold text-cream md:text-6xl">Services</h1>
-      <p class="mx-auto mt-4 max-w-xl text-cream/75">
-        Detailing, protection, and restoration — every service backed by the On-Wheels standard.
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">Services</h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        Detailing, protection, and restoration — every service backed by the
+        On-Wheels standard.
       </p>
     </div>
   </section>
 
   <section id="detailing" class="container-x py-16">
-    <h2 class="text-3xl font-bold text-navy">Detailing</h2>
-    <p class="mt-2 max-w-2xl text-navy/70">Complete interior and exterior care. (Pricing tiered by vehicle size — final on booking.)</p>
+    <h2 class="text-navy text-3xl font-bold">Detailing</h2>
+    <p class="text-navy/70 mt-2 max-w-2xl">
+      Complete interior and exterior care. (Pricing tiered by vehicle size —
+      final on booking.)
+    </p>
     <div class="mt-8 grid gap-6 md:grid-cols-3">
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Interior Refresh</h3>
-        <p class="mt-2 text-sm text-navy/70">Vacuum, wipe-down, glass, light stain treatment.</p>
-        <p class="mt-3 font-display font-bold text-accent">From $150</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Interior Refresh</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Vacuum, wipe-down, glass, light stain treatment.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">From $150</p>
       </div>
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Premium Interior</h3>
-        <p class="mt-2 text-sm text-navy/70">Deep clean with hot water extraction & steam.</p>
-        <p class="mt-3 font-display font-bold text-accent">From $250</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Premium Interior</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Deep clean with hot water extraction & steam.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">From $250</p>
       </div>
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Steam & Hot Water</h3>
-        <p class="mt-2 text-sm text-navy/70">Sanitizing steam + hot water extraction.</p>
-        <p class="mt-3 font-display font-bold text-accent">$180 flat</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Steam & Hot Water</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Sanitizing steam + hot water extraction.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">$180 flat</p>
       </div>
     </div>
-    <div class="mt-6"><Placeholder label="Detailing before/after" note="Upload: images/detail-interior.webp · 1200×800" class="aspect-[3/2]" /></div>
+    <div class="mt-6">
+      <Placeholder
+        label="Detailing before/after"
+        note="Upload: images/detail-interior.webp · 1200×800"
+        class="aspect-[3/2]"
+      />
+    </div>
   </section>
 
-  <section id="paint-ceramic" class="container-x border-t border-navy/10 py-16">
-    <h2 class="text-3xl font-bold text-navy">Paint Correction &amp; Ceramic</h2>
-    <p class="mt-2 max-w-2xl text-navy/70">Restore depth, clarity, and protection. Coated with CarPro CQuartz 3.0.</p>
+  <section id="paint-ceramic" class="container-x border-navy/10 border-t py-16">
+    <h2 class="text-navy text-3xl font-bold">Paint Correction &amp; Ceramic</h2>
+    <p class="text-navy/70 mt-2 max-w-2xl">
+      Restore depth, clarity, and protection. Coated with CarPro CQuartz 3.0.
+    </p>
     <div class="mt-8 grid gap-6 md:grid-cols-2">
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Polish &amp; Protect</h3>
-        <p class="mt-2 text-sm text-navy/70">Single-stage polish + premium sealant.</p>
-        <p class="mt-3 font-display font-bold text-accent">From $200</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Polish &amp; Protect</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Single-stage polish + premium sealant.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">From $200</p>
       </div>
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Two-Step Correction</h3>
-        <p class="mt-2 text-sm text-navy/70">Compound + polish to remove swirls and oxidation.</p>
-        <p class="mt-3 font-display font-bold text-accent">Quote only</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Two-Step Correction</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Compound + polish to remove swirls and oxidation.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">Quote only</p>
       </div>
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Ceramic Coating</h3>
-        <p class="mt-2 text-sm text-navy/70">CarPro CQuartz 3.0 — 2+ years of hydrophobic protection.</p>
-        <p class="mt-3 font-display font-bold text-accent">Quote only</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Ceramic Coating</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          CarPro CQuartz 3.0 — 2+ years of hydrophobic protection.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">Quote only</p>
       </div>
-      <div class="rounded-xl border border-navy/10 bg-sand p-6">
-        <h3 class="text-xl font-bold text-navy">Signature Detail</h3>
-        <p class="mt-2 text-sm text-navy/70">Interior refresh + exterior polish & protect. The full treatment.</p>
-        <p class="mt-3 font-display font-bold text-accent">From $350</p>
+      <div class="border-navy/10 bg-sand rounded-xl border p-6">
+        <h3 class="text-navy text-xl font-bold">Signature Detail</h3>
+        <p class="text-navy/70 mt-2 text-sm">
+          Interior refresh + exterior polish & protect. The full treatment.
+        </p>
+        <p class="font-display text-accent mt-3 font-bold">From $350</p>
       </div>
     </div>
-    <div class="mt-6"><Placeholder label="Ceramic coating — water beading" note="Upload: images/ceramic-beading.webp · 1200×800" class="aspect-[3/2]" /></div>
+    <div class="mt-6">
+      <Placeholder
+        label="Ceramic coating — water beading"
+        note="Upload: images/ceramic-beading.webp · 1200×800"
+        class="aspect-[3/2]"
+      />
+    </div>
   </section>
 
-  <section class="container-x border-t border-navy/10 py-16">
+  <section class="container-x border-navy/10 border-t py-16">
     <div class="grid gap-6 md:grid-cols-2">
-      <a href="/tinting" class="rounded-xl border border-navy/10 bg-sand p-8 transition hover:-translate-y-1 hover:shadow-md">
-        <h2 class="text-3xl font-bold text-navy">Window Tinting</h2>
-        <p class="mt-2 text-navy/70">GEOShield ceramic, nano-ceramic & carbon films. See your shade →</p>
+      <a
+        href="/tinting"
+        class="border-navy/10 bg-sand rounded-xl border p-8 transition hover:-translate-y-1 hover:shadow-md"
+      >
+        <h2 class="text-navy text-3xl font-bold">Window Tinting</h2>
+        <p class="text-navy/70 mt-2">
+          GEOShield ceramic, nano-ceramic & carbon films. See your shade →
+        </p>
       </a>
-      <a href="/undercoating" class="rounded-xl border border-navy/10 bg-sand p-8 transition hover:-translate-y-1 hover:shadow-md">
-        <h2 class="text-3xl font-bold text-navy">Undercoating</h2>
-        <p class="mt-2 text-navy/70">Fluid Film & Woolwax rust protection for Michigan winters →</p>
+      <a
+        href="/undercoating"
+        class="border-navy/10 bg-sand rounded-xl border p-8 transition hover:-translate-y-1 hover:shadow-md"
+      >
+        <h2 class="text-navy text-3xl font-bold">Undercoating</h2>
+        <p class="text-navy/70 mt-2">
+          Fluid Film & Woolwax rust protection for Michigan winters →
+        </p>
       </a>
     </div>
   </section>

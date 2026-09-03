@@ -1,20 +1,20 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Placeholder from "../components/Placeholder.astro";
 
 const shots = [
-  { src: '/images/IMG_2071.webp', alt: 'Detail job — 2071' },
-  { src: '/images/IMG_2288.webp', alt: 'Detail job — 2288' },
-  { src: '/images/IMG_2577.webp', alt: 'Detail job — 2577' },
-  { src: '/images/IMG_2700.webp', alt: 'Detail job — 2700' },
-  { src: '/images/IMG_2967.webp', alt: 'Detail job — 2967' },
-  { src: '/images/IMG_3123.webp', alt: 'Detail job — 3123' },
-  { src: '/images/IMG_3131.webp', alt: 'Detail job — 3131' },
-  { src: '/images/IMG_3170.webp', alt: 'Detail job — 3170' },
-  { src: '/images/IMG_3954.webp', alt: 'Detail job — 3954' },
-  { src: '/images/IMG_4386.webp', alt: 'Detail job — 4386' },
-  { src: '/images/IMG_4396.webp', alt: 'Detail job — 4396' },
-  { src: '/images/IMG_4649.webp', alt: 'Detail job — 4649' },
+  { src: "/images/IMG_2071.webp", alt: "Detail job — 2071" },
+  { src: "/images/IMG_2288.webp", alt: "Detail job — 2288" },
+  { src: "/images/IMG_2577.webp", alt: "Detail job — 2577" },
+  { src: "/images/IMG_2700.webp", alt: "Detail job — 2700" },
+  { src: "/images/IMG_2967.webp", alt: "Detail job — 2967" },
+  { src: "/images/IMG_3123.webp", alt: "Detail job — 3123" },
+  { src: "/images/IMG_3131.webp", alt: "Detail job — 3131" },
+  { src: "/images/IMG_3170.webp", alt: "Detail job — 3170" },
+  { src: "/images/IMG_3954.webp", alt: "Detail job — 3954" },
+  { src: "/images/IMG_4386.webp", alt: "Detail job — 4386" },
+  { src: "/images/IMG_4396.webp", alt: "Detail job — 4396" },
+  { src: "/images/IMG_4649.webp", alt: "Detail job — 4649" },
 ];
 ---
 
@@ -24,21 +24,44 @@ const shots = [
 >
   <section class="bg-navy py-20 text-center">
     <div class="container-x">
-      <h1 class="text-5xl font-bold text-cream md:text-6xl">Recent Work</h1>
-      <p class="mx-auto mt-4 max-w-xl text-cream/75">Real cars, real results. No stock photos.</p>
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">Recent Work</h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        Real cars, real results. No stock photos.
+      </p>
     </div>
   </section>
 
   <section class="container-x py-16">
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {shots.map((s) => (
-        <figure class="overflow-hidden rounded-xl border border-navy/10 bg-sand">
-          <img src={s.src} alt={s.alt} loading="lazy" width="800" height="600" class="aspect-[4/3] w-full object-cover" />
-        </figure>
-      ))}
-      <Placeholder label="Add tinting job photo" note="Upload: images/tint-job-1.webp" class="aspect-[4/3]" />
-      <Placeholder label="Add undercoating job photo" note="Upload: images/undercoat-job-1.webp" class="aspect-[4/3]" />
-      <Placeholder label="Add Texas job photo" note="Upload: images/tx-job-1.webp" class="aspect-[4/3]" />
+      {
+        shots.map((s) => (
+          <figure class="border-navy/10 bg-sand overflow-hidden rounded-xl border">
+            <img
+              src={s.src}
+              alt={s.alt}
+              loading="lazy"
+              width="800"
+              height="600"
+              class="aspect-[4/3] w-full object-cover"
+            />
+          </figure>
+        ))
+      }
+      <Placeholder
+        label="Add tinting job photo"
+        note="Upload: images/tint-job-1.webp"
+        class="aspect-[4/3]"
+      />
+      <Placeholder
+        label="Add undercoating job photo"
+        note="Upload: images/undercoat-job-1.webp"
+        class="aspect-[4/3]"
+      />
+      <Placeholder
+        label="Add Texas job photo"
+        note="Upload: images/tx-job-1.webp"
+        class="aspect-[4/3]"
+      />
     </div>
   </section>
 </BaseLayout>

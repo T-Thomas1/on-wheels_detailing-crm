@@ -1,15 +1,26 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Placeholder from "../components/Placeholder.astro";
 
 const miLocations = [
-  { name: 'Marysville — Garage', line: 'Storefront & full detailing', note: 'Undercoating listed here' },
-  { name: 'New Haven — Garage', line: 'Undercoating bay (lift + drain)', note: 'Fixed location, not mobile' },
-  { name: 'Mobile — Metro Detroit', line: 'Detroit · Port Huron · St. Clair · Macomb & St. Clair County' },
+  {
+    name: "Marysville — Garage",
+    line: "Storefront & full detailing",
+    note: "Undercoating listed here",
+  },
+  {
+    name: "New Haven — Garage",
+    line: "Undercoating bay (lift + drain)",
+    note: "Fixed location, not mobile",
+  },
+  {
+    name: "Mobile — Metro Detroit",
+    line: "Detroit · Port Huron · St. Clair · Macomb & St. Clair County",
+  },
 ];
 
 const txLocations = [
-  { name: 'Houston — Mobile', line: 'Harris County & surrounding areas' },
+  { name: "Houston — Mobile", line: "Harris County & surrounding areas" },
 ];
 ---
 
@@ -19,44 +30,71 @@ const txLocations = [
 >
   <section class="bg-navy py-20 text-center">
     <div class="container-x">
-      <h1 class="text-5xl font-bold text-cream md:text-6xl">Locations</h1>
-      <p class="mx-auto mt-4 max-w-xl text-cream/75">Two states. Mobile to you, or bring it to the bay.</p>
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">Locations</h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        Two states. Mobile to you, or bring it to the bay.
+      </p>
     </div>
   </section>
 
   <section class="container-x py-16">
-    <h2 class="text-3xl font-bold text-navy">Michigan <span class="text-accent">— home base</span></h2>
+    <h2 class="text-navy text-3xl font-bold">
+      Michigan <span class="text-accent">— home base</span>
+    </h2>
     <div class="mt-8 grid gap-6 md:grid-cols-3">
-      {miLocations.map((l) => (
-        <div class="rounded-xl border border-navy/10 bg-sand p-6">
-          <h3 class="text-xl font-bold text-navy">{l.name}</h3>
-          <p class="mt-2 text-sm text-navy/70">{l.line}</p>
-          {l.note && <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-accent">{l.note}</p>}
-        </div>
-      ))}
+      {
+        miLocations.map((l) => (
+          <div class="border-navy/10 bg-sand rounded-xl border p-6">
+            <h3 class="text-navy text-xl font-bold">{l.name}</h3>
+            <p class="text-navy/70 mt-2 text-sm">{l.line}</p>
+            {l.note && (
+              <p class="text-accent mt-2 text-xs font-semibold tracking-wide uppercase">
+                {l.note}
+              </p>
+            )}
+          </div>
+        ))
+      }
     </div>
     <div class="mt-8 grid gap-6 md:grid-cols-2">
-      <Placeholder label="Marysville garage exterior" note="Upload: images/location-marysville.webp · 1200×800" class="aspect-[3/2]" />
-      <Placeholder label="New Haven bay" note="Upload: images/location-newhaven.webp · 1200×800" class="aspect-[3/2]" />
+      <Placeholder
+        label="Marysville garage exterior"
+        note="Upload: images/location-marysville.webp · 1200×800"
+        class="aspect-[3/2]"
+      />
+      <Placeholder
+        label="New Haven bay"
+        note="Upload: images/location-newhaven.webp · 1200×800"
+        class="aspect-[3/2]"
+      />
     </div>
   </section>
 
-  <section class="border-t border-navy/10 bg-sand py-16">
+  <section class="border-navy/10 bg-sand border-t py-16">
     <div class="container-x">
-      <h2 class="text-3xl font-bold text-navy">Texas <span class="text-accent">— mobile service</span></h2>
+      <h2 class="text-navy text-3xl font-bold">
+        Texas <span class="text-accent">— mobile service</span>
+      </h2>
       <div class="mt-8 grid items-center gap-8 md:grid-cols-2">
         <div>
-          {txLocations.map((l) => (
-            <div class="rounded-xl border border-navy/10 bg-cream p-6">
-              <h3 class="text-xl font-bold text-navy">{l.name}</h3>
-              <p class="mt-2 text-sm text-navy/70">{l.line}</p>
-            </div>
-          ))}
-          <p class="mt-6 text-sm text-navy/60">
-            Full Houston presence and dedicated Texas landing page coming before go-live.
+          {
+            txLocations.map((l) => (
+              <div class="border-navy/10 bg-cream rounded-xl border p-6">
+                <h3 class="text-navy text-xl font-bold">{l.name}</h3>
+                <p class="text-navy/70 mt-2 text-sm">{l.line}</p>
+              </div>
+            ))
+          }
+          <p class="text-navy/60 mt-6 text-sm">
+            Full Houston presence and dedicated Texas landing page coming before
+            go-live.
           </p>
         </div>
-        <Placeholder label="Houston mobile service" note="Upload: images/location-houston.webp · 1200×800" class="aspect-[3/2]" />
+        <Placeholder
+          label="Houston mobile service"
+          note="Upload: images/location-houston.webp · 1200×800"
+          class="aspect-[3/2]"
+        />
       </div>
     </div>
   </section>

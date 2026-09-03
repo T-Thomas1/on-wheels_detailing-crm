@@ -1,54 +1,68 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
-import BeforeAfter from '../components/BeforeAfter.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Placeholder from "../components/Placeholder.astro";
+import BeforeAfter from "../components/BeforeAfter.astro";
 
 const services = [
   {
-    name: 'Detailing',
-    href: '/services#detailing',
-    desc: 'Interior refresh, steam & hot-water extraction, full cleans.',
-    price: 'From $150',
+    name: "Detailing",
+    href: "/services#detailing",
+    desc: "Interior refresh, steam & hot-water extraction, full cleans.",
+    price: "From $150",
   },
   {
-    name: 'Paint & Ceramic',
-    href: '/services#paint-ceramic',
-    desc: 'Correction, polishing, and CarPro CQuartz 3.0 ceramic coatings.',
-    price: 'From $200',
+    name: "Paint & Ceramic",
+    href: "/services#paint-ceramic",
+    desc: "Correction, polishing, and CarPro CQuartz 3.0 ceramic coatings.",
+    price: "From $200",
   },
   {
-    name: 'Window Tinting',
-    href: '/tinting',
-    desc: 'GEOShield films — ceramic, nano-ceramic & carbon. See your shade.',
-    price: 'By film',
+    name: "Window Tinting",
+    href: "/tinting",
+    desc: "GEOShield films — ceramic, nano-ceramic & carbon. See your shade.",
+    price: "By film",
   },
   {
-    name: 'Undercoating',
-    href: '/undercoating',
-    desc: 'Fluid Film & Woolwax rust protection for Michigan winters.',
-    price: '$175–$300',
+    name: "Undercoating",
+    href: "/undercoating",
+    desc: "Fluid Film & Woolwax rust protection for Michigan winters.",
+    price: "$175–$300",
   },
 ];
 
 const stats = [
-  { value: '5★', label: 'Google rated' },
-  { value: '50+', label: 'Vehicles detailed' },
-  { value: '2024', label: 'Founded by TaSain' },
-  { value: 'MI + TX', label: 'Two-state service' },
+  { value: "5★", label: "Google rated" },
+  { value: "50+", label: "Vehicles detailed" },
+  { value: "2024", label: "Founded by TaSain" },
+  { value: "MI + TX", label: "Two-state service" },
 ];
 
-const brands = ['CarPro', 'Koch Chemie', 'P&S', 'Oberk', 'GEOShield', 'Fluid Film'];
+const brands = [
+  "CarPro",
+  "Koch Chemie",
+  "P&S",
+  "Oberk",
+  "GEOShield",
+  "Fluid Film",
+];
 
 const ldJson = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDetailing',
-  name: 'On-Wheels Detailing',
-  url: 'https://www.onwheelsdetailing.com',
-  telephone: '+15868730656',
-  email: 'tasain@onwheelsdetailing.com',
-  priceRange: '$150-$2000',
-  founder: { '@type': 'Person', name: 'TaSain' },
-  areaServed: ['Metro Detroit', 'Port Huron', 'St. Clair', 'Marysville', 'New Haven', 'Houston'],
+  "@context": "https://schema.org",
+  "@type": "AutoDetailing",
+  name: "On-Wheels Detailing",
+  url: "https://www.onwheelsdetailing.com",
+  telephone: "+15868730656",
+  email: "tasain@onwheelsdetailing.com",
+  priceRange: "$150-$2000",
+  founder: { "@type": "Person", name: "TaSain" },
+  areaServed: [
+    "Metro Detroit",
+    "Port Huron",
+    "St. Clair",
+    "Marysville",
+    "New Haven",
+    "Houston",
+  ],
 };
 ---
 
@@ -57,7 +71,7 @@ const ldJson = {
   description="Premium mobile and in-shop auto detailing, ceramic coating, window tinting, and undercoating. Founded by TaSain — serving Metro Detroit and Houston."
 >
   <!-- HERO -->
-  <section class="relative overflow-hidden bg-navy">
+  <section class="bg-navy relative overflow-hidden">
     <img
       src="/images/hero-car.webp"
       alt="Recently detailed vehicle with mirror finish"
@@ -65,21 +79,34 @@ const ldJson = {
       width="1600"
       height="900"
     />
-    <div class="relative container-x py-28 md:py-40">
-      <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-gold">
+    <div
+      class="from-navy/90 via-navy/40 absolute inset-0 bg-gradient-to-r to-transparent"
+    >
+    </div>
+    <div class="container-x relative py-28 md:py-40">
+      <p
+        class="font-display text-gold text-sm font-semibold tracking-[0.25em] uppercase"
+      >
         Built by TaSain · Since 2024
       </p>
-      <h1 class="mt-4 max-w-3xl text-5xl font-bold text-cream md:text-7xl">
+      <h1 class="text-cream mt-4 max-w-3xl text-5xl font-bold md:text-7xl">
         Detailing <span class="text-accent">reimagined.</span>
       </h1>
-      <p class="mt-5 max-w-xl text-lg text-cream/85">
-        Showroom finish. Mobile convenience. One detailer who treats your car like his own.
+      <p class="text-cream/85 mt-5 max-w-xl text-lg">
+        Showroom finish. Mobile convenience. One detailer who treats your car
+        like his own.
       </p>
       <div class="mt-8 flex flex-wrap gap-4">
-        <a href="/book" class="rounded-full bg-accent px-7 py-3.5 font-semibold text-white shadow-lg transition hover:bg-gold hover:text-navy">
+        <a
+          href="/book"
+          class="bg-accent hover:bg-gold hover:text-navy rounded-full px-7 py-3.5 font-semibold text-white shadow-lg transition"
+        >
           Book Now
         </a>
-        <a href="/gallery" class="rounded-full border border-cream/40 px-7 py-3.5 font-semibold text-cream transition hover:bg-cream hover:text-navy">
+        <a
+          href="/gallery"
+          class="border-cream/40 text-cream hover:bg-cream hover:text-navy rounded-full border px-7 py-3.5 font-semibold transition"
+        >
           See Our Work
         </a>
       </div>
@@ -87,38 +114,47 @@ const ldJson = {
   </section>
 
   <!-- TRUST BAR -->
-  <section class="border-b border-navy/10 bg-sand">
+  <section class="border-navy/10 bg-sand border-b">
     <div class="container-x grid grid-cols-2 gap-6 py-8 md:grid-cols-4">
-      {stats.map((s) => (
-        <div class="text-center">
-          <p class="font-display text-3xl font-bold text-navy">{s.value}</p>
-          <p class="mt-1 text-xs uppercase tracking-wide text-navy/60">{s.label}</p>
-        </div>
-      ))}
+      {
+        stats.map((s) => (
+          <div class="text-center">
+            <p class="font-display text-navy text-3xl font-bold">{s.value}</p>
+            <p class="text-navy/60 mt-1 text-xs tracking-wide uppercase">
+              {s.label}
+            </p>
+          </div>
+        ))
+      }
     </div>
   </section>
 
   <!-- OWNER INTRO -->
   <section class="container-x grid items-center gap-10 py-20 md:grid-cols-2">
     <div>
-      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+      <p
+        class="font-display text-accent text-sm font-semibold tracking-[0.2em] uppercase"
+      >
         Meet your detailer
       </p>
-      <h2 class="mt-3 text-4xl font-bold text-navy md:text-5xl">
+      <h2 class="text-navy mt-3 text-4xl font-bold md:text-5xl">
         Not a crew. <span class="text-accent">A craftsman.</span>
       </h2>
-      <p class="mt-5 text-navy/75">
-        On-Wheels Detailing started in 2024 with one buffer and one promise: treat
-        every car like it's my own. Today that's grown into mobile detailing across
-        Metro Detroit, two garage locations, an undercoating bay, and window tinting —
-        all still built on the same hands-on standard.
+      <p class="text-navy/75 mt-5">
+        On-Wheels Detailing started in 2024 with one buffer and one promise:
+        treat every car like it's my own. Today that's grown into mobile
+        detailing across Metro Detroit, two garage locations, an undercoating
+        bay, and window tinting — all still built on the same hands-on standard.
       </p>
-      <ul class="mt-6 space-y-2 text-navy/80">
+      <ul class="text-navy/80 mt-6 space-y-2">
         <li>• Certified, pro-grade products — no parts-store shortcuts</li>
         <li>• Real before/after results, not stock photos</li>
         <li>• A personal guarantee: if it's not right, I'll make it right</li>
       </ul>
-      <a href="/about" class="mt-7 inline-block rounded-full bg-navy px-6 py-3 font-semibold text-cream transition hover:bg-slate">
+      <a
+        href="/about"
+        class="bg-navy text-cream hover:bg-slate mt-7 inline-block rounded-full px-6 py-3 font-semibold transition"
+      >
         Read the full story
       </a>
     </div>
@@ -133,20 +169,31 @@ const ldJson = {
   <section class="bg-sand py-20">
     <div class="container-x">
       <div class="text-center">
-        <h2 class="text-4xl font-bold text-navy md:text-5xl">What we do</h2>
-        <p class="mx-auto mt-3 max-w-xl text-navy/70">
+        <h2 class="text-navy text-4xl font-bold md:text-5xl">What we do</h2>
+        <p class="text-navy/70 mx-auto mt-3 max-w-xl">
           Four ways to protect and transform your vehicle — all under one roof.
         </p>
       </div>
       <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {services.map((s) => (
-          <a href={s.href} class="group rounded-xl border border-navy/10 bg-cream p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-            <p class="font-display text-xs font-semibold uppercase tracking-wide text-accent">{s.price}</p>
-            <h3 class="mt-2 text-2xl font-bold text-navy group-hover:text-accent">{s.name}</h3>
-            <p class="mt-2 text-sm text-navy/70">{s.desc}</p>
-            <span class="mt-4 inline-block text-sm font-semibold text-accent">Learn more →</span>
-          </a>
-        ))}
+        {
+          services.map((s) => (
+            <a
+              href={s.href}
+              class="group border-navy/10 bg-cream rounded-xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <p class="font-display text-accent text-xs font-semibold tracking-wide uppercase">
+                {s.price}
+              </p>
+              <h3 class="text-navy group-hover:text-accent mt-2 text-2xl font-bold">
+                {s.name}
+              </h3>
+              <p class="text-navy/70 mt-2 text-sm">{s.desc}</p>
+              <span class="text-accent mt-4 inline-block text-sm font-semibold">
+                Learn more →
+              </span>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -154,29 +201,44 @@ const ldJson = {
   <!-- BEFORE / AFTER -->
   <section class="container-x py-20">
     <div class="text-center">
-      <h2 class="text-4xl font-bold text-navy md:text-5xl">The proof is in the paint</h2>
-      <p class="mx-auto mt-3 max-w-xl text-navy/70">
-        Interactive before/after slider coming here — drag to see the transformation.
+      <h2 class="text-navy text-4xl font-bold md:text-5xl">
+        The proof is in the paint
+      </h2>
+      <p class="text-navy/70 mx-auto mt-3 max-w-xl">
+        Interactive before/after slider coming here — drag to see the
+        transformation.
       </p>
     </div>
     <div class="mx-auto mt-10 max-w-4xl">
-      <BeforeAfter before="/images/IMG_2071.webp" after="/images/IMG_2288.webp" alt="Paint correction demo" />
-      <p class="mt-3 text-center text-xs text-navy/50">Demo images — replace with a real before/after pair.</p>
+      <BeforeAfter
+        before="/images/IMG_2071.webp"
+        after="/images/IMG_2288.webp"
+        alt="Paint correction demo"
+      />
+      <p class="text-navy/50 mt-3 text-center text-xs">
+        Demo images — replace with a real before/after pair.
+      </p>
     </div>
   </section>
 
   <!-- PRODUCTS WE TRUST -->
-  <section class="border-y border-navy/10 bg-sand py-12">
+  <section class="border-navy/10 bg-sand border-y py-12">
     <div class="container-x">
-      <p class="text-center font-display text-sm font-semibold uppercase tracking-[0.2em] text-navy/60">
+      <p
+        class="font-display text-navy/60 text-center text-sm font-semibold tracking-[0.2em] uppercase"
+      >
         Products we trust
       </p>
-      <div class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-        {brands.map((b) => (
-          <span class="font-display text-2xl font-semibold uppercase tracking-wide text-navy/40">
-            {b}
-          </span>
-        ))}
+      <div
+        class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4"
+      >
+        {
+          brands.map((b) => (
+            <span class="font-display text-navy/40 text-2xl font-semibold tracking-wide uppercase">
+              {b}
+            </span>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -184,39 +246,73 @@ const ldJson = {
   <!-- TESTIMONIALS -->
   <section class="container-x py-20">
     <div class="text-center">
-      <h2 class="text-4xl font-bold text-navy md:text-5xl">What customers say</h2>
+      <h2 class="text-navy text-4xl font-bold md:text-5xl">
+        What customers say
+      </h2>
     </div>
     <div class="mt-10 grid gap-6 md:grid-cols-3">
-      {[1, 2, 3].map((i) => (
-        <figure class="rounded-xl border border-navy/10 bg-cream p-6 shadow-sm">
-          <div class="text-gold" aria-hidden="true">★★★★★</div>
-          <blockquote class="mt-3 text-navy/80">
-            "SAMPLE REVIEW — replace with a real customer quote naming the service and town."
-          </blockquote>
-          <figcaption class="mt-4 text-sm font-semibold text-navy">— Customer name, City</figcaption>
-        </figure>
-      ))}
+      {
+        [1, 2, 3].map(() => (
+          <figure class="border-navy/10 bg-cream rounded-xl border p-6 shadow-sm">
+            <div class="text-gold" aria-hidden="true">
+              ★★★★★
+            </div>
+            <blockquote class="text-navy/80 mt-3">
+              "SAMPLE REVIEW — replace with a real customer quote naming the
+              service and town."
+            </blockquote>
+            <figcaption class="text-navy mt-4 text-sm font-semibold">
+              — Customer name, City
+            </figcaption>
+          </figure>
+        ))
+      }
     </div>
-    <p class="mt-6 text-center text-sm text-navy/60">
+    <p class="text-navy/60 mt-6 text-center text-sm">
       Review us on
-      <a href="https://g.page/r/CS4aNgHfsCsaEBM/review" target="_blank" rel="noopener" class="font-semibold text-accent hover:underline">Google</a>
+      <a
+        href="https://g.page/r/CS4aNgHfsCsaEBM/review"
+        target="_blank"
+        rel="noopener"
+        class="text-accent font-semibold hover:underline">Google</a
+      >
       ·
-      <a href="https://www.facebook.com/share/1JHbMqPWnt/" target="_blank" rel="noopener" class="font-semibold text-accent hover:underline">Facebook</a>
+      <a
+        href="https://www.facebook.com/share/1JHbMqPWnt/"
+        target="_blank"
+        rel="noopener"
+        class="text-accent font-semibold hover:underline">Facebook</a
+      >
     </p>
   </section>
 
   <!-- CTA BAND -->
   <section class="bg-navy py-20">
     <div class="container-x text-center">
-      <h2 class="text-4xl font-bold text-cream md:text-5xl">Ready to book your detail?</h2>
-      <p class="mx-auto mt-4 max-w-xl text-cream/75">
-        Text or call (586) 873-0656, or book online — serving Metro Detroit and Houston.
+      <h2 class="text-cream text-4xl font-bold md:text-5xl">
+        Ready to book your detail?
+      </h2>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        Text or call (586) 873-0656, or book online — serving Metro Detroit and
+        Houston.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-4">
-        <a href="/book" class="rounded-full bg-accent px-8 py-4 font-semibold text-white shadow-lg transition hover:bg-gold hover:text-navy">Book Now</a>
-        <a href="tel:+15868730656" class="rounded-full border border-cream/40 px-8 py-4 font-semibold text-cream transition hover:bg-cream hover:text-navy">Call (586) 873-0656</a>
+        <a
+          href="/book"
+          class="bg-accent hover:bg-gold hover:text-navy rounded-full px-8 py-4 font-semibold text-white shadow-lg transition"
+          >Book Now</a
+        >
+        <a
+          href="tel:+15868730656"
+          class="border-cream/40 text-cream hover:bg-cream hover:text-navy rounded-full border px-8 py-4 font-semibold transition"
+          >Call (586) 873-0656</a
+        >
       </div>
     </div>
   </section>
-  <script type="application/ld+json" set:html={JSON.stringify(ldJson)}></script>
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(ldJson)}
+  />
 </BaseLayout>

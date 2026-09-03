@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Placeholder from "../components/Placeholder.astro";
 ---
 
 <BaseLayout
@@ -9,45 +9,68 @@ import Placeholder from '../components/Placeholder.astro';
 >
   <section class="bg-navy py-20 text-center">
     <div class="container-x">
-      <h1 class="text-5xl font-bold text-cream md:text-6xl">About</h1>
-      <p class="mx-auto mt-4 max-w-xl text-cream/75">One detailer. One standard. Your car, transformed.</p>
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">About</h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        One detailer. One standard. Your car, transformed.
+      </p>
     </div>
   </section>
 
   <section class="container-x grid items-center gap-10 py-20 md:grid-cols-2">
-    <Placeholder label="TaSain portrait" note="Upload: images/owner-ta-sain.webp · 1200×1500" class="aspect-[4/5]" />
+    <Placeholder
+      label="TaSain portrait"
+      note="Upload: images/owner-ta-sain.webp · 1200×1500"
+      class="aspect-[4/5]"
+    />
     <div>
-      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">The story</p>
-      <h2 class="mt-3 text-4xl font-bold text-navy">Built by TaSain</h2>
-      <p class="mt-5 text-navy/75">
-        On-Wheels Detailing started in May 2024 with a polisher and a promise. Since then:
-        mobile detailing across Metro Detroit, a Marysville storefront, a dedicated
-        undercoating bay in New Haven, window tinting, and service into Texas.
+      <p
+        class="font-display text-accent text-sm font-semibold tracking-[0.2em] uppercase"
+      >
+        The story
       </p>
-      <p class="mt-4 text-navy/75">
-        Every car is worked on by one person who treats it like his own. That's not a
-        slogan — that's the business model.
+      <h2 class="text-navy mt-3 text-4xl font-bold">Built by TaSain</h2>
+      <p class="text-navy/75 mt-5">
+        On-Wheels Detailing started in May 2024 with a polisher and a promise.
+        Since then: mobile detailing across Metro Detroit, a Marysville
+        storefront, a dedicated undercoating bay in New Haven, window tinting,
+        and service into Texas.
+      </p>
+      <p class="text-navy/75 mt-4">
+        Every car is worked on by one person who treats it like his own. That's
+        not a slogan — that's the business model.
       </p>
     </div>
   </section>
 
-  <section class="border-t border-navy/10 bg-sand py-16">
+  <section class="border-navy/10 bg-sand border-t py-16">
     <div class="container-x">
-      <h2 class="text-3xl font-bold text-navy">The journey</h2>
+      <h2 class="text-navy text-3xl font-bold">The journey</h2>
       <ol class="mt-8 space-y-6">
-        {[
-          { y: '2024', t: 'Founded', d: 'Mobile detailing launches in Metro Detroit.' },
-          { y: '2025', t: 'Storefront', d: 'Marysville garage opens.' },
-          { y: '2026', t: 'Expansion', d: 'New Haven undercoating bay + window tinting + Texas.' },
-        ].map((m) => (
-          <li class="flex gap-4">
-            <span class="font-display text-2xl font-bold text-accent">{m.y}</span>
-            <div>
-              <p class="font-bold text-navy">{m.t}</p>
-              <p class="text-navy/70">{m.d}</p>
-            </div>
-          </li>
-        ))}
+        {
+          [
+            {
+              y: "2024",
+              t: "Founded",
+              d: "Mobile detailing launches in Metro Detroit.",
+            },
+            { y: "2025", t: "Storefront", d: "Marysville garage opens." },
+            {
+              y: "2026",
+              t: "Expansion",
+              d: "New Haven undercoating bay + window tinting + Texas.",
+            },
+          ].map((m) => (
+            <li class="flex gap-4">
+              <span class="font-display text-accent text-2xl font-bold">
+                {m.y}
+              </span>
+              <div>
+                <p class="text-navy font-bold">{m.t}</p>
+                <p class="text-navy/70">{m.d}</p>
+              </div>
+            </li>
+          ))
+        }
       </ol>
     </div>
   </section>

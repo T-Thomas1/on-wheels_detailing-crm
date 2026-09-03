@@ -5,43 +5,48 @@
    (from docs/onwheelsBrandGuideLines.png — do not change)
    ───────────────────────────────────────────────────────────── */
 @theme {
-  --color-navy: #0d2e48;        /* primary — deep navy */
-  --color-slate: #2a4358;       /* secondary — slate navy */
-  --color-cream: #f1eed9;       /* background — cream */
-  --color-sand: #e4e1b9;        /* background alt — sand */
-  --color-accent: #e6863a;      /* CTA — burnt orange */
-  --color-gold: #edb760;        /* accent — gold */
-  --color-crimson: #c83c34;     /* error / alert — red */
+  --color-navy: #0d2e48; /* primary — deep navy */
+  --color-slate: #2a4358; /* secondary — slate navy */
+  --color-cream: #f1eed9; /* background — cream */
+  --color-sand: #e4e1b9; /* background alt — sand */
+  --color-accent: #e6863a; /* CTA — burnt orange */
+  --color-gold: #edb760; /* accent — gold */
+  --color-crimson: #c83c34; /* error / alert — red */
 
   --font-display: "FH Oscar Condensed", "Oswald", "Arial Narrow", sans-serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Display font — FH Oscar Condensed (logo/brand typeface) */
 @font-face {
   font-family: "FH Oscar Condensed";
-  src: url("/fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf") format("opentype");
+  src: url("/fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf")
+    format("opentype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "FH Oscar Condensed";
-  src: url("/fonts/FHOscarCondensedTest-Medium-BF65139d0c9ecad.otf") format("opentype");
+  src: url("/fonts/FHOscarCondensedTest-Medium-BF65139d0c9ecad.otf")
+    format("opentype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "FH Oscar Condensed";
-  src: url("/fonts/FHOscarCondensedTest-SemiBold-BF65139d0c852c5.otf") format("opentype");
+  src: url("/fonts/FHOscarCondensedTest-SemiBold-BF65139d0c852c5.otf")
+    format("opentype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "FH Oscar Condensed";
-  src: url("/fonts/FHOscarCondensedTest-Bold-BF65139d0c7ac65.otf") format("opentype");
+  src: url("/fonts/FHOscarCondensedTest-Bold-BF65139d0c7ac65.otf")
+    format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -59,7 +64,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4, .font-display {
+h1,
+h2,
+h3,
+h4,
+.font-display {
   font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.015em;
@@ -107,5 +116,33 @@ h1, h2, h3, h4, .font-display {
   padding-inline: 1.25rem;
 }
 @media (min-width: 768px) {
-  .container-x { padding-inline: 2rem; }
+  .container-x {
+    padding-inline: 2rem;
+  }
+}
+
+/* ── Accessibility & polish ────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+a,
+button {
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }

@@ -21,6 +21,9 @@ npm install        # first time only (already installed on this box)
 npm run dev        # http://localhost:4321  (hot reload — for review)
 npm run build      # static output to dist/
 npm run preview    # serve the built dist/
+npm run check      # astro check — type-check .astro files
+npm run lint       # eslint
+npm run format     # prettier --write (format + sort Tailwind classes)
 ```
 
 ## Structure
@@ -55,16 +58,16 @@ site/
 
 ## Image upload slots (drop files into `public/images/`)
 
-| Placeholder label | Filename to upload |
-|---|---|
-| Owner portrait (home + about) | `owner-ta-sain.webp` |
-| Paint correction before/after (home) | a real pair → wire into `index.astro` `BeforeAfter` |
-| Detailing before/after (services) | `detail-interior.webp` |
-| Ceramic water beading (services) | `ceramic-beading.webp` |
-| Tint base car (tinting simulator) | `tint-base-car.png` (clean side profile, clear glass) |
-| Undercoating in progress | `undercoating-bay.webp` |
-| Marysville / New Haven / Houston | `location-marysville.webp`, `location-newhaven.webp`, `location-houston.webp` |
-| Tinting / undercoating / Texas jobs | `tint-job-1.webp`, `undercoat-job-1.webp`, `tx-job-1.webp` |
+| Placeholder label                    | Filename to upload                                                            |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| Owner portrait (home + about)        | `owner-ta-sain.webp`                                                          |
+| Paint correction before/after (home) | a real pair → wire into `index.astro` `BeforeAfter`                           |
+| Detailing before/after (services)    | `detail-interior.webp`                                                        |
+| Ceramic water beading (services)     | `ceramic-beading.webp`                                                        |
+| Tint base car (tinting simulator)    | `tint-base-car.png` (clean side profile, clear glass)                         |
+| Undercoating in progress             | `undercoating-bay.webp`                                                       |
+| Marysville / New Haven / Houston     | `location-marysville.webp`, `location-newhaven.webp`, `location-houston.webp` |
+| Tinting / undercoating / Texas jobs  | `tint-job-1.webp`, `undercoat-job-1.webp`, `tx-job-1.webp`                    |
 
 Every empty slot renders as a labeled dashed box with the exact filename + size,
 so you can see at a glance what's missing.
@@ -78,7 +81,7 @@ before the CRM ships CORS), it falls back to a bundled service list and a
 
 ## Deploy (Cloudflare Pages, 2027)
 
-- Build command: `npm run build`  ·  Output dir: `dist`
+- Build command: `npm run build` · Output dir: `dist`
 - Node 22.12+ required (Astro 7).
 - `_headers` ships HSTS / frame / nosniff / permissions. **CSP is deferred** —
   needs testing with the inline island scripts + Cloudflare Turnstile before

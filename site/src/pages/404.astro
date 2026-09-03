@@ -1,11 +1,20 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Page not found — On-Wheels Detailing" description="This page doesn't exist.">
+<BaseLayout
+  title="Page not found — On-Wheels Detailing"
+  description="This page doesn't exist."
+>
   <section class="container-x py-32 text-center">
-    <h1 class="text-6xl font-bold text-navy">404</h1>
-    <p class="mt-4 text-navy/70">That page drove off. Let's get you back on the road.</p>
-    <a href="/" class="mt-8 inline-block rounded-full bg-accent px-7 py-3 font-semibold text-white">Go home</a>
+    <h1 class="text-navy text-6xl font-bold">404</h1>
+    <p class="text-navy/70 mt-4">
+      That page drove off. Let's get you back on the road.
+    </p>
+    <a
+      href="/"
+      class="bg-accent mt-8 inline-block rounded-full px-7 py-3 font-semibold text-white"
+      >Go home</a
+    >
   </section>
 </BaseLayout>
