@@ -4,7 +4,10 @@ const services = [
   { label: "Paint & Ceramic", href: "/services#paint-ceramic" },
   { label: "Window Tinting", href: "/tinting" },
   { label: "Undercoating", href: "/undercoating" },
+  { label: "RV Detailing", href: "/services#rv-detailing" },
 ];
+
+const path = Astro.url.pathname;
 
 const links = [
   { label: "Home", href: "/" },
@@ -34,8 +37,10 @@ const links = [
     </a>
 
     <nav class="hidden items-center gap-6 lg:flex" aria-label="Primary">
-      <a href="/" class="text-navy/80 hover:text-accent text-sm font-medium"
-        >Home</a
+      <a
+        href="/"
+        class="text-navy/80 hover:text-accent text-sm font-medium"
+        aria-current={path === "/" ? "page" : undefined}>Home</a
       >
 
       <div class="group relative">
@@ -46,7 +51,7 @@ const links = [
           <span class="text-xs" aria-hidden="true">▾</span>
         </button>
         <div
-          class="border-navy/10 bg-cream absolute top-full left-0 hidden min-w-[13rem] rounded-lg border p-2 shadow-lg group-hover:block"
+          class="border-navy/10 bg-cream absolute top-full left-0 hidden min-w-[13rem] rounded-lg border p-2 shadow-lg group-focus-within:block group-hover:block"
         >
           {
             services.map((s) => (
@@ -66,6 +71,7 @@ const links = [
           <a
             href={l.href}
             class="text-navy/80 hover:text-accent text-sm font-medium"
+            aria-current={path === l.href ? "page" : undefined}
           >
             {l.label}
           </a>

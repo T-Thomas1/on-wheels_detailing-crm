@@ -637,6 +637,21 @@ def seed_rv_detailing():
     conn.close()
 
 
+def cleanup_marine_services():
+    """Remove legacy Marine Gel-coat RV services superseded by RV Detailing.
+
+    Deletes only rows with no appointments referencing them, so any booking
+    history is preserved. Idempotent and safe.
+    """
+    conn = get_db()
+    conn.execute(
+        "DELETE FROM services WHERE category='Marine Gel-coat' "
+        "AND id NOT IN (SELECT service_id FROM appointments WHERE service_id IS NOT NULL)"
+    )
+    conn.commit()
+    conn.close()
+
+
 def get_services(category=None):
     conn = get_db()
     if category:
