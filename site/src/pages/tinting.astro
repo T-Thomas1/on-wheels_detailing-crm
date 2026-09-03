@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Placeholder from '../components/Placeholder.astro';
+import TintSimulator from '../components/TintSimulator.astro';
 
 const films = [
   { name: 'Carbon', desc: 'Great heat rejection, classic smoked look.', tag: 'Value' },
@@ -41,28 +41,42 @@ const films = [
       <p class="mx-auto mt-3 max-w-xl text-center text-navy/70">
         Interactive tint simulator goes here — drag a slider from 50% down to 5% to see the darkness on a real car.
       </p>
-      <div class="mx-auto mt-8 max-w-4xl">
-        <Placeholder
-          label="Tint shade simulator"
-          note="Upload: images/tint-base-car.png (clean side profile, clear glass) · 1600×900 — overlay drives the preview"
-          class="aspect-video"
-        />
+      <div class="mx-auto mt-8 max-w-3xl">
+        <TintSimulator />
       </div>
     </div>
   </section>
 
   <section class="container-x py-16">
-    <h2 class="text-2xl font-bold text-navy">Legal limits (verify before publish)</h2>
+    <h2 class="text-2xl font-bold text-navy">Know the legal limits</h2>
     <div class="mt-4 grid gap-6 md:grid-cols-2">
       <div class="rounded-xl border border-navy/10 bg-cream p-6">
         <h3 class="font-bold text-navy">Michigan</h3>
-        <p class="mt-2 text-sm text-navy/70">Front side windows — legal limit to be confirmed with current state law.</p>
+        <ul class="mt-2 space-y-1 text-sm text-navy/70">
+          <li>Rear side &amp; back windows: any darkness.</li>
+          <li>Front side windows: restricted by position — no simple VLT cap; we apply compliant film.</li>
+          <li>Windshield: non-reflective strip above the AS-1 line only.</li>
+        </ul>
       </div>
       <div class="rounded-xl border border-navy/10 bg-cream p-6">
         <h3 class="font-bold text-navy">Texas</h3>
-        <p class="mt-2 text-sm text-navy/70">Front side windows — legal limit to be confirmed with current state law.</p>
+        <ul class="mt-2 space-y-1 text-sm text-navy/70">
+          <li>Front side windows: 25% VLT minimum (must allow &gt;25% light).</li>
+          <li>Rear side &amp; back windows: any darkness.</li>
+          <li>Windshield: non-reflective strip above the AS-1 line (top 5&quot;).</li>
+        </ul>
       </div>
     </div>
-    <p class="mt-4 text-sm text-navy/50">Note: exact VLT % to be verified before go-live.</p>
+    <p class="mt-4 text-sm text-navy/50">Final compliance is confirmed at install based on your state and vehicle.</p>
   </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: 'What window tint films does On-Wheels offer?', acceptedAnswer: { '@type': 'Answer', text: 'GEOShield ceramic, nano-ceramic, and carbon films, applied in Michigan and Texas.' } },
+      { '@type': 'Question', name: 'What is the legal window tint in Michigan?', acceptedAnswer: { '@type': 'Answer', text: 'Rear and back windows can be any darkness. Front side windows are restricted by position, and the windshield allows only a non-reflective strip above the AS-1 line.' } },
+      { '@type': 'Question', name: 'What is the legal window tint in Texas?', acceptedAnswer: { '@type': 'Answer', text: 'Front side windows must allow more than 25% of light. Rear and back windows can be any darkness.' } },
+    ],
+  })}></script>
 </BaseLayout>

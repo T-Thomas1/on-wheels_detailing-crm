@@ -24,8 +24,12 @@ ALL_URLS = [
     f"https://{HOST}/",
     f"https://{HOST}/about",
     f"https://{HOST}/services",
+    f"https://{HOST}/tinting",
+    f"https://{HOST}/undercoating",
     f"https://{HOST}/gallery",
+    f"https://{HOST}/locations",
     f"https://{HOST}/contact",
+    f"https://{HOST}/book",
 ]
 
 

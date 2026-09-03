@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Placeholder from '../components/Placeholder.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
 
 const services = [
   {
@@ -37,6 +38,18 @@ const stats = [
 ];
 
 const brands = ['CarPro', 'Koch Chemie', 'P&S', 'Oberk', 'GEOShield', 'Fluid Film'];
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoDetailing',
+  name: 'On-Wheels Detailing',
+  url: 'https://www.onwheelsdetailing.com',
+  telephone: '+15868730656',
+  email: 'tasain@onwheelsdetailing.com',
+  priceRange: '$150-$2000',
+  founder: { '@type': 'Person', name: 'TaSain' },
+  areaServed: ['Metro Detroit', 'Port Huron', 'St. Clair', 'Marysville', 'New Haven', 'Houston'],
+};
 ---
 
 <BaseLayout
@@ -146,9 +159,9 @@ const brands = ['CarPro', 'Koch Chemie', 'P&S', 'Oberk', 'GEOShield', 'Fluid Fil
         Interactive before/after slider coming here — drag to see the transformation.
       </p>
     </div>
-    <div class="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
-      <Placeholder label="Before / after — paint correction" note="Upload: images/before-after-1.webp · 1200×900" class="aspect-[4/3]" />
-      <Placeholder label="Before / after — interior" note="Upload: images/before-after-2.webp · 1200×900" class="aspect-[4/3]" />
+    <div class="mx-auto mt-10 max-w-4xl">
+      <BeforeAfter before="/images/IMG_2071.webp" after="/images/IMG_2288.webp" alt="Paint correction demo" />
+      <p class="mt-3 text-center text-xs text-navy/50">Demo images — replace with a real before/after pair.</p>
     </div>
   </section>
 
@@ -205,4 +218,5 @@ const brands = ['CarPro', 'Koch Chemie', 'P&S', 'Oberk', 'GEOShield', 'Fluid Fil
       </div>
     </div>
   </section>
+  <script type="application/ld+json" set:html={JSON.stringify(ldJson)}></script>
 </BaseLayout>

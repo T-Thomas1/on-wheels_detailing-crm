@@ -71,4 +71,13 @@ const pricing = [
       <Placeholder label="Undercoating in progress" note="Upload: images/undercoating-bay.webp · 1600×900" class="aspect-video" />
     </div>
   </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: 'Fluid Film or Woolwax — which is better?', acceptedAnswer: { '@type': 'Answer', text: 'Both are lanolin-based rust protectants. Fluid Film creeps deeper into seams and is reapplied yearly; Woolwax is thicker, lasts about two years, and drips less.' } },
+      { '@type': 'Question', name: 'How often should undercoating be reapplied?', acceptedAnswer: { '@type': 'Answer', text: 'Fluid Film yearly, Woolwax every two years. We apply it on a lift at our New Haven bay.' } },
+    ],
+  })}></script>
 </BaseLayout>
