@@ -295,25 +295,53 @@ const timeSlots = [
       category: "Undercoating",
       price: "$175–$300",
     },
+    {
+      id: "rv-wash-wax",
+      name: "RV Wash & Wax",
+      category: "RV Detailing",
+      price: "$20/ft",
+    },
+    {
+      id: "rv-polish-protect",
+      name: "RV Polish & Protect",
+      category: "RV Detailing",
+      price: "$30/ft",
+    },
+    {
+      id: "rv-oxidation",
+      name: "RV Oxidation Removal",
+      category: "RV Detailing",
+      price: "$40/ft",
+    },
+    {
+      id: "rv-ceramic",
+      name: "RV Ceramic Coating",
+      category: "RV Detailing",
+      price: "$70/ft",
+    },
   ];
 
   const locationCategories: Record<string, string[]> = {
     "Michigan - Metro Detroit": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
+      "RV Detailing",
     ],
     "Michigan - St. Clair": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
+      "RV Detailing",
     ],
     "Texas - Harris County": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
+      "RV Detailing",
     ],
     "Michigan - Marysville (Shop)": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
       "Window Tinting",
+      "RV Detailing",
     ],
     "Michigan - New Haven (Shop)": [
       "Interior Detailing",
@@ -380,7 +408,11 @@ const timeSlots = [
                 ? s.starting_price
                   ? `$${s.starting_price}`
                   : ""
-                : s.pricing_model.toLowerCase(),
+                : s.pricing_model === "Per Foot"
+                  ? s.starting_price
+                    ? `$${s.starting_price}/ft`
+                    : "per foot"
+                  : s.pricing_model.toLowerCase(),
           });
         }
       }

@@ -290,6 +290,33 @@ def init_db():
             conn.execute("PRAGMA legacy_alter_table=OFF")
             conn.execute("PRAGMA foreign_keys=ON")
 
+    # ── Widen services.category CHECK to include RV Detailing ──
+    svc_row2 = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='services'"
+    ).fetchone()
+    if svc_row2 and 'RV Detailing' not in (svc_row2['sql'] or ''):
+        new_sql = svc_row2['sql'].replace(
+            "'Window Tinting','Undercoating'",
+            "'Window Tinting','Undercoating','RV Detailing'",
+            1,
+        ).replace("CREATE TABLE services", "CREATE TABLE services_new", 1)
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("PRAGMA legacy_alter_table=ON")
+        try:
+            conn.execute("BEGIN")
+            conn.execute("ALTER TABLE services RENAME TO services_old")
+            conn.execute(new_sql)
+            conn.execute("INSERT INTO services_new SELECT * FROM services_old")
+            conn.execute("DROP TABLE services_old")
+            conn.execute("ALTER TABLE services_new RENAME TO services")
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.execute("PRAGMA legacy_alter_table=OFF")
+            conn.execute("PRAGMA foreign_keys=ON")
+
     # Update deposit amounts for existing services (safe to re-run)
     deposit_updates = [
         (50, 'Polish & Protect (Auto)'),
@@ -407,7 +434,7 @@ SERVICE_PRICE_TIERS = {
 }
 
 # Marine / RV services (per-foot pricing)
-PER_FOOT_SERVICES = {'Marine Wash & Protect', 'RV Wash & Protect'}
+PER_FOOT_SERVICES = {'RV Wash & Wax', 'RV Polish & Protect', 'RV Oxidation Removal', 'RV Ceramic Coating'}
 PER_FOOT_RATE = 20  # dollars per foot
 
 
@@ -498,18 +525,18 @@ def seed_services():
 
     services = [
         # RV Detailing (Per-Foot)
-        ("RV Wash Only", "Marine Gel-coat", "Wash Only",
-         "Hand wash, wheels, and windows. Per-foot pricing for RVs and campers.",
-         8, "Per Foot", "pH-neutral soap", 2, 50),
-        ("RV Wash & Protect", "Marine Gel-coat", "Wash & Protect",
-         "Thorough wash with gelcoat-safe wax/sealant + UV protection. Per-foot.",
-         25, "Per Foot", "pH-neutral soap, gelcoat sealant, UV protectant", 3, 100),
-        ("RV Premium Detail", "Marine Gel-coat", "Premium Detail",
-         "Wash & protect + roof treatment + awning cleaning. All-in-one per-foot.",
-         35, "Per Foot", "pH-neutral soap, gelcoat sealant, roof protectant, awning cleaner", 5, 100),
-        ("RV Oxidation Removal", "Marine Gel-coat", "Oxidation Removal",
+        ("RV Wash & Wax", "RV Detailing", "Wash & Wax",
+         "Hand wash with premium wax/sealant + UV protection. Per-foot for RVs and campers.",
+         20, "Per Foot", "pH-neutral soap, wax/sealant", 3, 50),
+        ("RV Polish & Protect", "RV Detailing", "Polish & Protect",
+         "Single-stage polish + sealant to revive faded gelcoat. Per-foot.",
+         30, "Per Foot", "Polish, sealant, dual-action polisher", 6, 100),
+        ("RV Oxidation Removal", "RV Detailing", "Oxidation Removal",
          "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
-         45, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, 100),
+         40, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, 100),
+        ("RV Ceramic Coating", "RV Detailing", "Ceramic Coating",
+         "Long-term ceramic protection for RVs and campers. Per-foot.",
+         70, "Per Foot", "Ceramic coating kit, surface prep", 10, 150),
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
          "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
@@ -568,6 +595,35 @@ def seed_expansion_services():
         ("Undercoating — Woolwax", "Undercoating", "Woolwax",
          "Thicker, longer-lasting lanolin coating. Two-year reapplication.",
          175, "Flat Rate", "Woolwax", 2, 50),
+    ]
+    for s in services:
+        exists = conn.execute(
+            "SELECT 1 FROM services WHERE name=?", (s[0],)).fetchone()
+        if not exists:
+            conn.execute(
+                "INSERT INTO services (name, category, sub_service, description,"
+                " starting_price, pricing_model, products_used, duration_hours,"
+                " deposit_amount) VALUES (?,?,?,?,?,?,?,?,?)", s)
+    conn.commit()
+    conn.close()
+
+
+def seed_rv_detailing():
+    """Idempotently add RV Detailing services (per-foot pricing)."""
+    conn = get_db()
+    services = [
+        ("RV Wash & Wax", "RV Detailing", "Wash & Wax",
+         "Hand wash with premium wax/sealant + UV protection. Per-foot for RVs and campers.",
+         20, "Per Foot", "pH-neutral soap, wax/sealant", 3, 50),
+        ("RV Polish & Protect", "RV Detailing", "Polish & Protect",
+         "Single-stage polish + sealant to revive faded gelcoat. Per-foot.",
+         30, "Per Foot", "Polish, sealant, dual-action polisher", 6, 100),
+        ("RV Oxidation Removal", "RV Detailing", "Oxidation Removal",
+         "Compound + polish + protect to restore chalked, oxidized gelcoat. Per-foot.",
+         40, "Per Foot", "Marine compound, polish, gelcoat sealant, dual-action polisher", 8, 100),
+        ("RV Ceramic Coating", "RV Detailing", "Ceramic Coating",
+         "Long-term ceramic protection for RVs and campers. Per-foot.",
+         70, "Per Foot", "Ceramic coating kit, surface prep", 10, 150),
     ]
     for s in services:
         exists = conn.execute(
