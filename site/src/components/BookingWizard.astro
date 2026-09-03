@@ -5,10 +5,13 @@
 const locations = [
   { value: "Michigan - Metro Detroit", label: "Mobile — Metro Detroit" },
   { value: "Michigan - St. Clair", label: "Mobile — St. Clair / Port Huron" },
-  { value: "Michigan - Marysville (Shop)", label: "Marysville garage" },
+  {
+    value: "Michigan - Marysville (Shop)",
+    label: "Marysville garage (tinting)",
+  },
   {
     value: "Michigan - New Haven (Shop)",
-    label: "New Haven garage (undercoating)",
+    label: "New Haven garage (tinting + undercoating)",
   },
   { value: "Texas - Harris County", label: "Mobile — Houston, TX" },
 ];
@@ -262,6 +265,32 @@ const locations = [
     },
   ];
 
+  const locationCategories: Record<string, string[]> = {
+    "Michigan - Metro Detroit": [
+      "Interior Detailing",
+      "Paint Correction & Ceramic",
+    ],
+    "Michigan - St. Clair": [
+      "Interior Detailing",
+      "Paint Correction & Ceramic",
+    ],
+    "Texas - Harris County": [
+      "Interior Detailing",
+      "Paint Correction & Ceramic",
+    ],
+    "Michigan - Marysville (Shop)": [
+      "Interior Detailing",
+      "Paint Correction & Ceramic",
+      "Window Tinting",
+    ],
+    "Michigan - New Haven (Shop)": [
+      "Interior Detailing",
+      "Paint Correction & Ceramic",
+      "Window Tinting",
+      "Undercoating",
+    ],
+  };
+
   const el = document.querySelector("[data-wizard]")!;
   const steps = [...el.querySelectorAll<HTMLElement>("[data-step]")];
   const nextBtn = el.querySelector<HTMLButtonElement>("[data-next]")!;
@@ -330,11 +359,15 @@ const locations = [
 
   function renderServices() {
     serviceSelect.innerHTML = '<option value="">Choose a service…</option>';
-    const cats = [...new Set(services.map((s) => s.category))];
+    const allowed = locationCategories[radio("location")] ?? [];
+    const visible = allowed.length
+      ? services.filter((s) => allowed.includes(s.category))
+      : services;
+    const cats = [...new Set(visible.map((s) => s.category))];
     for (const cat of cats) {
       const og = document.createElement("optgroup");
       og.label = cat;
-      for (const s of services.filter((x) => x.category === cat)) {
+      for (const s of visible.filter((x) => x.category === cat)) {
         const o = document.createElement("option");
         o.value = s.id;
         o.textContent = `${s.name} ${s.price ? `(${s.price})` : ""}`;
@@ -343,6 +376,15 @@ const locations = [
       serviceSelect.appendChild(og);
     }
   }
+
+  el.querySelectorAll<HTMLInputElement>('input[name="location"]').forEach(
+    (r) => {
+      r.addEventListener("change", () => {
+        serviceSelect.value = "";
+        renderServices();
+      });
+    },
+  );
 
   const validStep = (): boolean => {
     if (step === 0) return !!radio("location");

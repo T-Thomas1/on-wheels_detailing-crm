@@ -10,20 +10,61 @@ const shades = [
 
 <div data-tint>
   <div
-    class="border-navy/10 bg-navy relative aspect-video overflow-hidden rounded-xl border"
+    class="border-navy/10 relative overflow-hidden rounded-xl border bg-gradient-to-b from-slate-100 to-slate-200"
   >
-    <img
-      src="/images/hero-car.webp"
-      alt="Vehicle tint preview — replace with a clean side profile with clear glass"
-      class="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-    />
-    <div
-      class="absolute inset-0 bg-black transition-opacity duration-150"
-      data-tint-overlay
-      style="opacity: 0.8"
+    <svg
+      viewBox="0 0 800 300"
+      class="w-full"
+      role="img"
+      aria-label="Car tint preview"
     >
-    </div>
+      <defs>
+        <clipPath id="tint-glass">
+          <path
+            d="M268 176 L295 150 C310 140 330 134 355 132 L445 132 C470 132 490 140 505 150 L535 176 Z"
+          ></path>
+        </clipPath>
+      </defs>
+
+      <!-- ground shadow -->
+      <ellipse cx="400" cy="288" rx="330" ry="10" fill="rgba(13,46,72,0.08)"
+      ></ellipse>
+
+      <!-- body -->
+      <path
+        d="M70 235 C70 215 95 205 125 203 L175 196 C205 190 235 182 265 176 L295 150 C310 140 330 134 355 132 L445 132 C470 132 490 140 505 150 L535 176 C565 184 600 190 635 194 L685 200 C720 204 740 216 745 232 L747 252 C747 272 715 280 650 280 L150 280 C95 280 70 265 70 235 Z"
+        fill="#cbd5e1"></path>
+
+      <!-- clear glass base -->
+      <path
+        d="M268 176 L295 150 C310 140 330 134 355 132 L445 132 C470 132 490 140 505 150 L535 176 Z"
+        fill="#dbeafe"></path>
+
+      <!-- tint overlay (clipped to glass) -->
+      <rect
+        x="0"
+        y="0"
+        width="800"
+        height="300"
+        fill="#000"
+        clip-path="url(#tint-glass)"
+        opacity="0.8"
+        data-tint-overlay></rect>
+
+      <!-- glass outline -->
+      <path
+        d="M268 176 L295 150 C310 140 330 134 355 132 L445 132 C470 132 490 140 505 150 L535 176 Z"
+        fill="none"
+        stroke="#475569"
+        stroke-width="3"></path>
+
+      <!-- wheels -->
+      <circle cx="185" cy="272" r="42" fill="#0f172a"></circle>
+      <circle cx="185" cy="272" r="18" fill="#e2e8f0"></circle>
+      <circle cx="615" cy="272" r="42" fill="#0f172a"></circle>
+      <circle cx="615" cy="272" r="18" fill="#e2e8f0"></circle>
+    </svg>
+
     <div
       class="bg-navy/85 text-cream absolute bottom-3 left-3 rounded px-3 py-1 text-sm font-bold"
       data-tint-readout
@@ -72,7 +113,7 @@ const shades = [
 <script>
   for (const el of document.querySelectorAll("[data-tint]")) {
     const slider = el.querySelector<HTMLInputElement>("[data-tint-slider]")!;
-    const overlay = el.querySelector<HTMLElement>("[data-tint-overlay]")!;
+    const overlay = el.querySelector<SVGElement>("[data-tint-overlay]")!;
     const readout = el.querySelector<HTMLElement>("[data-tint-readout]")!;
 
     const set = (vlt: number) => {
