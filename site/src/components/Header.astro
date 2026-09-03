@@ -1,0 +1,97 @@
+---
+const services = [
+  { label: 'Detailing', href: '/services#detailing' },
+  { label: 'Paint & Ceramic', href: '/services#paint-ceramic' },
+  { label: 'Window Tinting', href: '/tinting' },
+  { label: 'Undercoating', href: '/undercoating' },
+];
+
+const links = [
+  { label: 'Home', href: '/' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'Locations', href: '/locations' },
+  { label: 'About', href: '/about' },
+];
+---
+
+<header class="sticky top-0 z-50 border-b border-navy/10 bg-cream/95 backdrop-blur">
+  <div class="container-x flex items-center justify-between py-3">
+    <a href="/" class="flex items-center gap-3">
+      <img
+        src="/images/onwheelsLogoMark.webp"
+        alt="On-Wheels Detailing logo mark"
+        class="h-10 w-auto"
+        width="40"
+        height="40"
+      />
+      <span class="font-display text-xl font-bold uppercase leading-none tracking-wide">
+        On-<span class="text-accent">Wheels</span> Detailing
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-6 lg:flex" aria-label="Primary">
+      <a href="/" class="text-sm font-medium text-navy/80 hover:text-accent">Home</a>
+
+      <div class="group relative">
+        <button class="flex items-center gap-1 text-sm font-medium text-navy/80 hover:text-accent">
+          Services
+          <span class="text-xs" aria-hidden="true">▾</span>
+        </button>
+        <div class="absolute left-0 top-full hidden min-w-[13rem] rounded-lg border border-navy/10 bg-cream p-2 shadow-lg group-hover:block">
+          {services.map((s) => (
+            <a href={s.href} class="block rounded-md px-3 py-2 text-sm text-navy/80 hover:bg-sand hover:text-accent">
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {links.slice(1).map((l) => (
+        <a href={l.href} class="text-sm font-medium text-navy/80 hover:text-accent">{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="/book"
+        class="hidden rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-navy sm:inline-block"
+      >
+        Book Now
+      </a>
+      <button
+        id="nav-toggle"
+        class="rounded-md border border-navy/15 px-3 py-2 text-navy lg:hidden"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden border-t border-navy/10 bg-cream px-4 py-4 lg:hidden">
+    <nav class="flex flex-col gap-1" aria-label="Mobile">
+      <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-navy/80 hover:bg-sand">Home</a>
+      <p class="px-3 pt-2 text-xs font-semibold uppercase tracking-wide text-navy/50">Services</p>
+      {services.map((s) => (
+        <a href={s.href} class="rounded-md px-3 py-2 text-sm font-medium text-navy/80 hover:bg-sand">{s.label}</a>
+      ))}
+      {links.slice(1).map((l) => (
+        <a href={l.href} class="rounded-md px-3 py-2 text-sm font-medium text-navy/80 hover:bg-sand">{l.label}</a>
+      ))}
+      <a href="/book" class="mt-2 rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-white">Book Now</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('nav-toggle');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    const hidden = menu?.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!hidden));
+  });
+</script>

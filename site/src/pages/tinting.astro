@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Placeholder from '../components/Placeholder.astro';
+
+const films = [
+  { name: 'Carbon', desc: 'Great heat rejection, classic smoked look.', tag: 'Value' },
+  { name: 'Nano-Ceramic', desc: 'Superior heat rejection, no signal interference.', tag: 'Best value' },
+  { name: 'Ceramic', desc: 'Maximum IR/UV rejection, clearest optics, longest life.', tag: 'Premium' },
+];
+---
+
+<BaseLayout
+  title="Window Tinting — GEOShield Films | On-Wheels Detailing"
+  description="GEOShield window tinting in Michigan and Texas. Ceramic, nano-ceramic and carbon films — preview your shade with the interactive viewer."
+>
+  <section class="bg-navy py-20">
+    <div class="container-x text-center">
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-gold">GEOShield</p>
+      <h1 class="mt-3 text-5xl font-bold text-cream md:text-6xl">Window Tinting</h1>
+      <p class="mx-auto mt-4 max-w-xl text-cream/75">
+        Cooler cabin. UV protection. Privacy that turns heads. Choose your film, preview your shade.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <div class="grid gap-6 md:grid-cols-3">
+      {films.map((f) => (
+        <div class="rounded-xl border border-navy/10 bg-sand p-6">
+          <span class="inline-block rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">{f.tag}</span>
+          <h2 class="mt-3 text-2xl font-bold text-navy">{f.name}</h2>
+          <p class="mt-2 text-sm text-navy/70">{f.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-sand py-16">
+    <div class="container-x">
+      <h2 class="text-center text-3xl font-bold text-navy md:text-4xl">Preview your shade</h2>
+      <p class="mx-auto mt-3 max-w-xl text-center text-navy/70">
+        Interactive tint simulator goes here — drag a slider from 50% down to 5% to see the darkness on a real car.
+      </p>
+      <div class="mx-auto mt-8 max-w-4xl">
+        <Placeholder
+          label="Tint shade simulator"
+          note="Upload: images/tint-base-car.png (clean side profile, clear glass) · 1600×900 — overlay drives the preview"
+          class="aspect-video"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <h2 class="text-2xl font-bold text-navy">Legal limits (verify before publish)</h2>
+    <div class="mt-4 grid gap-6 md:grid-cols-2">
+      <div class="rounded-xl border border-navy/10 bg-cream p-6">
+        <h3 class="font-bold text-navy">Michigan</h3>
+        <p class="mt-2 text-sm text-navy/70">Front side windows — legal limit to be confirmed with current state law.</p>
+      </div>
+      <div class="rounded-xl border border-navy/10 bg-cream p-6">
+        <h3 class="font-bold text-navy">Texas</h3>
+        <p class="mt-2 text-sm text-navy/70">Front side windows — legal limit to be confirmed with current state law.</p>
+      </div>
+    </div>
+    <p class="mt-4 text-sm text-navy/50">Note: exact VLT % to be verified before go-live.</p>
+  </section>
+</BaseLayout>

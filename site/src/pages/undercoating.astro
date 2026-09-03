@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Placeholder from '../components/Placeholder.astro';
+
+const products = [
+  {
+    name: 'Fluid Film',
+    desc: 'Lanolin-based, creeps into seams and cavities. Yearly reapplication. Classic, proven rust fighter.',
+    reapply: 'Yearly',
+  },
+  {
+    name: 'Woolwax',
+    desc: 'Thicker, longer-lasting lanolin coating. Two-year reapplication. Less drip, more durable.',
+    reapply: '2 years',
+  },
+];
+
+const pricing = [
+  { size: 'Sedan', price: '$175' },
+  { size: 'SUV', price: '$225' },
+  { size: 'Truck', price: '$300' },
+];
+---
+
+<BaseLayout
+  title="Undercoating & Rust Protection — Fluid Film vs Woolwax"
+  description="Underbody rust protection for Michigan winters. Fluid Film vs Woolwax — compare and choose. Applied at our New Haven bay."
+>
+  <section class="bg-navy py-20 text-center">
+    <div class="container-x">
+      <h1 class="text-5xl font-bold text-cream md:text-6xl">Undercoating</h1>
+      <p class="mx-auto mt-4 max-w-xl text-cream/75">
+        Michigan salt is brutal. Protect your frame with lanolin-based rust treatment — done on a lift at our New Haven bay.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <h2 class="text-center text-3xl font-bold text-navy md:text-4xl">Fluid Film vs Woolwax</h2>
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {products.map((p) => (
+        <div class="rounded-xl border border-navy/10 bg-sand p-8">
+          <h3 class="text-2xl font-bold text-navy">{p.name}</h3>
+          <p class="mt-3 text-navy/75">{p.desc}</p>
+          <p class="mt-4 inline-block rounded-full bg-navy px-4 py-1.5 text-sm font-semibold text-cream">
+            Reapply: {p.reapply}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-sand py-16">
+    <div class="container-x">
+      <h2 class="text-center text-3xl font-bold text-navy">Pricing by vehicle</h2>
+      <div class="mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-3">
+        {pricing.map((p) => (
+          <div class="rounded-xl border border-navy/10 bg-cream p-6 text-center">
+            <p class="text-sm uppercase tracking-wide text-navy/60">{p.size}</p>
+            <p class="mt-2 font-display text-4xl font-bold text-accent">{p.price}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-center text-sm text-navy/60">Applied at our New Haven garage — lift + drain, done right.</p>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <h2 class="text-2xl font-bold text-navy">The process</h2>
+    <div class="mx-auto mt-6 max-w-3xl">
+      <Placeholder label="Undercoating in progress" note="Upload: images/undercoating-bay.webp · 1600×900" class="aspect-video" />
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,14 @@
+---
+interface Props {
+  label: string;
+  note?: string;
+  class?: string;
+}
+
+const { label, note, class: className = 'aspect-video' } = Astro.props;
+---
+
+<div class:list={['placeholder', className]} data-upload-slot>
+  <span class="placeholder-label">{label}</span>
+  {note && <span class="placeholder-note">{note}</span>}
+</div>

@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   On-Wheels Detailing — Brand design tokens
+   (from docs/onwheelsBrandGuideLines.png — do not change)
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  --color-navy: #0d2e48;        /* primary — deep navy */
+  --color-slate: #2a4358;       /* secondary — slate navy */
+  --color-cream: #f1eed9;       /* background — cream */
+  --color-sand: #e4e1b9;        /* background alt — sand */
+  --color-accent: #e6863a;      /* CTA — burnt orange */
+  --color-gold: #edb760;        /* accent — gold */
+  --color-crimson: #c83c34;     /* error / alert — red */
+
+  --font-display: "FH Oscar Condensed", "Oswald", "Arial Narrow", sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Display font — FH Oscar Condensed (logo/brand typeface) */
+@font-face {
+  font-family: "FH Oscar Condensed";
+  src: url("/fonts/FHOscarCondensedTest-Light-BF65139d0c8d1d6.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FH Oscar Condensed";
+  src: url("/fonts/FHOscarCondensedTest-Medium-BF65139d0c9ecad.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FH Oscar Condensed";
+  src: url("/fonts/FHOscarCondensedTest-SemiBold-BF65139d0c852c5.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FH Oscar Condensed";
+  src: url("/fonts/FHOscarCondensedTest-Bold-BF65139d0c7ac65.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  line-height: 1.05;
+}
+
+/* ── Image upload placeholder slots ────────────────────────── */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 1.5rem;
+  border: 2px dashed var(--color-accent);
+  border-radius: 0.75rem;
+  color: var(--color-slate);
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(230 134 58 / 0.06) 0 10px,
+    transparent 10px 20px
+  );
+}
+.placeholder-label {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.placeholder-note {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Utility helpers ───────────────────────────────────────── */
+.container-x {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 768px) {
+  .container-x { padding-inline: 2rem; }
+}
