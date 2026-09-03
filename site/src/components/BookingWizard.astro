@@ -30,10 +30,13 @@ const timeSlots = [
   "4:00 PM",
   "5:00 PM",
 ];
+
+const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
 <div
   data-wizard
+  data-gmaps-key={gmapsKey}
   class="border-navy/10 bg-cream rounded-2xl border p-6 shadow-sm md:p-8"
 >
   <!-- Progress -->
@@ -506,6 +509,31 @@ const timeSlots = [
   );
 
   syncAddress();
+
+  // Google Places address autocomplete (optional; needs PUBLIC_GOOGLE_MAPS_API_KEY)
+  const gmapsKey = el.getAttribute("data-gmaps-key");
+  if (
+    gmapsKey &&
+    !document.querySelector('script[src*="maps.googleapis.com"]')
+  ) {
+    const s = document.createElement("script");
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${gmapsKey}&libraries=places`;
+    s.async = true;
+    s.onload = () => {
+      const addr = el.querySelector<HTMLInputElement>("[data-address]");
+      const g = (window as any).google;
+      if (!addr || !g?.maps?.places) return;
+      const ac = new g.maps.places.Autocomplete(addr, {
+        componentRestrictions: { country: "us" },
+        types: ["address"],
+      });
+      ac.addListener("place_changed", () => {
+        const place = ac.getPlace();
+        if (place.formatted_address) addr.value = place.formatted_address;
+      });
+    };
+    document.head.appendChild(s);
+  }
 
   const validStep = (): string => {
     if (step === 0) return radio("location") ? "" : "Please choose a location.";
