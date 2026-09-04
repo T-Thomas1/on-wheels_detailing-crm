@@ -478,7 +478,9 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   const priceSummary = () => {
     const s = currentService();
     if (!s) return null;
-    const size = sizeOf[val("[data-type]")] ?? "Sedan";
+    const vt = val("[data-type]");
+    if (!vt) return null; // size not chosen yet — pricing appears on selection
+    const size = sizeOf[vt] ?? "Sedan";
     const mobile = isMobile();
     let base: number | null = null;
     if (s.tiers) base = s.tiers[tierIndex[size] ?? 0];
@@ -570,6 +572,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         serviceSelect.value = "";
         renderServices();
         syncAddress();
+        updatePrice();
       });
     },
   );
@@ -578,6 +581,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     "change",
     updatePrice,
   );
+
+  serviceSelect.addEventListener("change", updatePrice);
 
   // US phone auto-format: (XXX) XXX-XXXX
   el.querySelector<HTMLInputElement>("[data-phone]")!.addEventListener(
@@ -660,7 +665,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     if (step === 1)
       return serviceSelect.value ? "" : "Please choose a service.";
     if (step === 2) {
-      if (!val("[data-type]")) return "Please select your vehicle type.";
+      if (!val("[data-type]")) return "Please select your vehicle size.";
       const y = Number(val("[data-year]"));
       if (val("[data-year]") && (y < 1970 || y > new Date().getFullYear() + 1))
         return "Please enter a valid year (1970 or newer).";
