@@ -334,6 +334,9 @@ def init_db():
     starting_price_updates = [
         (525, 'Two-Step Paint Correction'),
         (1500, 'Ceramic Coating (Auto)'),
+        (449, 'Window Tinting — Ceramic'),
+        (599, 'Window Tinting — Nano-Ceramic'),
+        (299, 'Window Tinting — Carbon'),
     ]
     for amount, name in starting_price_updates:
         conn.execute(
@@ -589,16 +592,16 @@ def seed_expansion_services():
     """
     conn = get_db()
     services = [
-        # Window Tinting (GEOShield) — quote-only until cert + pricing are final
+        # Window Tinting (GEOShield) — premium films, priced from (tiered by vehicle size)
         ("Window Tinting — Ceramic", "Window Tinting", "Ceramic Film",
          "GEOShield ceramic tint — maximum IR/UV rejection, clearest optics.",
-         None, "Quote Only", "GEOShield Ceramic", 4, 50),
+         449, "Quote Only", "GEOShield Ceramic", 4, 50),
         ("Window Tinting — Nano-Ceramic", "Window Tinting", "Nano-Ceramic Film",
          "GEOShield nano-ceramic tint — superior heat rejection, no signal interference.",
-         None, "Quote Only", "GEOShield Nano-Ceramic", 3, 50),
+         599, "Quote Only", "GEOShield Nano-Ceramic", 3, 50),
         ("Window Tinting — Carbon", "Window Tinting", "Carbon Film",
          "GEOShield carbon tint — great heat rejection, classic smoked look.",
-         None, "Quote Only", "GEOShield Carbon", 3, 50),
+         299, "Quote Only", "GEOShield Carbon", 3, 50),
         # Undercoating (Fluid Film / Woolwax) — tiered by vehicle size
         ("Undercoating — Fluid Film", "Undercoating", "Fluid Film",
          "Lanolin-based rust protection that creeps into seams. Yearly reapplication.",
