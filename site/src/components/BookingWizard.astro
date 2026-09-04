@@ -198,13 +198,23 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         class="border-navy/15 rounded-lg border p-3 sm:col-span-2"
         rows="3"></textarea>
     </div>
-    <label class="text-navy/70 mt-3 flex items-start gap-2 text-sm">
-      <input type="checkbox" data-deposit class="mt-0.5 accent-[#e6863a]" />
-      <span>I understand a deposit may be required to hold my appointment.</span
-      >
-    </label>
     <div data-review class="bg-sand text-navy/80 mt-4 rounded-lg p-4 text-sm">
     </div>
+    <p data-deposit-note class="text-navy/80 mt-3 text-sm font-semibold"></p>
+    <label
+      data-deposit-label
+      class="text-navy/70 mt-3 flex items-start gap-2 text-sm"
+    >
+      <input
+        type="checkbox"
+        data-deposit
+        class="mt-0.5 accent-[#e6863a]"
+        required
+      />
+      <span
+        >I agree a deposit holds my appointment and is applied to my total.</span
+      >
+    </label>
   </div>
 
   <!-- Nav -->
@@ -231,96 +241,112 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Interior Refresh",
       category: "Interior Detailing",
       price: "from $150",
+      deposit: null,
     },
     {
       id: "premium-interior",
       name: "Premium Interior Restoration",
       category: "Interior Detailing",
       price: "from $250",
+      deposit: null,
     },
     {
       id: "steam-hot-water",
       name: "Steam & Hot Water Extraction",
       category: "Interior Detailing",
       price: "$180 flat",
+      deposit: null,
     },
     {
       id: "polish-protect",
       name: "Polish & Protect",
       category: "Paint Correction & Ceramic",
       price: "from $200",
+      deposit: 50,
     },
     {
       id: "two-step",
       name: "Two-Step Paint Correction",
       category: "Paint Correction & Ceramic",
-      price: "quote",
+      price: "from $525",
+      deposit: 100,
     },
     {
       id: "ceramic",
       name: "Ceramic Coating (Auto)",
       category: "Paint Correction & Ceramic",
-      price: "quote",
+      price: "from $1,500",
+      deposit: 100,
     },
     {
       id: "signature",
       name: "Signature Detail Package",
       category: "Paint Correction & Ceramic",
       price: "from $350",
+      deposit: 100,
     },
     {
       id: "tint-ceramic",
       name: "Window Tinting, Ceramic",
       category: "Window Tinting",
-      price: "quote",
+      price: "By film",
+      deposit: 50,
     },
     {
       id: "tint-nano",
       name: "Window Tinting, Nano-Ceramic",
       category: "Window Tinting",
-      price: "quote",
+      price: "By film",
+      deposit: 50,
     },
     {
       id: "tint-carbon",
       name: "Window Tinting, Carbon",
       category: "Window Tinting",
-      price: "quote",
+      price: "By film",
+      deposit: 50,
     },
     {
       id: "undercoat-fluid",
       name: "Undercoating, Fluid Film",
       category: "Undercoating",
       price: "$175–$300",
+      deposit: 50,
     },
     {
       id: "undercoat-woolwax",
       name: "Undercoating, Woolwax",
       category: "Undercoating",
       price: "$175–$300",
+      deposit: 50,
     },
     {
       id: "rv-wash-wax",
       name: "RV Wash & Wax",
       category: "RV Detailing",
       price: "$20/ft",
+      deposit: 50,
     },
     {
       id: "rv-polish-protect",
       name: "RV Polish & Protect",
       category: "RV Detailing",
       price: "$30/ft",
+      deposit: 100,
     },
     {
       id: "rv-oxidation",
       name: "RV Oxidation Removal",
       category: "RV Detailing",
       price: "$40/ft",
+      deposit: 100,
     },
     {
       id: "rv-ceramic",
       name: "RV Ceramic Coating",
       category: "RV Detailing",
       price: "$70/ft",
+      deposit: 150,
     },
   ];
 
@@ -368,7 +394,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   const show = () => {
     steps.forEach((s, i) => s.classList.toggle("hidden", i !== step));
     prevBtn.classList.toggle("invisible", step === 0);
-    nextBtn.textContent = step === steps.length - 1 ? "Submit" : "Next";
+    nextBtn.textContent = step === steps.length - 1 ? "Book Now" : "Next";
     el.querySelectorAll("[data-step-indicator]").forEach((ind, i) => {
       ind.classList.toggle("opacity-40", i > step);
     });
@@ -395,6 +421,11 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       .filter(Boolean)
       .join(" · ") || "…";
 
+  const depositFor = (): number | null => {
+    const s = services.find((x) => x.id === serviceSelect.value);
+    return s?.deposit ?? null;
+  };
+
   // Load services (live API → fallback)
   fetch(`${apiBase}/api/services`)
     .then((r) => (r.ok ? r.json() : Promise.reject()))
@@ -415,7 +446,12 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                   ? s.starting_price
                     ? `$${s.starting_price}/ft`
                     : "per foot"
-                  : s.pricing_model.toLowerCase(),
+                  : s.pricing_model === "Quote Only"
+                    ? s.starting_price
+                      ? `from $${s.starting_price}`
+                      : "By film"
+                    : s.pricing_model.toLowerCase(),
+            deposit: s.deposit_amount ?? null,
           });
         }
       }
@@ -559,6 +595,10 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         return "Please enter a valid US phone number.";
       if (isMobile() && !val("[data-address]").trim())
         return "Please enter your service address for mobile details.";
+      const d = depositFor();
+      const depBox = el.querySelector<HTMLInputElement>("[data-deposit]")!;
+      if (d && !depBox.checked)
+        return "Please confirm the deposit to hold your slot.";
       return "";
     }
     return "";
@@ -573,7 +613,22 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     }
     if (step < steps.length - 1) {
       step++;
-      if (step === 4) reviewEl.textContent = summary();
+      if (step === 4) {
+        reviewEl.textContent = summary();
+        const d = depositFor();
+        const noteEl = el.querySelector<HTMLElement>("[data-deposit-note]")!;
+        const depLabel = el.querySelector<HTMLElement>("[data-deposit-label]")!;
+        const depBox = el.querySelector<HTMLInputElement>("[data-deposit]")!;
+        if (d) {
+          noteEl.textContent = `A $${d} deposit holds your slot, applied to your total.`;
+          depLabel.classList.remove("hidden");
+          depBox.required = true;
+        } else {
+          noteEl.textContent = "No deposit required, pay on the day.";
+          depLabel.classList.add("hidden");
+          depBox.required = false;
+        }
+      }
       show();
       return;
     }
