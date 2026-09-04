@@ -344,6 +344,33 @@ def init_db():
             (amount, name))
     conn.commit()
 
+    # Normalize pricing_model: tiered services show "from $X", flat show "$X" (safe to re-run)
+    pricing_model_updates = [
+        ('Quote Only', 'Interior Refresh'),
+        ('Quote Only', 'Premium Interior Restoration'),
+        ('Quote Only', 'Polish & Protect (Auto)'),
+        ('Quote Only', 'Two-Step Paint Correction'),
+        ('Quote Only', 'Ceramic Coating (Auto)'),
+        ('Quote Only', 'Undercoating — Fluid Film'),
+        ('Quote Only', 'Undercoating — Woolwax'),
+    ]
+    for model, name in pricing_model_updates:
+        conn.execute(
+            "UPDATE services SET pricing_model=? WHERE name=? AND pricing_model != ?",
+            (model, name, model))
+    conn.commit()
+
+    # Correct Premium Interior base price (was 250, now 200)
+    conn.execute(
+        "UPDATE services SET starting_price=200 WHERE name='Premium Interior Restoration' AND starting_price=250")
+
+    # Correct Polish & Protect base price (was 200, now 375)
+    conn.execute(
+        "UPDATE services SET starting_price=375 WHERE name='Polish & Protect (Auto)' AND starting_price=200")
+
+    # Remove discontinued Steam & Hot Water Extraction service
+    conn.execute("DELETE FROM services WHERE name='Steam & Hot Water Extraction'")
+
     # Normalize existing phone numbers to digits-only (dedup migration)
     all_customers = conn.execute("SELECT id, phone FROM customers WHERE phone IS NOT NULL").fetchall()
     for row in all_customers:
@@ -440,16 +467,17 @@ SERVICE_PRICE_TIERS = {
     'Interior Refresh':               [150,  180,  210],
     'Premium Interior Restoration':   [200,  240,  280],
     'Polish & Protect':               [375,  425,  475],
-    'Signature Detail Package':       [1150, 1350, 1600],
     'Two-Step Paint Correction':      [525,  625,  725],
     'Ceramic Coating (Auto)':         [1500, 1750, 2000],
-    'Undercoating — Fluid Film':      [175, 225, 300],
-    'Undercoating — Woolwax':         [175, 225, 300],
+    'Undercoating — Fluid Film':      [175,  225,  300],
+    'Undercoating — Woolwax':         [175,  225,  300],
 }
 
 # Marine / RV services (per-foot pricing)
 PER_FOOT_SERVICES = {'RV Wash & Wax', 'RV Polish & Protect', 'RV Oxidation Removal', 'RV Ceramic Coating'}
 PER_FOOT_RATE = 20  # dollars per foot
+
+MOBILE_FEE = 25  # flat surcharge added to mobile (non-shop) details
 
 
 def classify_vehicle_size(vehicle_type):
@@ -483,6 +511,32 @@ def get_service_tier_price(service_name, vehicle_size):
     idx_map = {'Sedan': 0, 'SUV/Hatchback': 1, 'Large SUV/Truck': 2}
     idx = idx_map.get(vehicle_size, 0)
     return tiers[idx]
+
+
+def compute_quoted_price(service_id, vehicle_size, is_mobile=False, conn=None):
+    """Return the quoted price for a booking, or None if not determinable at booking time.
+
+    Tiered services use their size tier; flat-rate services use their starting_price.
+    Per-foot (needs length) and unpriced (tint) services return None. Mobile adds MOBILE_FEE.
+    """
+    _close = conn is None
+    if _close:
+        conn = get_db()
+    row = conn.execute(
+        "SELECT name, starting_price, pricing_model FROM services WHERE id=?",
+        (service_id,)).fetchone()
+    if _close:
+        conn.close()
+    if not row:
+        return None
+    price = get_service_tier_price(row['name'], vehicle_size)
+    if price is None and row['pricing_model'] == 'Flat Rate':
+        price = row['starting_price']
+    if price is None:
+        return None
+    if is_mobile:
+        price += MOBILE_FEE
+    return int(price)
 
 
 def get_vehicle_size_short(vehicle_size):
@@ -554,13 +608,10 @@ def seed_services():
         # Interior Detailing
         ("Interior Refresh", "Interior Detailing", "Interior Refresh",
          "Complete interior clean: vacuum, wipe-down, glass, and light stain treatment.",
-         150, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl", 2, None),
+         150, "Quote Only", "Koch Chemie Pol Star, Carpro Perl", 2, None),
         ("Premium Interior Restoration", "Interior Detailing", "Premium Interior Restoration",
          "Deep clean with hot water extraction and steam. Carpet, upholstery, headliner — the works.",
-         250, "Flat Rate", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4, None),
-        ("Steam & Hot Water Extraction", "Interior Detailing", "Steam & Hot Water Extraction",
-         "Sanitizing steam treatment + hot water extraction for carpets and fabric seats.",
-         180, "Flat Rate", "Steam cleaner, hot water extractor", 3, None),
+         200, "Quote Only", "Koch Chemie Pol Star, Carpro Perl, hot water extractor", 4, None),
         # Paint Correction
         ("Two-Step Paint Correction", "Paint Correction & Ceramic", "Two-Step Paint Correction",
          "Compound + polish to remove swirls, light scratches, and oxidation. Restores depth and clarity.",
@@ -570,7 +621,7 @@ def seed_services():
          1500, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8, 100),
         ("Polish & Protect (Auto)", "Paint Correction & Ceramic", "Polish & Protect",
          "Single-stage polish with premium paint sealant. Perfect maintenance detail.",
-         200, "Flat Rate", "Polish, sealant, dual-action polisher", 3, 50),
+         375, "Quote Only", "Polish, sealant, dual-action polisher", 3, 50),
         ("Signature Detail Package", "Paint Correction & Ceramic", "Signature Detail Package",
          "The full treatment: interior refresh + exterior polish & protect. Your car, transformed.",
          350, "Flat Rate", "Pol Star, Carpro Perl, polish, sealant", 5, 100),
@@ -594,21 +645,21 @@ def seed_expansion_services():
     services = [
         # Window Tinting (GEOShield) — premium films, priced from (tiered by vehicle size)
         ("Window Tinting — Ceramic", "Window Tinting", "Ceramic Film",
-         "GEOShield ceramic tint — maximum IR/UV rejection, clearest optics.",
-         449, "Quote Only", "GEOShield Ceramic", 4, 50),
+         "GEOShield C2 Ceramic — carbon + nano-ceramic hybrid, strong heat rejection, true black.",
+         449, "Quote Only", "GEOShield C2 Ceramic", 4, 50),
         ("Window Tinting — Nano-Ceramic", "Window Tinting", "Nano-Ceramic Film",
-         "GEOShield nano-ceramic tint — superior heat rejection, no signal interference.",
-         599, "Quote Only", "GEOShield Nano-Ceramic", 3, 50),
+         "GEOShield Pro Nano — advanced nano-ceramic, superior heat rejection, no signal interference.",
+         599, "Quote Only", "GEOShield Pro Nano", 3, 50),
         ("Window Tinting — Carbon", "Window Tinting", "Carbon Film",
-         "GEOShield carbon tint — great heat rejection, classic smoked look.",
-         299, "Quote Only", "GEOShield Carbon", 3, 50),
+         "GEOShield C2 — carbon-infused film, great heat rejection, classic smoked look.",
+         299, "Quote Only", "GEOShield C2", 3, 50),
         # Undercoating (Fluid Film / Woolwax) — tiered by vehicle size
         ("Undercoating — Fluid Film", "Undercoating", "Fluid Film",
          "Lanolin-based rust protection that creeps into seams. Yearly reapplication.",
-         175, "Flat Rate", "Fluid Film", 2, 50),
+         175, "Quote Only", "Fluid Film", 2, 50),
         ("Undercoating — Woolwax", "Undercoating", "Woolwax",
          "Thicker, longer-lasting lanolin coating. Two-year reapplication.",
-         175, "Flat Rate", "Woolwax", 2, 50),
+         175, "Quote Only", "Woolwax", 2, 50),
     ]
     for s in services:
         exists = conn.execute(
@@ -700,14 +751,14 @@ def create_appointment(customer_id, appointment_date, appointment_time=None,
                        vehicle_id=None, service_id=None, job_address=None,
                        special_requests=None, status='New Lead',
                        payment_link=None, deposit_agreed_at=None,
-                       appointment_tz=None, conn=None):
+                       appointment_tz=None, quoted_price=None, conn=None):
     _close = conn is None
     if _close:
         conn = get_db()
     conn.execute("""
-        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
-    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz))
+        INSERT INTO appointments (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz, quoted_price)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+    """, (customer_id, vehicle_id, service_id, appointment_date, appointment_time, job_address, status, special_requests, payment_link, deposit_agreed_at, appointment_tz, quoted_price))
     appt_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     row = conn.execute("SELECT id FROM appointments WHERE rowid=?", (appt_id,)).fetchone()
     if _close:

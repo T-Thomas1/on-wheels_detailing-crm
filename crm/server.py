@@ -32,6 +32,7 @@ from crm import (
     now, today_str, now_str,
     get_tz_for, tz_display_label, tz_offset_label, LOCATION_TIMEZONES,
     classify_vehicle_size, get_service_tier_price, get_vehicle_size_short,
+    SERVICE_PRICE_TIERS, MOBILE_FEE, compute_quoted_price,
 )
 
 PORT = int(os.environ.get('PORT', 5050))
@@ -392,8 +393,10 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'pricing_model': s['pricing_model'],
                     'duration_hours': s['duration_hours'],
                     'deposit_amount': s['deposit_amount'],
+                    'price_tiers': SERVICE_PRICE_TIERS.get(s['name'])
+                                   or SERVICE_PRICE_TIERS.get(s['name'].replace(' (Auto)', '')),
                 })
-            json_response(self, {'services': categorized})
+            json_response(self, {'services': categorized, 'mobile_fee': MOBILE_FEE})
 
         elif path == '/api/dashboard':
             if not self._require_auth('read'):
@@ -540,13 +543,16 @@ class CRMHandler(BaseHTTPRequestHandler):
                 payment_link = None
                 deposit_agreed_at = None
                 deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
-    
+
+                is_mobile = data.get('location', '') in MOBILE_LOCATIONS
+                quoted_price = compute_quoted_price(service_id, vehicle_size, is_mobile=is_mobile, conn=conn)
+
                 if service_id:
                     deposit_amount, link = get_service_deposit(service_id, conn=conn)
                     if deposit_amount and deposit_agreed:
                         payment_link = link
                         deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
+
                 appointment_id = create_appointment(
                     customer_id=customer_id,
                     appointment_date=data.get('preferred_date', datetime.now().strftime('%Y-%m-%d')),
@@ -558,6 +564,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     status='New Lead',
                     payment_link=payment_link,
                     deposit_agreed_at=deposit_agreed_at,
+                    quoted_price=quoted_price,
                     conn=conn,
                 )
     
@@ -579,6 +586,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'success': True,
                     'message': confirm_msg,
                     'appointment_id': appointment_id,
+                    'quoted_price': quoted_price,
                 }, 201)
             except Exception as e:
                 try:

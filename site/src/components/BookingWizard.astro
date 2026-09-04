@@ -120,16 +120,22 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         class="border-navy/15 rounded-lg border p-3"
       />
       <select data-type class="border-navy/15 rounded-lg border p-3" required>
-        <option value="">Vehicle type *</option>
-        <option>Car</option><option>SUV</option><option>Truck</option><option
-          >Van</option
-        ><option>RV</option><option>Other</option>
+        <option value="">Vehicle size *</option>
+        <option value="Car">Sedan / Car</option>
+        <option value="SUV">SUV / Hatchback</option>
+        <option value="Truck">Large SUV / Truck / Van</option>
+        <option value="RV">RV / Camper</option>
+        <option value="Other">Other</option>
       </select>
       <input
         data-color
         placeholder="Color (optional)"
         class="border-navy/15 rounded-lg border p-3 sm:col-span-2"
       />
+      <div
+        data-size-price
+        class="text-navy mt-3 hidden rounded-lg bg-sand p-3 text-sm font-semibold sm:col-span-2"
+      ></div>
     </div>
   </div>
 
@@ -200,6 +206,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     </div>
     <div data-review class="bg-sand text-navy/80 mt-4 rounded-lg p-4 text-sm">
     </div>
+    <p data-total-note class="text-navy mt-3 text-sm font-bold"></p>
     <p data-deposit-note class="text-navy/80 mt-3 text-sm font-semibold"></p>
     <label
       data-deposit-label
@@ -241,27 +248,26 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Interior Refresh",
       category: "Interior Detailing",
       price: "from $150",
+      tiers: [150, 180, 210],
+      base: null,
       deposit: null,
     },
     {
       id: "premium-interior",
       name: "Premium Interior Restoration",
       category: "Interior Detailing",
-      price: "from $250",
-      deposit: null,
-    },
-    {
-      id: "steam-hot-water",
-      name: "Steam & Hot Water Extraction",
-      category: "Interior Detailing",
-      price: "$180 flat",
+      price: "from $200",
+      tiers: [200, 240, 280],
+      base: null,
       deposit: null,
     },
     {
       id: "polish-protect",
       name: "Polish & Protect",
       category: "Paint Correction & Ceramic",
-      price: "from $200",
+      price: "from $375",
+      tiers: [375, 425, 475],
+      base: null,
       deposit: 50,
     },
     {
@@ -269,6 +275,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Two-Step Paint Correction",
       category: "Paint Correction & Ceramic",
       price: "from $525",
+      tiers: [525, 625, 725],
+      base: null,
       deposit: 100,
     },
     {
@@ -276,13 +284,17 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Ceramic Coating (Auto)",
       category: "Paint Correction & Ceramic",
       price: "from $1,500",
+      tiers: [1500, 1750, 2000],
+      base: null,
       deposit: 100,
     },
     {
       id: "signature",
       name: "Signature Detail Package",
       category: "Paint Correction & Ceramic",
-      price: "from $350",
+      price: "$350",
+      tiers: null,
+      base: 350,
       deposit: 100,
     },
     {
@@ -290,6 +302,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Window Tinting, Ceramic",
       category: "Window Tinting",
       price: "from $449",
+      tiers: null,
+      base: null,
       deposit: 50,
     },
     {
@@ -297,6 +311,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Window Tinting, Nano-Ceramic",
       category: "Window Tinting",
       price: "from $599",
+      tiers: null,
+      base: null,
       deposit: 50,
     },
     {
@@ -304,6 +320,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Window Tinting, Carbon",
       category: "Window Tinting",
       price: "from $299",
+      tiers: null,
+      base: null,
       deposit: 50,
     },
     {
@@ -311,6 +329,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Undercoating, Fluid Film",
       category: "Undercoating",
       price: "$175–$300",
+      tiers: [175, 225, 300],
+      base: null,
       deposit: 50,
     },
     {
@@ -318,6 +338,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "Undercoating, Woolwax",
       category: "Undercoating",
       price: "$175–$300",
+      tiers: [175, 225, 300],
+      base: null,
       deposit: 50,
     },
     {
@@ -325,6 +347,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "RV Wash & Wax",
       category: "RV Detailing",
       price: "$20/ft",
+      tiers: null,
+      base: null,
       deposit: 50,
     },
     {
@@ -332,6 +356,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "RV Polish & Protect",
       category: "RV Detailing",
       price: "$30/ft",
+      tiers: null,
+      base: null,
       deposit: 100,
     },
     {
@@ -339,6 +365,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "RV Oxidation Removal",
       category: "RV Detailing",
       price: "$40/ft",
+      tiers: null,
+      base: null,
       deposit: 100,
     },
     {
@@ -346,6 +374,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       name: "RV Ceramic Coating",
       category: "RV Detailing",
       price: "$70/ft",
+      tiers: null,
+      base: null,
       deposit: 150,
     },
   ];
@@ -426,10 +456,57 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     return s?.deposit ?? null;
   };
 
+  let mobileFee = 25;
+
+  const sizeOf: Record<string, string> = {
+    Car: "Sedan",
+    SUV: "SUV/Hatchback",
+    Truck: "Large SUV/Truck",
+    Van: "Large SUV/Truck",
+    RV: "Other",
+    Other: "Other",
+  };
+  const tierIndex: Record<string, number> = {
+    Sedan: 0,
+    "SUV/Hatchback": 1,
+    "Large SUV/Truck": 2,
+  };
+
+  const currentService = () =>
+    services.find((x) => x.id === serviceSelect.value);
+
+  const priceSummary = () => {
+    const s = currentService();
+    if (!s) return null;
+    const size = sizeOf[val("[data-type]")] ?? "Sedan";
+    const mobile = isMobile();
+    let base: number | null = null;
+    if (s.tiers) base = s.tiers[tierIndex[size] ?? 0];
+    else if (typeof s.base === "number") base = s.base;
+    if (base == null) return null; // per-foot / tint — no definitive price
+    const total = base + (mobile ? mobileFee : 0);
+    return { base, total, mobile, size };
+  };
+
+  const updatePrice = () => {
+    const priceEl = el.querySelector<HTMLElement>("[data-size-price]");
+    if (!priceEl) return;
+    const ps = priceSummary();
+    if (ps) {
+      priceEl.classList.remove("hidden");
+      priceEl.textContent =
+        `${currentService()?.name} (${ps.size}): $${ps.total}` +
+        (ps.mobile ? ` (includes $${mobileFee} mobile fee)` : "");
+    } else {
+      priceEl.classList.add("hidden");
+    }
+  };
+
   // Load services (live API → fallback)
   fetch(`${apiBase}/api/services`)
     .then((r) => (r.ok ? r.json() : Promise.reject()))
     .then((data) => {
+      if (typeof data.mobile_fee === "number") mobileFee = data.mobile_fee;
       const live: typeof fallbackServices = [];
       for (const [cat, items] of Object.entries(data.services ?? {})) {
         for (const s of items as any[]) {
@@ -451,6 +528,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                       ? `from $${s.starting_price}`
                       : "By film"
                     : s.pricing_model.toLowerCase(),
+            tiers: s.price_tiers ?? null,
+            base: s.pricing_model === "Flat Rate" ? s.starting_price : null,
             deposit: s.deposit_amount ?? null,
           });
         }
@@ -493,6 +572,11 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         syncAddress();
       });
     },
+  );
+
+  el.querySelector<HTMLSelectElement>("[data-type]")!.addEventListener(
+    "change",
+    updatePrice,
   );
 
   // US phone auto-format: (XXX) XXX-XXXX
@@ -615,6 +699,11 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       step++;
       if (step === 4) {
         reviewEl.textContent = summary();
+        const ps = priceSummary();
+        const totalEl = el.querySelector<HTMLElement>("[data-total-note]")!;
+        totalEl.textContent = ps
+          ? `Estimated total: $${ps.total}. Payment due at the start of your session.`
+          : "Final price confirmed after booking.";
         const d = depositFor();
         const noteEl = el.querySelector<HTMLElement>("[data-deposit-note]")!;
         const depLabel = el.querySelector<HTMLElement>("[data-deposit-label]")!;
