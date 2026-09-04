@@ -19,6 +19,14 @@ const locations = [
   { value: "Texas - Harris County", label: "Mobile, Houston, TX" },
 ];
 
+const vehicleSizes = [
+  { value: "Car", label: "Sedan / Car" },
+  { value: "SUV", label: "SUV / Hatchback" },
+  { value: "Truck", label: "Large SUV / Truck / Van" },
+  { value: "RV", label: "RV / Camper" },
+  { value: "Other", label: "Other" },
+];
+
 const timeSlots = [
   "9:00 AM",
   "10:00 AM",
@@ -119,14 +127,25 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         min="1970"
         class="border-navy/15 rounded-lg border p-3"
       />
-      <select data-type class="border-navy/15 rounded-lg border p-3" required>
-        <option value="">Vehicle size *</option>
-        <option value="Car">Sedan / Car</option>
-        <option value="SUV">SUV / Hatchback</option>
-        <option value="Truck">Large SUV / Truck / Van</option>
-        <option value="RV">RV / Camper</option>
-        <option value="Other">Other</option>
-      </select>
+      <div class="sm:col-span-2">
+        <p class="text-navy/70 mb-2 text-sm font-semibold">Vehicle size *</p>
+        <div class="grid gap-2 sm:grid-cols-3">
+          {
+            vehicleSizes.map((v) => (
+              <label class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition">
+                <input
+                  type="radio"
+                  name="vehicle_type"
+                  value={v.value}
+                  class="accent-[#e6863a]"
+                  required
+                />
+                <span class="text-navy/80 text-sm">{v.label}</span>
+              </label>
+            ))
+          }
+        </div>
+      </div>
       <input
         data-color
         placeholder="Color (optional)"
@@ -478,7 +497,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   const priceSummary = () => {
     const s = currentService();
     if (!s) return null;
-    const vt = val("[data-type]");
+    const vt = radio("vehicle_type");
     if (!vt) return null; // size not chosen yet — pricing appears on selection
     const size = sizeOf[vt] ?? "Sedan";
     const mobile = isMobile();
@@ -577,9 +596,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     },
   );
 
-  el.querySelector<HTMLSelectElement>("[data-type]")!.addEventListener(
-    "change",
-    updatePrice,
+  el.querySelectorAll<HTMLInputElement>('input[name="vehicle_type"]').forEach(
+    (r) => r.addEventListener("change", updatePrice),
   );
 
   serviceSelect.addEventListener("change", updatePrice);
@@ -665,7 +683,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     if (step === 1)
       return serviceSelect.value ? "" : "Please choose a service.";
     if (step === 2) {
-      if (!val("[data-type]")) return "Please select your vehicle size.";
+      if (!radio("vehicle_type")) return "Please select your vehicle size.";
       const y = Number(val("[data-year]"));
       if (val("[data-year]") && (y < 1970 || y > new Date().getFullYear() + 1))
         return "Please enter a valid year (1970 or newer).";
@@ -747,7 +765,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       location: radio("location"),
       job_address: val("[data-address]"),
       address: val("[data-address]"),
-      vehicle_type: val("[data-type]"),
+      vehicle_type: radio("vehicle_type"),
       vehicle_make: val("[data-make]"),
       vehicle_model: val("[data-model]"),
       vehicle_year: val("[data-year]"),
