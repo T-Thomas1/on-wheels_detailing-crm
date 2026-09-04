@@ -14,6 +14,7 @@ import hashlib
 import hmac
 from datetime import datetime, timedelta
 from pathlib import Path
+from html import escape
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 
@@ -199,11 +200,15 @@ def json_response(handler, data, status=200):
 
 
 def render_template(name, **context):
-    """Render an HTML template with simple {{ var }} substitution."""
+    """Render an HTML template with simple {{ var }} substitution (HTML-escaped)."""
     path = TEMPLATES_DIR / name
     if not path.exists():
         return f"<h1>Template not found: {name}</h1>"
     html = path.read_text()
+
+    def esc(value) -> str:
+        """HTML-escape a value for safe interpolation (XSS defense)."""
+        return escape(str(value or ''), quote=True)
 
     def replace_for(match):
         var = match.group(1).strip()
@@ -215,9 +220,9 @@ def render_template(name, **context):
             item_html = block
             if isinstance(item, dict):
                 for k, v in item.items():
-                    item_html = item_html.replace('{{ ' + var + '.' + k + ' }}', str(v or ''))
+                    item_html = item_html.replace('{{ ' + var + '.' + k + ' }}', esc(v))
             else:
-                item_html = item_html.replace('{{ ' + var + ' }}', str(item or ''))
+                item_html = item_html.replace('{{ ' + var + ' }}', esc(item))
             result.append(item_html)
         return ''.join(result)
 
@@ -235,8 +240,8 @@ def render_template(name, **context):
         if '.' in expr:
             obj, key = expr.split('.', 1)
             val = context.get(obj, {})
-            return str(val.get(key, '')) if isinstance(val, dict) else str(val or '')
-        return str(context.get(expr, ''))
+            return esc(val.get(key, '')) if isinstance(val, dict) else esc(val)
+        return esc(context.get(expr, ''))
 
     html = re.sub(r'\{\{ ([\w.]+) \}\}', replace_var, html)
 
@@ -245,7 +250,7 @@ def render_template(name, **context):
         filter_name = match.group(2)
         var_expr = match.group(3).strip()
         val = context.get(var_expr, 0)
-        return fmt % (float(val),) if filter_name == 'format' and val is not None else str(val)
+        return fmt % (float(val),) if filter_name == 'format' and val is not None else esc(val)
 
     html = re.sub(r'\{\{ "([^"]+)"\|(\w+)\((\w+)\) \}\}', replace_filtered, html)
     return html
@@ -263,6 +268,14 @@ class CRMHandler(BaseHTTPRequestHandler):
         if forwarded:
             return forwarded.split(',')[0].strip()
         return self.client_address[0]
+
+    def _content_length(self) -> int:
+        """Safely parse Content-Length; malformed or missing → 0."""
+        raw = self.headers.get('Content-Length', '')
+        try:
+            return int(raw) if raw.strip() else 0
+        except ValueError:
+            return 0
 
     def _is_public_path(self) -> bool:
         path = urlparse(self.path).path
@@ -432,7 +445,7 @@ class CRMHandler(BaseHTTPRequestHandler):
             if not self._rate_limit_check(book_mode=True):
                 return
 
-            content_length = int(self.headers.get('Content-Length', 0))
+            content_length = self._content_length()
             if content_length > 10_000:  # 10KB max
                 json_response(self, {'error': 'Request too large'}, 413)
                 return
@@ -594,7 +607,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                 json_response(self, {'error': 'Invalid appointment ID'}, 400)
                 return
 
-            content_length = int(self.headers.get('Content-Length', 0))
+            content_length = self._content_length()
             body = self.rfile.read(content_length)
             try:
                 data = json.loads(body)

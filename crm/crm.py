@@ -330,6 +330,17 @@ def init_db():
             (amount, name))
     conn.commit()
 
+    # Update starting_price for quote-only services so "from $X" renders (safe to re-run)
+    starting_price_updates = [
+        (525, 'Two-Step Paint Correction'),
+        (1500, 'Ceramic Coating (Auto)'),
+    ]
+    for amount, name in starting_price_updates:
+        conn.execute(
+            "UPDATE services SET starting_price=? WHERE name=? AND starting_price IS NULL",
+            (amount, name))
+    conn.commit()
+
     # Normalize existing phone numbers to digits-only (dedup migration)
     all_customers = conn.execute("SELECT id, phone FROM customers WHERE phone IS NOT NULL").fetchall()
     for row in all_customers:
@@ -550,10 +561,10 @@ def seed_services():
         # Paint Correction
         ("Two-Step Paint Correction", "Paint Correction & Ceramic", "Two-Step Paint Correction",
          "Compound + polish to remove swirls, light scratches, and oxidation. Restores depth and clarity.",
-         None, "Quote Only", "Compounds, polishes, dual-action polisher", 6, 100),
+         525, "Quote Only", "Compounds, polishes, dual-action polisher", 6, 100),
         ("Ceramic Coating (Auto)", "Paint Correction & Ceramic", "Ceramic Coating",
          "Carpro CQ.UK 3.0 ceramic coating for cars/trucks. 2+ years of hydrophobic protection.",
-         None, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8, 100),
+         1500, "Quote Only", "Carpro CQ.UK 3.0, surface prep", 8, 100),
         ("Polish & Protect (Auto)", "Paint Correction & Ceramic", "Polish & Protect",
          "Single-stage polish with premium paint sealant. Perfect maintenance detail.",
          200, "Flat Rate", "Polish, sealant, dual-action polisher", 3, 50),
