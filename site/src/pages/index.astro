@@ -50,27 +50,27 @@ const brands = [
 
 const googleRating = {
   score: "5.0",
-  count: null, // fill in the real Google review count when known
+  count: 13,
 };
 
 const reviews = [
   {
     quote:
-      "SAMPLE REVIEW: replace with a real Google review naming the service and town.",
-    name: "Customer Name",
-    town: "City, MI",
+      "I had my van detailed and I thought it was beyond saving. They proved me wrong because it looked better than when I bought it new. Can't recommend them enough!!",
+    name: "Ashley Storer",
+    town: "",
   },
   {
     quote:
-      "SAMPLE REVIEW: replace with a real Google review naming the service and town.",
-    name: "Customer Name",
-    town: "City, MI",
+      "Wow what an amazing service! We live in Cypress in Harris County Texas. My father has an older car that he is very happy with even though it really needed a deep interior cleaning. On-Wheels Detailing came out to the house. They were polite, professional, and very focused on their work. They also asked great questions to make sure we received exactly what we wanted. Thank you so much, and we highly recommend On-Wheels Detailing to anyone who wants a fantastic, reasonable car cleaning service that delivers their services to right where you are.",
+    name: "Jc Thomson",
+    town: "Cypress, TX",
   },
   {
     quote:
-      "SAMPLE REVIEW: replace with a real Google review naming the service and town.",
-    name: "Customer Name",
-    town: "City, MI",
+      "Highly recommend! I originally tried another local company and they no showed for my appt. Been using On-Wheels for a little over a year now; I'm on a 3 month schedule and I look forward to each visit! Getting into a squeaky clean ride is so nice. The scent bomb was a nice touch too!",
+    name: "Canine Design",
+    town: "",
   },
 ];
 
@@ -341,6 +341,13 @@ const ldJson = {
           class="text-navy/60 text-sm hover:underline"
           >Read all reviews on Google →</a
         >
+        <a
+          href="https://www.facebook.com/share/1JHbMqPWnt/"
+          target="_blank"
+          rel="noopener"
+          class="text-navy/60 text-sm hover:underline"
+          >22 reviews on Facebook →</a
+        >
       </div>
 
       <div class="mt-10 grid gap-6 md:grid-cols-3">
@@ -350,7 +357,8 @@ const ldJson = {
               <div class="text-gold" aria-hidden="true">★★★★★</div>
               <blockquote class="text-navy/80 mt-3 text-sm">{r.quote}</blockquote>
               <figcaption class="text-navy mt-4 text-sm font-semibold">
-                {r.name}<span class="text-navy/50 font-normal">, {r.town}</span>
+                {r.name || "Google review"}
+                {r.town && <span class="text-navy/50 font-normal">, {r.town}</span>}
               </figcaption>
             </figure>
           ))
