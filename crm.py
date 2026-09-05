@@ -4,6 +4,7 @@
 import sqlite3
 import os
 import json
+import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -115,6 +116,18 @@ def get_db() -> sqlite3.Connection:
     conn.execute("PRAGMA synchronous=NORMAL")
     conn.execute("PRAGMA mmap_size=33554432")
     return conn
+
+
+def _repoint_create_table(create_sql, old_name, new_name):
+    """Swap the table name in a CREATE TABLE statement, robust to SQLite's quoted
+    identifier form (`CREATE TABLE "services"`) that appears after an ALTER RENAME.
+    A naive `.replace('CREATE TABLE services', ...)` misses the quoted form."""
+    pattern = (
+        r'CREATE TABLE\s+(?:"' + re.escape(old_name) + r'"|'
+        + re.escape(old_name) + r'|\['
+        + re.escape(old_name) + r'\])'
+    )
+    return re.sub(pattern, 'CREATE TABLE ' + new_name, create_sql, count=1)
 
 
 def init_db():
@@ -237,7 +250,8 @@ def init_db():
             "location IN ('Texas - Harris County','Michigan - Metro Detroit')",
             "location IN ('Texas - Harris County','Michigan - Metro Detroit',"
             "'Shop - Marysville, MI','Shop - New Haven, MI')",
-        ).replace("CREATE TABLE customers", "CREATE TABLE customers_new", 1)
+        )
+        new_sql = _repoint_create_table(new_sql, "customers", "customers_new")
         conn.execute("PRAGMA foreign_keys=OFF")
         conn.execute("PRAGMA legacy_alter_table=ON")
         try:
@@ -272,7 +286,8 @@ def init_db():
             "'Marine Gel-coat','Interior Detailing','Paint Correction & Ceramic',"
             "'Window Tinting','Undercoating'",
             1,
-        ).replace("CREATE TABLE services", "CREATE TABLE services_new", 1)
+        )
+        new_sql = _repoint_create_table(new_sql, "services", "services_new")
         conn.execute("PRAGMA foreign_keys=OFF")
         conn.execute("PRAGMA legacy_alter_table=ON")
         try:
@@ -299,7 +314,8 @@ def init_db():
             "'Window Tinting','Undercoating'",
             "'Window Tinting','Undercoating','RV Detailing'",
             1,
-        ).replace("CREATE TABLE services", "CREATE TABLE services_new", 1)
+        )
+        new_sql = _repoint_create_table(new_sql, "services", "services_new")
         conn.execute("PRAGMA foreign_keys=OFF")
         conn.execute("PRAGMA legacy_alter_table=ON")
         try:
