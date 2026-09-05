@@ -132,7 +132,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         <div class="grid gap-2 sm:grid-cols-3">
           {
             vehicleSizes.map((v) => (
-              <label class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition">
+              <label data-size={v.value} class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition">
                 <input
                   type="radio"
                   name="vehicle_type"
@@ -530,21 +530,25 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
   const isRvService = () => currentService()?.category === "RV Detailing";
 
-  // RV services always mean an RV — set the size automatically and lock the
-  // group so the customer isn't asked to pick a size twice.
+  // RV Detailing is the only service that offers the RV size: selecting it
+  // shows (and pre-checks) RV alone; every other service hides RV entirely.
   const syncVehicleSize = () => {
     const rv = isRvService();
-    const inputs = [
-      ...el.querySelectorAll<HTMLInputElement>('input[name="vehicle_type"]'),
-    ];
-    const rvInput = inputs.find((i) => i.value === "RV");
+    const labels = [...el.querySelectorAll<HTMLElement>("[data-size]")];
+    const rvInput = el.querySelector<HTMLInputElement>(
+      'input[name="vehicle_type"][value="RV"]',
+    );
     const note = el.querySelector<HTMLElement>("[data-rv-note]");
+    labels.forEach((l) =>
+      l.classList.toggle(
+        "hidden",
+        rv ? l.dataset.size !== "RV" : l.dataset.size === "RV",
+      ),
+    );
     if (rv) {
-      inputs.forEach((i) => (i.disabled = i.value !== "RV"));
       if (rvInput) rvInput.checked = true;
       note?.classList.remove("hidden");
     } else {
-      inputs.forEach((i) => (i.disabled = false));
       if (rvInput?.checked) rvInput.checked = false;
       note?.classList.add("hidden");
     }
@@ -871,4 +875,5 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   }
 
   show();
+  syncVehicleSize();
 </script>
