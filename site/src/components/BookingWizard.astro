@@ -132,7 +132,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         <div class="grid gap-2 sm:grid-cols-3">
           {
             vehicleSizes.map((v) => (
-              <label class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition">
+              <label class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition">
                 <input
                   type="radio"
                   name="vehicle_type"
@@ -145,6 +145,9 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             ))
           }
         </div>
+        <p data-rv-note class="text-accent mt-2 hidden text-xs font-semibold">
+          RV service — vehicle size is set to RV automatically.
+        </p>
       </div>
       <input
         data-color
@@ -525,6 +528,28 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   const currentService = () =>
     services.find((x) => x.id === serviceSelect.value);
 
+  const isRvService = () => currentService()?.category === "RV Detailing";
+
+  // RV services always mean an RV — set the size automatically and lock the
+  // group so the customer isn't asked to pick a size twice.
+  const syncVehicleSize = () => {
+    const rv = isRvService();
+    const inputs = [
+      ...el.querySelectorAll<HTMLInputElement>('input[name="vehicle_type"]'),
+    ];
+    const rvInput = inputs.find((i) => i.value === "RV");
+    const note = el.querySelector<HTMLElement>("[data-rv-note]");
+    if (rv) {
+      inputs.forEach((i) => (i.disabled = i.value !== "RV"));
+      if (rvInput) rvInput.checked = true;
+      note?.classList.remove("hidden");
+    } else {
+      inputs.forEach((i) => (i.disabled = false));
+      if (rvInput?.checked) rvInput.checked = false;
+      note?.classList.add("hidden");
+    }
+  };
+
   const priceSummary = () => {
     const s = currentService();
     if (!s) return null;
@@ -622,6 +647,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         serviceSelect.value = "";
         renderServices();
         syncAddress();
+        syncVehicleSize();
         updatePrice();
       });
     },
@@ -631,7 +657,10 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     (r) => r.addEventListener("change", updatePrice),
   );
 
-  serviceSelect.addEventListener("change", updatePrice);
+  serviceSelect.addEventListener("change", () => {
+    syncVehicleSize();
+    updatePrice();
+  });
 
   // US phone auto-format: (XXX) XXX-XXXX
   el.querySelector<HTMLInputElement>("[data-phone]")!.addEventListener(
