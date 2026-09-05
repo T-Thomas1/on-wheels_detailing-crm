@@ -7,9 +7,15 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  noindex?: boolean;
 }
 
-const { title, description, ogImage = "/images/hero-car.webp" } = Astro.props;
+const {
+  title,
+  description,
+  ogImage = "/images/hero-car.webp",
+  noindex = false,
+} = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -23,6 +29,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />

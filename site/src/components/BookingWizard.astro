@@ -227,20 +227,51 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     </div>
     <p data-total-note class="text-navy mt-3 text-sm font-bold"></p>
     <p data-deposit-note class="text-navy/80 mt-3 text-sm font-semibold"></p>
-    <label
-      data-deposit-label
-      class="text-navy/70 mt-3 flex items-start gap-2 text-sm"
-    >
-      <input
-        type="checkbox"
-        data-deposit
-        class="mt-0.5 accent-[#e6863a]"
-        required
-      />
-      <span
-        >I agree a deposit holds my appointment and is applied to my total.</span
-      >
-    </label>
+
+    <!-- Payment method (only shown when the service carries a deposit) -->
+    <fieldset data-payment-wrap class="mt-4 hidden">
+      <legend class="text-navy/70 mb-2 text-sm font-semibold">
+        How would you like to pay? *
+      </legend>
+      <div class="grid gap-2">
+        <label
+          class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition"
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="card"
+            class="accent-[#e6863a] mt-0.5"
+          />
+          <span class="text-navy/80 text-sm">
+            <span class="font-semibold">Pay the deposit now by card</span><span
+              data-card-amount
+            ></span>
+            <span class="text-navy/60 block text-xs">Secured by Stripe</span>
+          </span>
+        </label>
+        <label
+          class="border-navy/15 has-[:checked]:border-accent has-[:checked]:bg-sand flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition"
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="cash"
+            class="accent-[#e6863a] mt-0.5"
+          />
+          <span class="text-navy/80 text-sm">
+            <span class="font-semibold">I'll pay cash at my appointment</span>
+            <span class="text-navy/60 block text-xs"
+              >No card needed. Your deposit is due at the start of your
+              session.</span
+            >
+          </span>
+        </label>
+      </div>
+      <p data-payment-helper class="text-navy/60 mt-2 text-xs">
+        Your deposit is applied to your total.
+      </p>
+    </fieldset>
   </div>
 
   <!-- Nav -->
@@ -703,9 +734,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       if (isMobile() && !val("[data-address]").trim())
         return "Please enter your service address for mobile details.";
       const d = depositFor();
-      const depBox = el.querySelector<HTMLInputElement>("[data-deposit]")!;
-      if (d && !depBox.checked)
-        return "Please confirm the deposit to hold your slot.";
+      if (d && !radio("payment"))
+        return "Please choose how you'd like to pay the deposit.";
       return "";
     }
     return "";
@@ -729,16 +759,21 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
           : "Final price confirmed after booking.";
         const d = depositFor();
         const noteEl = el.querySelector<HTMLElement>("[data-deposit-note]")!;
-        const depLabel = el.querySelector<HTMLElement>("[data-deposit-label]")!;
-        const depBox = el.querySelector<HTMLInputElement>("[data-deposit]")!;
+        const payWrap = el.querySelector<HTMLElement>("[data-payment-wrap]")!;
+        const cardAmt = el.querySelector<HTMLElement>("[data-card-amount]")!;
         if (d) {
           noteEl.textContent = `A $${d} deposit holds your slot, applied to your total.`;
-          depLabel.classList.remove("hidden");
-          depBox.required = true;
+          cardAmt.textContent = ` ($${d} deposit)`;
+          payWrap.classList.remove("hidden");
+          if (!radio("payment")) {
+            const card = el.querySelector<HTMLInputElement>(
+              'input[name="payment"][value="card"]',
+            ) as HTMLInputElement;
+            if (card) card.checked = true;
+          }
         } else {
           noteEl.textContent = "No deposit required, pay on the day.";
-          depLabel.classList.add("hidden");
-          depBox.required = false;
+          payWrap.classList.add("hidden");
         }
       }
       show();
@@ -774,8 +809,8 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       preferred_date: val("[data-date]"),
       preferred_time: val("[data-time]"),
       special_requests: val("[data-notes]"),
-      deposit_agreed:
-        el.querySelector<HTMLInputElement>("[data-deposit]")!.checked,
+      payment_method: radio("payment") || "cash",
+      deposit_agreed: radio("payment") === "card",
     };
     try {
       const res = await fetch(`${apiBase}/api/book`, {
@@ -785,6 +820,13 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
+        if (data.checkout_url) {
+          // Heuristic 1 (visibility of system status): signal the handoff to Stripe.
+          statusEl.className = "mt-4 block text-sm font-semibold text-navy";
+          statusEl.textContent = "Redirecting to secure checkout…";
+          window.location.href = data.checkout_url;
+          return;
+        }
         statusEl.className = "mt-4 block text-sm font-semibold text-navy";
         statusEl.textContent =
           data.message || "Thanks! TaSain will text you shortly to confirm.";

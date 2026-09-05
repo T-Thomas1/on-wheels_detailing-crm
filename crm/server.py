@@ -12,11 +12,13 @@ import io
 import time
 import hashlib
 import hmac
+import base64
+import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 from html import escape
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urlencode
 
 sys.path.insert(0, str(Path(__file__).parent))
 from crm import (
@@ -78,7 +80,7 @@ PHONE_REDACT_LENGTH = 4  # show last 4 digits only
 AUDIT_LOG_PATH = Path(__file__).parent / 'audit.log'
 
 # Public endpoints (no API key required)
-PUBLIC_PATHS = {'/', '/book', '/api/book', '/api/services', '/static/'}
+PUBLIC_PATHS = {'/', '/book', '/api/book', '/api/services', '/static/', '/api/stripe-webhook'}
 
 # Init DB on startup
 _db = init_db()
@@ -255,6 +257,73 @@ def render_template(name, **context):
 
     html = re.sub(r'\{\{ "([^"]+)"\|(\w+)\((\w+)\) \}\}', replace_filtered, html)
     return html
+
+
+# ═══════════════════════════════════════════════════════════════
+#  STRIPE CHECKOUT (server-side — the secret key NEVER leaves this box)
+# ═══════════════════════════════════════════════════════════════
+# A customer pays a deposit at booking via Stripe Checkout (hosted page).
+# The marketing site only ever receives a checkout URL; it never sees the key.
+
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+# Base URL of the marketing site — success/cancel redirect targets.
+SITE_BASE_URL = os.environ.get('SITE_BASE_URL', 'https://www.onwheelsdetailing.com').rstrip('/')
+
+
+def stripe_checkout_enabled() -> bool:
+    """True when the Stripe secret key is configured (checkout is live)."""
+    return bool(STRIPE_SECRET_KEY)
+
+
+def create_checkout_session(amount_dollars, appointment_id, service_name, customer_email=None):
+    """Create a Stripe Checkout Session and return the decoded JSON ('id' + 'url')."""
+    if not STRIPE_SECRET_KEY:
+        raise RuntimeError('STRIPE_SECRET_KEY not configured')
+    unit_amount = int(round(float(amount_dollars) * 100))
+    payload = {
+        'mode': 'payment',
+        'client_reference_id': appointment_id,
+        'success_url': f"{SITE_BASE_URL}/book/success?session_id={{CHECKOUT_SESSION_ID}}",
+        'cancel_url': f"{SITE_BASE_URL}/book",
+        'payment_method_types[0]': 'card',
+        'line_items[0][quantity]': '1',
+        'line_items[0][price_data][currency]': 'usd',
+        'line_items[0][price_data][unit_amount]': str(unit_amount),
+        'line_items[0][price_data][product_data][name]': f"{service_name} deposit",
+        'metadata[appointment_id]': appointment_id,
+    }
+    if customer_email:
+        payload['customer_email'] = customer_email
+    data = urlencode(payload).encode()
+    req = urllib.request.Request(
+        'https://api.stripe.com/v1/checkout/sessions',
+        data=data, method='POST',
+    )
+    req.add_header(
+        'Authorization',
+        'Basic ' + base64.b64encode((STRIPE_SECRET_KEY + ':').encode()).decode(),
+    )
+    req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read().decode())
+
+
+def verify_stripe_signature(payload: bytes, sig_header: str) -> bool:
+    """Verify a Stripe webhook signature header ('t=...,v1=...')."""
+    if not STRIPE_WEBHOOK_SECRET:
+        return False
+    parts = {}
+    for chunk in sig_header.split(','):
+        k, sep, v = chunk.strip().partition('=')
+        if sep:
+            parts[k] = v
+    ts, v1 = parts.get('t', ''), parts.get('v1', '')
+    if not ts or not v1:
+        return False
+    signed = f"{ts}.".encode() + payload
+    expected = hmac.new(STRIPE_WEBHOOK_SECRET.encode(), signed, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, v1)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -443,6 +512,46 @@ class CRMHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         path = urlparse(self.path).path
 
+        if path == '/api/stripe-webhook':
+            content_length = self._content_length()
+            if content_length <= 0 or content_length > 65536:
+                json_response(self, {'error': 'Bad payload'}, 400)
+                return
+            payload = self.rfile.read(content_length)
+            sig_header = self.headers.get('Stripe-Signature', '')
+            if not verify_stripe_signature(payload, sig_header):
+                audit_log('STRIPE_BAD_SIG', self._client_ip(), path)
+                json_response(self, {'error': 'Invalid signature'}, 400)
+                return
+            try:
+                event = json.loads(payload)
+            except json.JSONDecodeError:
+                json_response(self, {'error': 'Invalid JSON'}, 400)
+                return
+
+            if event.get('type') == 'checkout.session.completed':
+                obj = event.get('data', {}).get('object', {}) or {}
+                appt_id = obj.get('client_reference_id') or (obj.get('metadata') or {}).get('appointment_id')
+                amount = float((obj.get('amount_total') or 0)) / 100.0
+                session_id = obj.get('id', '')
+                if appt_id:
+                    try:
+                        add_payment(appt_id, amount, 'Deposit', 'Credit Card', 'Paid',
+                                    notes=f'Stripe checkout {session_id}')
+                        c = get_db()
+                        c.execute("UPDATE appointments SET deposit_agreed_at=? WHERE id=?", (now_str(), appt_id))
+                        c.commit()
+                        c.close()
+                        audit_log('STRIPE_PAID', self._client_ip(), path, f'appt={appt_id[:8]}, ${amount}')
+                    except Exception as e:
+                        audit_log('STRIPE_PAID_FAIL', self._client_ip(), path, str(e))
+                else:
+                    audit_log('STRIPE_NO_REF', self._client_ip(), path, f'session={session_id}')
+            else:
+                audit_log('STRIPE_EVENT', self._client_ip(), path, str(event.get('type')))
+            json_response(self, {'received': True}, 200)
+            return
+
         if path == '/api/book':
             # Public endpoint — but rate-limited
             if not self._rate_limit_check(book_mode=True):
@@ -542,16 +651,35 @@ class CRMHandler(BaseHTTPRequestHandler):
     
                 payment_link = None
                 deposit_agreed_at = None
+                checkout_url = None
                 deposit_agreed = data.get('deposit_agreed') in (True, 'true', 'on', '1')
+                payment_method = sanitize_input(data.get('payment_method', ''), 20).lower()
 
                 is_mobile = data.get('location', '') in MOBILE_LOCATIONS
                 quoted_price = compute_quoted_price(service_id, vehicle_size, is_mobile=is_mobile, conn=conn)
 
+                deposit_amount = None
+                appt_status = 'New Lead'
+                want_card_checkout = False
+
                 if service_id:
                     deposit_amount, link = get_service_deposit(service_id, conn=conn)
-                    if deposit_amount and deposit_agreed:
-                        payment_link = link
-                        deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    if deposit_amount:
+                        if payment_method == 'card':
+                            if stripe_checkout_enabled():
+                                want_card_checkout = True
+                                appt_status = 'Awaiting Deposit'
+                            else:
+                                # Key not configured yet — fall back to the manual link flow.
+                                payment_link = link
+                                deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        elif payment_method == 'cash':
+                            # Pay on the day — no online payment, nothing to record here.
+                            pass
+                        elif deposit_agreed:
+                            # Legacy booking form (no payment_method): owner texts the link.
+                            payment_link = link
+                            deposit_agreed_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
                 appointment_id = create_appointment(
                     customer_id=customer_id,
@@ -561,12 +689,25 @@ class CRMHandler(BaseHTTPRequestHandler):
                     service_id=service_id,
                     job_address=sanitize_input(data.get('job_address', ''), 200),
                     special_requests=special_requests or None,
-                    status='New Lead',
+                    status=appt_status,
                     payment_link=payment_link,
                     deposit_agreed_at=deposit_agreed_at,
                     quoted_price=quoted_price,
                     conn=conn,
                 )
+
+                if want_card_checkout:
+                    try:
+                        svc_row = conn.execute("SELECT name FROM services WHERE id=?", (service_id,)).fetchone()
+                        service_name = svc_row['name'] if svc_row else 'Deposit'
+                        session = create_checkout_session(deposit_amount, appointment_id, service_name, email or None)
+                        checkout_url = session.get('url')
+                        if checkout_url:
+                            conn.execute("UPDATE appointments SET payment_link=? WHERE id=?", (checkout_url, appointment_id))
+                            audit_log('STRIPE_SESSION', self._client_ip(), path, f'appt={appointment_id[:8]}, ${deposit_amount}')
+                    except Exception as e:
+                        audit_log('STRIPE_FAIL', self._client_ip(), path, str(e))
+                        checkout_url = None
     
                 today = datetime.now().strftime('%Y-%m-%d')
                 create_follow_up(appointment_id, 'Booking Confirmation', today, 'SMS', conn=conn)
@@ -587,6 +728,7 @@ class CRMHandler(BaseHTTPRequestHandler):
                     'message': confirm_msg,
                     'appointment_id': appointment_id,
                     'quoted_price': quoted_price,
+                    'checkout_url': checkout_url,
                 }, 201)
             except Exception as e:
                 try:

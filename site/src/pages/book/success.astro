@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Booking Received | On-Wheels Detailing"
+  description="Your booking is in and your deposit is on its way. TaSain will text you to confirm."
+  noindex
+>
+  <section class="bg-navy py-20 text-center">
+    <div class="container-x">
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">You're booked</h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        Thanks for choosing On-Wheels Detailing.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <div class="mx-auto max-w-xl">
+      <div
+        class="border-navy/10 bg-cream rounded-2xl border p-8 text-center shadow-sm"
+      >
+        <div
+          class="bg-[#e6863a]/15 mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full"
+        >
+          <span class="text-accent text-2xl font-bold" aria-hidden="true"
+            >&#10003;</span
+          >
+        </div>
+        <h2 class="font-display text-navy text-2xl font-bold uppercase">
+          Booking received
+        </h2>
+        <p class="text-navy/70 mt-3">
+          Your appointment is reserved and your deposit is on its way. TaSain
+          will text you shortly to confirm the day and time.
+        </p>
+        <p class="text-navy/60 mt-3 text-sm">
+          Paid by card? Your deposit is applied to your total and a receipt
+          comes from Stripe.
+        </p>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="/"
+            class="bg-accent hover:bg-navy rounded-full px-6 py-2.5 font-semibold text-white transition"
+            >Back to home</a
+          >
+          <a
+            href="tel:+15868730656"
+            class="border-navy/15 text-navy/70 hover:bg-sand rounded-full border px-6 py-2.5 font-semibold transition"
+            >Call or text (586) 873-0656</a
+          >
+        </div>
+        <p class="text-navy/40 mt-4 text-xs">
+          Need to change something? Just call or text and we'll sort it out.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Checkout Cancelled | On-Wheels Detailing"
+  description="No charge was made. You can still book and pay cash at your appointment."
+  noindex
+>
+  <section class="bg-navy py-20 text-center">
+    <div class="container-x">
+      <h1 class="text-cream text-5xl font-bold md:text-6xl">
+        Checkout cancelled
+      </h1>
+      <p class="text-cream/75 mx-auto mt-4 max-w-xl">
+        No charge was made, and nothing was booked.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x py-16">
+    <div class="mx-auto max-w-xl">
+      <div
+        class="border-navy/10 bg-cream rounded-2xl border p-8 text-center shadow-sm"
+      >
+        <h2 class="font-display text-navy text-2xl font-bold uppercase">
+          No worries
+        </h2>
+        <p class="text-navy/70 mt-3">
+          You can still book and pay cash at your appointment, or try the card
+          again whenever you're ready.
+        </p>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="/book"
+            class="bg-accent hover:bg-navy rounded-full px-6 py-2.5 font-semibold text-white transition"
+            >Try again</a
+          >
+          <a
+            href="tel:+15868730656"
+            class="border-navy/15 text-navy/70 hover:bg-sand rounded-full border px-6 py-2.5 font-semibold transition"
+            >Call or text (586) 873-0656</a
+          >
+        </div>
+        <p class="text-navy/40 mt-4 text-xs">
+          Prefer to talk it through? Call or text and we'll get you scheduled.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
