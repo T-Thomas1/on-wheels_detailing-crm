@@ -60,10 +60,11 @@ forwarding. Only trust `XFF` when the direct peer is the loopback/Nginx socket.
 to the wizard; verify the token server-side in `/api/book`. Plus a honeypot
 field (hidden input; reject if filled).
 
-**G4. Content-Security-Policy.** CF Pages `_headers` has HSTS + frame + permissions
-but **no CSP**. Add a strict CSP for the Astro site (default-src 'self'; script
-from 'self' + CF Turnstile + Stripe; img 'self' + data:; connect-src 'self' +
-api origin). Astro's SSG output is static, so CSP is easy to keep tight.
+**G4. Content-Security-Policy.** [✓ shipped Sept 2026] Added a strict CSP to CF
+Pages `_headers`: `default-src 'self'`; inline scripts (Astro's bundled output);
+`img-src 'self' data:`; `connect-src 'self'` + api origin + Google Maps;
+`frame-ancestors 'none'`; `object-src 'none'`; `base-uri`/`form-action 'self'`;
+`upgrade-insecure-requests`. Also added `Cross-Origin-Opener-Policy: same-origin`.
 
 ### P1 — soon after launch
 
