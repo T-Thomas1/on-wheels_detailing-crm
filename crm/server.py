@@ -332,10 +332,15 @@ def verify_stripe_signature(payload: bytes, sig_header: str) -> bool:
 class CRMHandler(BaseHTTPRequestHandler):
 
     def _client_ip(self) -> str:
-        """Extract client IP, respecting X-Forwarded-For from Nginx."""
+        """Real client IP. Trust X-Real-IP (set by Nginx to the corrected remote
+        address); fall back to the LAST X-Forwarded-For hop (closest to Nginx,
+        the trusted peer), then the socket address."""
+        real = self.headers.get('X-Real-IP', '').strip()
+        if real:
+            return real
         forwarded = self.headers.get('X-Forwarded-For', '')
         if forwarded:
-            return forwarded.split(',')[0].strip()
+            return forwarded.split(',')[-1].strip()
         return self.client_address[0]
 
     def _content_length(self) -> int:
@@ -570,6 +575,12 @@ class CRMHandler(BaseHTTPRequestHandler):
                     audit_log('BOOK_FAIL', self._client_ip(), path, 'invalid JSON')
                     return
     
+                # Honeypot: bots autofill the hidden field; humans never see it.
+                if sanitize_input(data.get('website', ''), 100):
+                    audit_log('BOOK_FAIL', self._client_ip(), path, 'honeypot triggered')
+                    json_response(self, {'error': 'Invalid request.'}, 400)
+                    return
+
                 # Sanitize inputs
                 name = sanitize_input(data.get('name', ''), 100)
                 phone = sanitize_input(data.get('phone', ''), 20)

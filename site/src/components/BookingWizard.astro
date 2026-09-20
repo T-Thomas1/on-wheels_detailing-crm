@@ -47,6 +47,23 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
   data-gmaps-key={gmapsKey}
   class="border-navy/10 bg-cream rounded-2xl border p-6 shadow-sm md:p-8"
 >
+  <!-- Honeypot (bots autofill it; humans never see it) -->
+  <div
+    data-hp
+    aria-hidden="true"
+    style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden"
+  >
+    <label>Leave this field empty
+      <input
+        data-hp-input
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </label>
+  </div>
+
   <!-- Progress -->
   <ol
     class="text-navy/50 mb-6 flex items-center gap-2 text-xs font-semibold tracking-wide uppercase"
@@ -794,6 +811,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       preferred_date: val("[data-date]"),
       preferred_time: val("[data-time]"),
       special_requests: val("[data-notes]"),
+      website: val("[data-hp-input]"),
       payment_method: radio("payment") || "cash",
       deposit_agreed: radio("payment") === "card",
     };
