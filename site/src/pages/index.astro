@@ -93,10 +93,13 @@ const ldJson = {
   <section class="bg-navy relative overflow-hidden">
     <img
       src="/images/hero-car.webp"
+      srcset="/images/hero-car-mobile.webp 768w, /images/hero-car.webp 1920w"
+      sizes="100vw"
       alt="Recently detailed vehicle with mirror finish"
       class="absolute inset-0 h-full w-full object-cover opacity-40"
       width="1600"
       height="900"
+      fetchpriority="high"
     />
     <div
       class="from-navy/90 via-navy/40 absolute inset-0 bg-gradient-to-r to-transparent"
@@ -230,8 +233,8 @@ const ldJson = {
     </div>
     <div class="mx-auto mt-10 max-w-4xl">
       <BeforeAfter
-        before="/images/IMG_2071.webp"
-        after="/images/IMG_2288.webp"
+        before="/images/IMG_2071-1200w.webp"
+        after="/images/IMG_2288-1200w.webp"
         alt="Paint correction demo"
       />
       <p class="text-navy/50 mt-3 text-center text-xs">

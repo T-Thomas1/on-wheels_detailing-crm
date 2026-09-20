@@ -3,18 +3,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Placeholder from "../components/Placeholder.astro";
 
 const shots = [
-  { src: "/images/IMG_2071.webp", alt: "Detail job, 2071" },
-  { src: "/images/IMG_2288.webp", alt: "Detail job, 2288" },
-  { src: "/images/IMG_2577.webp", alt: "Detail job, 2577" },
-  { src: "/images/IMG_2700.webp", alt: "Detail job, 2700" },
-  { src: "/images/IMG_2967.webp", alt: "Detail job, 2967" },
-  { src: "/images/IMG_3123.webp", alt: "Detail job, 3123" },
-  { src: "/images/IMG_3131.webp", alt: "Detail job, 3131" },
-  { src: "/images/IMG_3170.webp", alt: "Detail job, 3170" },
-  { src: "/images/IMG_3954.webp", alt: "Detail job, 3954" },
-  { src: "/images/IMG_4386.webp", alt: "Detail job, 4386" },
-  { src: "/images/IMG_4396.webp", alt: "Detail job, 4396" },
-  { src: "/images/IMG_4649.webp", alt: "Detail job, 4649" },
+  { id: "IMG_2071", alt: "Detail job, 2071" },
+  { id: "IMG_2288", alt: "Detail job, 2288" },
+  { id: "IMG_2577", alt: "Detail job, 2577" },
+  { id: "IMG_2700", alt: "Detail job, 2700" },
+  { id: "IMG_2967", alt: "Detail job, 2967" },
+  { id: "IMG_3123", alt: "Detail job, 3123" },
+  { id: "IMG_3131", alt: "Detail job, 3131" },
+  { id: "IMG_3170", alt: "Detail job, 3170" },
+  { id: "IMG_3954", alt: "Detail job, 3954" },
+  { id: "IMG_4386", alt: "Detail job, 4386" },
+  { id: "IMG_4396", alt: "Detail job, 4396" },
+  { id: "IMG_4649", alt: "Detail job, 4649" },
 ];
 ---
 
@@ -37,9 +37,12 @@ const shots = [
         shots.map((s) => (
           <figure class="border-navy/10 bg-sand overflow-hidden rounded-xl border">
             <img
-              src={s.src}
+              src={`/images/${s.id}-800w.webp`}
+              srcset={`/images/${s.id}-400w.webp 400w, /images/${s.id}-800w.webp 800w, /images/${s.id}-1200w.webp 1200w`}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               alt={s.alt}
               loading="lazy"
+              decoding="async"
               width="800"
               height="600"
               class="aspect-[4/3] w-full object-cover"
