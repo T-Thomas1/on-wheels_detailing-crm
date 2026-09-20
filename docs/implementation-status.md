@@ -7,6 +7,12 @@
 
 ## 1. Done (committed to `development`)
 
+> **Sept 2026 — Tinting + Undercoating REMOVED.** The window-tint + undercoating
+> expansion is on indefinite hold while TaSain pursues ML pipelines / AI
+> engineering. Stripped from the CRM seed/migrations, the Astro site (dedicated
+> pages, booking-wizard services, nav), docs, and IndexNow URLs. RV Detailing is
+> unaffected.
+
 ### Marketing site — `site/` (Astro 7.3 + TS + Tailwind 4)
 - 7 pages: Home, Services, Gallery, Locations, About, Book, 404 — all build
   clean, all serve HTTP 200.
