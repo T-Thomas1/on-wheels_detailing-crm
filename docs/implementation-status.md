@@ -8,23 +8,23 @@
 ## 1. Done (committed to `development`)
 
 ### Marketing site — `site/` (Astro 7.3 + TS + Tailwind 4)
-- 9 pages: Home, Services, Tinting, Undercoating, Gallery, Locations, About,
-  Book, 404 — all build clean, all serve HTTP 200.
+- 7 pages: Home, Services, Gallery, Locations, About, Book, 404 — all build
+  clean, all serve HTTP 200.
 - Brand tokens locked (navy `#0d2e48`, cream `#f1eed9`, orange `#e6863a`,
   gold `#edb760`), FH Oscar Condensed display font.
 - Header (Services dropdown + mobile menu) + Footer (SAIN API credit, phone,
   email, Facebook, Instagram, MI + TX location lines).
-- Interactive islands: **before/after slider**, **tint shade simulator**
-  (50%→5% VLT), **5-step booking wizard** (fails open to "call to book").
-- Schema.org: `AutoDetailing` (home), `FAQPage` (tinting, undercoating).
+- Interactive islands: **before/after slider**, **5-step booking wizard**
+  (fails open to "call to book").
+- Schema.org: `AutoDetailing` (home).
 - SEO plumbing: auto sitemap, `robots.txt`, `_redirects` (`/book.html`→`/book`),
   `_headers` (HSTS/frame/nosniff), IndexNow URL list updated.
 
 ### CRM — `server.py` / `crm.py` (additive, idempotent)
 - CORS allowlist (`www` + apex + `localhost:4321` + `*.pages.dev`) + OPTIONS
   preflight. Never `*`.
-- Seeded 5 services (3 GEOShield tint tiers + Fluid Film/Woolwax) + widened
-  `services.category` CHECK via copy-preserving table rebuild.
+- Seeded RV Detailing services + widened `services.category` CHECK via
+  copy-preserving table rebuild.
 - Verified against a **copy** of the DB: no data loss, idempotent, allow/deny
   logic passes. Real `crm/onwheels.db` untouched.
 
@@ -37,10 +37,8 @@
 | Real before/after pairs | home `BeforeAfter` currently uses demo images |
 | Real testimonials | 3 sample cards on home → replace with real quotes |
 | GEOShield + product brand logos | "Products we trust" strip is text-only |
-| Tint pricing | films seeded as `Quote Only` (cert pending) |
 | CSP header | deferred — test with islands + Turnstile (security-plan G4) |
 | Cloudflare Turnstile key | wire into `BookingWizard` submit |
-| Booking payload schema | new column on `appointments` for film/shade + undercoat product |
 | Texas landing page | geo-targeted Houston page + LocalBusiness schema |
 | Image dedup | pick canonical `images/` location, remove the other |
 
@@ -48,7 +46,7 @@
 
 ## 3. Decisions locked (in `docs/brand-content.md`)
 
-- Tinting nested under Services (not top-level nav).
+- Services nested under a single Services dropdown (no top-level service links).
 - Owner-centric theme: TaSain IS the brand.
 - Products shown as brand trust strip, not a chemical spec dump.
 - Fluid Film vs Woolwax comparison is the one product A/B.

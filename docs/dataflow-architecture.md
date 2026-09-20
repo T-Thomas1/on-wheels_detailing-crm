@@ -127,7 +127,6 @@ are never reachable from the marketing site.
 |---------|--------|-----|
 | **Services page** (marketing/SEO) | Static content in Astro | SEO, sub-second, survives API outage |
 | **Booking wizard** (interactive) | Live `GET /api/services` | DB stays single source of truth for price/availability |
-| **Tinting / undercoating pages** | Static content | SEO landing pages, no PII |
 
 This gives resilience: if the API is down, the site still sells; only the
 book-now flow degrades (and it should degrade *gracefully*, not silently).
@@ -158,17 +157,14 @@ Steps:
 3. Wizard steps: location (MI mobile / Marysville shop / New Haven / TX) →
    service (from live catalog, filtered by location) → vehicle (make/model/year/
    condition + optional photo) → date (Thu/Sat/Sun) → review & contact.
-4. Submit `POST /api/book` with the same payload **plus** new fields for
-   tint (film tier + shade %) and undercoating (product + vehicle size).
+4. Submit `POST /api/book` with the existing payload.
 5. Server does the same validation + a **Turnstile** token check, then creates
    the record and returns the Stripe link.
 
 ### Required CRM changes (to unlock the above)
 1. **CORS** — `Access-Control-Allow-Origin` for `www` + Pages preview + localhost,
    and an `OPTIONS` preflight handler. *(The one hard blocker.)*
-2. **Seed tinting + undercoating** services (GEOShield tiers; Fluid Film/Woolwax).
-3. **Extend `/api/book` payload** for tint + undercoating selections.
-4. **Location mapping** — sync MI mobile / Marysville / New Haven / TX split.
+2. **Location mapping** — sync MI mobile / Marysville / New Haven / TX split.
 
 ---
 

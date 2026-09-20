@@ -16,18 +16,6 @@ const services = [
     desc: "Correction, polishing, and CarPro CQuartz 3.0 ceramic coatings.",
     price: "From $200",
   },
-  {
-    name: "Window Tinting",
-    href: "/tinting",
-    desc: "GEOShield films, ceramic, nano-ceramic & carbon. See your shade.",
-    price: "By film",
-  },
-  {
-    name: "Undercoating",
-    href: "/undercoating",
-    desc: "Fluid Film & Woolwax rust protection for Michigan winters.",
-    price: "$175–$300",
-  },
 ];
 
 const stats = [
@@ -42,8 +30,6 @@ const brands = [
   "Koch Chemie",
   "P&S",
   "Oberk",
-  "GEOShield",
-  "Fluid Film",
   "3D",
   "Meguiar's",
 ];
@@ -101,7 +87,7 @@ const ldJson = {
 
 <BaseLayout
   title="On-Wheels Detailing | Mobile & In-Shop Auto Detailing | Michigan & Texas"
-  description="Premium mobile and in-shop auto detailing, ceramic coating, window tinting, and undercoating. Founded by TaSain, serving Port Huron, St. Clair & Macomb County and Houston."
+  description="Premium mobile and in-shop auto detailing and ceramic coating. Founded by TaSain, serving Port Huron, St. Clair & Macomb County and Houston."
 >
   <!-- HERO -->
   <section class="bg-navy relative overflow-hidden">
@@ -176,9 +162,8 @@ const ldJson = {
       <p class="text-navy/75 mt-5">
         On-Wheels Detailing started in 2025 with one buffer and one promise:
         treat every car like it's my own. Today that's grown into mobile
-        detailing across Port Huron, St. Clair & Macomb County, two garage
-        locations, an undercoating bay, and window tinting, all still built on
-        the same hands-on standard.
+        detailing across Port Huron, St. Clair & Macomb County, and two garage
+        locations, all still built on the same hands-on standard.
       </p>
       <ul class="text-navy/80 mt-6 space-y-2">
         <li>• Certified, pro-grade products, no parts-store shortcuts</li>
@@ -205,10 +190,10 @@ const ldJson = {
       <div class="text-center">
         <h2 class="text-navy text-4xl font-bold md:text-5xl">What we do</h2>
         <p class="text-navy/70 mx-auto mt-3 max-w-xl">
-          Four ways to protect and transform your vehicle, all under one roof.
+          Two ways to protect and transform your vehicle, all under one roof.
         </p>
       </div>
-      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="mt-12 grid gap-6 sm:grid-cols-2">
         {
           services.map((s) => (
             <a

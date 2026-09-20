@@ -10,11 +10,11 @@ const locations = [
   { value: "Michigan - St. Clair", label: "Mobile, St. Clair / Port Huron" },
   {
     value: "Michigan - Marysville (Shop)",
-    label: "Marysville garage (tinting)",
+    label: "Marysville garage",
   },
   {
     value: "Michigan - New Haven (Shop)",
-    label: "New Haven garage (tinting + undercoating)",
+    label: "New Haven garage",
   },
   { value: "Texas - Harris County", label: "Mobile, Houston, TX" },
 ];
@@ -351,51 +351,6 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       deposit: 100,
     },
     {
-      id: "tint-ceramic",
-      name: "Window Tinting, Ceramic",
-      category: "Window Tinting",
-      price: "from $449",
-      tiers: null,
-      base: null,
-      deposit: 50,
-    },
-    {
-      id: "tint-nano",
-      name: "Window Tinting, Nano-Ceramic",
-      category: "Window Tinting",
-      price: "from $599",
-      tiers: null,
-      base: null,
-      deposit: 50,
-    },
-    {
-      id: "tint-carbon",
-      name: "Window Tinting, Carbon",
-      category: "Window Tinting",
-      price: "from $299",
-      tiers: null,
-      base: null,
-      deposit: 50,
-    },
-    {
-      id: "undercoat-fluid",
-      name: "Undercoating, Fluid Film",
-      category: "Undercoating",
-      price: "$175–$300",
-      tiers: [175, 225, 300],
-      base: null,
-      deposit: 50,
-    },
-    {
-      id: "undercoat-woolwax",
-      name: "Undercoating, Woolwax",
-      category: "Undercoating",
-      price: "$175–$300",
-      tiers: [175, 225, 300],
-      base: null,
-      deposit: 50,
-    },
-    {
       id: "rv-wash-wax",
       name: "RV Wash & Wax",
       category: "RV Detailing",
@@ -452,14 +407,11 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     "Michigan - Marysville (Shop)": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
-      "Window Tinting",
       "RV Detailing",
     ],
     "Michigan - New Haven (Shop)": [
       "Interior Detailing",
       "Paint Correction & Ceramic",
-      "Window Tinting",
-      "Undercoating",
     ],
   };
 
@@ -564,7 +516,7 @@ const gmapsKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     let base: number | null = null;
     if (s.tiers) base = s.tiers[tierIndex[size] ?? 0];
     else if (typeof s.base === "number") base = s.base;
-    if (base == null) return null; // per-foot / tint — no definitive price
+    if (base == null) return null; // per-foot — no definitive price
     const total = base + (mobile ? mobileFee : 0);
     return { base, total, mobile, size };
   };

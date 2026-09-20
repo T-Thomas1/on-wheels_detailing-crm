@@ -11,24 +11,24 @@ The site is the story of **TaSain** — not a faceless shop. "On-Wheels Detailin
 is the name; the person is the brand.
 
 - About page = TaSain's story front-and-center: founded May 2024, the craft,
-  the standard, the growth (mobile → Marysville shop → New Haven undercoating
-  bay → window tinting → Texas).
+  the standard, the growth (mobile → Marysville shop → Texas).
 - "Meet your detailer" — one person treats your car like his own. No stock
   photos of people; real photos of TaSain working.
 - First-person, confident voice in copy. A personal guarantee: "if it's not
   right, I'll make it right."
 - The "doing big things" effect: growth timeline, certifications, reviews,
-  the full service stack (detailing + tinting + undercoating) under one roof.
+  the full service stack under one roof.
 
 ---
 
 ## 2. Navigation decision (locked)
 
-**Tinting is nested under Services** — not a top-level nav item. Most customers
-know the business for detailing; the name is On-Wheels *Detailing*.
+Services are nested under a single "Services" dropdown — not top-level items.
+Most customers know the business for detailing; the name is On-Wheels
+*Detailing*.
 
-Proposed nav (7 items):
-`Home · Services (▾ Detailing / Paint & Ceramic / Tinting / Undercoating) ·
+Proposed nav (5 items):
+`Home · Services (▾ Detailing / Paint & Ceramic / RV Detailing) ·
 Gallery · Locations · About · [Book Now]`
 
 ---
@@ -50,8 +50,6 @@ Gallery · Locations · About · [Book Now]`
 - **No per-service chemical spec dump.** Customers buy outcomes; the raw
   `products_used` field stays in the DB for internal use only (already returned
   by `/api/services`, but the public site never renders it).
-- **Undercoating** is the one place we DO compare products: Fluid Film vs
-  Woolwax (real customer choice — yearly vs 2-yr reapply).
 
 ---
 

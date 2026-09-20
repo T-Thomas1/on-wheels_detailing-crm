@@ -22,7 +22,7 @@ from urllib.parse import urlparse, parse_qs, urlencode
 
 sys.path.insert(0, str(Path(__file__).parent))
 from crm import (
-    init_db, seed_services, seed_expansion_services, seed_rv_detailing,
+    init_db, seed_services, seed_rv_detailing,
     cleanup_marine_services,
     create_customer, find_customer, get_customers,
     add_vehicle, get_customer_vehicles,
@@ -85,7 +85,6 @@ PUBLIC_PATHS = {'/', '/book', '/api/book', '/api/services', '/static/', '/api/st
 # Init DB on startup
 _db = init_db()
 seed_services()
-seed_expansion_services()
 seed_rv_detailing()
 cleanup_marine_services()
 

@@ -10,8 +10,8 @@ replace the current hand-written HTML on Cloudflare Pages for the 2027 rollout.
 - **TypeScript**
 - **Tailwind CSS 4** (brand tokens in `src/styles/global.css` `@theme`)
 - Cloudflare Pages (deploy target) — no framework runtime, pure static output
-- Vanilla TS islands (no React/Alpine) for the tint simulator, before/after
-  slider, and booking wizard
+- Vanilla TS islands (no React/Alpine) for the before/after slider and booking
+  wizard
 
 ## Run it
 
@@ -39,13 +39,10 @@ site/
       Footer.astro      # SAIN API credit + contact/social links + locations
       Placeholder.astro # labeled upload-slot for missing images
       BeforeAfter.astro # draggable before/after comparison slider
-      TintSimulator.astro # VLT shade preview (slider 50% → 5%)
       BookingWizard.astro # 5-step wizard → POST /api/book (fails open)
     pages/
       index.astro       # home
-      services.astro    # detailing + paint/ceramic (+ tint/undercoat links)
-      tinting.astro     # GEOShield films + simulator + legal limits
-      undercoating.astro# Fluid Film vs Woolwax + pricing
+      services.astro    # detailing + paint/ceramic + RV
       gallery.astro     # recent work (existing images + upload slots)
       locations.astro   # MI (mobile/shop) + TX
       about.astro       # TaSain's story
@@ -64,10 +61,8 @@ site/
 | Paint correction before/after (home) | a real pair → wire into `index.astro` `BeforeAfter`                           |
 | Detailing before/after (services)    | `detail-interior.webp`                                                        |
 | Ceramic water beading (services)     | `ceramic-beading.webp`                                                        |
-| Tint base car (tinting simulator)    | `tint-base-car.png` (clean side profile, clear glass)                         |
-| Undercoating in progress             | `undercoating-bay.webp`                                                       |
 | Marysville / New Haven / Houston     | `location-marysville.webp`, `location-newhaven.webp`, `location-houston.webp` |
-| Tinting / undercoating / Texas jobs  | `tint-job-1.webp`, `undercoat-job-1.webp`, `tx-job-1.webp`                    |
+| Texas jobs                          | `tx-job-1.webp`                                                             |
 
 Every empty slot renders as a labeled dashed box with the exact filename + size,
 so you can see at a glance what's missing.

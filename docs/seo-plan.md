@@ -36,8 +36,8 @@
    | `/book` | booking wizard (on-site) | 301 → new flow |
    | `/book.html` | booking wizard | 301 |
 
-   *(New pages — `/tinting`, `/undercoating`, `/locations`, service detail pages
-   — are additive and don't need redirects.)*
+   *(New pages — `/locations` and service detail pages are additive and don’t
+   need redirects.)*
 
 2. **Keep `robots.txt` + `sitemap.xml` live.** Astro generates both via
    `@astrojs/sitemap`; the sitemap auto-grows as pages are added.
@@ -68,8 +68,6 @@
 |------|-------------|
 | Home + Locations | `AutoDetailing` (LocalBusiness) — one per location: Marysville shop, New Haven shop, mobile (Metro Detroit / St. Clair), TX (Houston) |
 | Services | `Service` + `OfferCatalog` + `Offer` with price |
-| Tinting | `Service` + `FAQPage` (legal limits, film tiers) |
-| Undercoating | `Service` + `FAQPage` (Fluid Film vs Woolwax) |
 | Gallery | `ImageObject` list + `VideoObject` for before/after |
 | Reviews | `AggregateRating` (from GBP) |
 
@@ -82,25 +80,22 @@ NAP consistency (Name / Address / Phone) must match Google Business Profile
 
 - **Geo pages** (one per market, unique content, no doorway pages):
   - `Mobile Auto Detailing Detroit MI` / Port Huron / St. Clair / Macomb Co
-  - `Ceramic Coating` + `Window Tinting` + `Undercoating` pages targeting each
+  - `Ceramic Coating` + `RV Detailing` pages targeting each
     metro (Marysville / New Haven / Metro Detroit) + `Houston TX`.
 - **Reviews name the town** (per the market-entry playbook): reviews that say
   "mobile detailing in Marysville" rank for Marysville.
-- **GBP alignment**: Marysville storefront (single GBP, lists undercoating),
-  New Haven (undercoating fixed location), mobile service area. New Tinting
-  service should be added to GBP offerings.
+- **GBP alignment**: Marysville storefront (single GBP), New Haven shop,
+  mobile service area.
 
 ---
 
 ## 6. Content & keyword strategy
 
-- **Service landing pages** (one keyword each): window tinting (GEOShield),
-  ceramic coating, paint correction, interior detailing, undercoating, RV.
+- **Service landing pages** (one keyword each): ceramic coating, paint
+  correction, interior detailing, RV.
 - **Blog** (education = top-of-funnel + featured snippets):
   - "How long does ceramic coating last?"
-  - "Michigan window tint laws (2026)"
   - "Wax vs sealant vs ceramic — what's the difference?"
-  - "Fluid Film vs Woolwax for Michigan winters"
 - **Before/after gallery** with descriptive filenames + alt text + captions
   (currently the gallery page is thin — 595 chars; the rebuild fixes this).
 
@@ -126,5 +121,5 @@ NAP consistency (Name / Address / Phone) must match Google Business Profile
 1. Build deploys to Cloudflare Pages.
 2. GitHub Action runs `indexnow-submit.py` (new URLs → Bing/Yandex instantly).
 3. Re-submit sitemap in Google Search Console + Bing Webmaster Tools.
-4. Request index of new pages (tinting, undercoating, locations) in GSC.
+4. Request index of new pages (locations) in GSC.
 5. Monitor GSC coverage report for 404s / redirect errors in week 1.
