@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Placeholder from "../components/Placeholder.astro";
 
 const shots = [
-  { id: "fender-after", alt: "Paint correction after, fender" },
+  { id: "fender-after", alt: "Paint correction after, fender", aspect: "aspect-[3/4]" },
   { id: "IMG_2071", alt: "Detail job, 2071" },
   { id: "IMG_2288", alt: "Detail job, 2288" },
   { id: "IMG_2577", alt: "Detail job, 2577" },
@@ -46,7 +46,7 @@ const shots = [
               decoding="async"
               width="800"
               height="600"
-              class="aspect-[4/3] w-full object-cover"
+              class:list={["w-full object-cover", s.aspect ?? "aspect-[4/3]"]}
             />
           </figure>
         ))
